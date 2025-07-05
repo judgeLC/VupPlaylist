@@ -1797,8 +1797,11 @@ class AdminManager {
             throw new Error('未登录，无法同步数据');
         }
 
+        console.log('开始同步风格数据到服务器...');
+
         // 获取当前所有风格
         const allGenres = window.genreManager.getAllGenres();
+        console.log(`准备同步 ${allGenres.length} 个风格:`, allGenres.map(g => `${g.name}(${g.id})`));
 
         // 构建同步数据
         const dataToSync = {
@@ -1809,32 +1812,82 @@ class AdminManager {
 
         let result;
 
-        // 检查是否有API客户端可用
-        if (typeof apiClient !== 'undefined') {
-            // 设置认证令牌到localStorage，供API客户端使用
-            localStorage.setItem('auth_token', session.token);
+        try {
+            // 检查是否有API客户端可用
+            if (typeof apiClient !== 'undefined') {
+                // 设置认证令牌到localStorage，供API客户端使用
+                localStorage.setItem('auth_token', session.token);
 
-            // 使用API客户端进行同步
-            result = await apiClient.syncData(dataToSync);
-        } else {
-            // 回退到原生fetch，但包含认证头
-            console.warn('API客户端未加载，使用原生fetch同步风格数据');
-            const response = await fetch('/api/update-data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session.token}`
-                },
-                body: JSON.stringify(dataToSync, null, 2)
-            });
-            result = await response.json();
+                // 使用API客户端进行同步
+                console.log('使用 API 客户端同步数据...');
+                result = await apiClient.syncData(dataToSync);
+            } else {
+                // 回退到原生fetch，但包含认证头
+                console.warn('API客户端未加载，使用原生fetch同步风格数据');
+                const response = await fetch('/api/update-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.token}`
+                    },
+                    body: JSON.stringify(dataToSync, null, 2)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                result = await response.json();
+            }
+
+            if (!result.success) {
+                throw new Error(result.message || '同步失败');
+            }
+
+            console.log('风格数据同步成功:', result.message);
+
+            // 同步成功后，通知所有打开的页面刷新风格数据
+            this.notifyGenreUpdate();
+
+            return result;
+
+        } catch (error) {
+            console.error('同步风格数据失败:', error);
+            throw error;
+        }
+    }
+
+    // 通知其他页面风格数据已更新
+    notifyGenreUpdate() {
+        console.log('通知其他页面风格数据已更新...');
+
+        // 通过 BroadcastChannel 通知其他标签页
+        if (typeof BroadcastChannel !== 'undefined') {
+            try {
+                const channel = new BroadcastChannel('genre-updates');
+                channel.postMessage({
+                    type: 'GENRES_UPDATED',
+                    timestamp: Date.now()
+                });
+                channel.close();
+                console.log('已通过 BroadcastChannel 发送风格更新通知');
+            } catch (error) {
+                console.warn('BroadcastChannel 通知失败:', error);
+            }
         }
 
-        if (!result.success) {
-            throw new Error(result.message || '同步失败');
+        // 通过 postMessage 通知父窗口（如果存在）
+        if (window.opener && !window.opener.closed) {
+            try {
+                window.opener.postMessage({
+                    type: 'GENRES_UPDATED',
+                    timestamp: Date.now()
+                }, '*');
+                console.log('已通过 postMessage 通知父窗口');
+            } catch (error) {
+                console.warn('postMessage 通知失败:', error);
+            }
         }
-
-        return result;
     }
 
     updateGenreSelects() {

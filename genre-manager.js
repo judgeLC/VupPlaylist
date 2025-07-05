@@ -9,8 +9,11 @@ class GenreManager {
         this.version = '3.2'; // 新版本号
         this.cacheKey = 'vtuber_genres_v3';
         this.versionKey = 'vtuber_genre_version';
-        
+
         console.log('GenreManager 初始化');
+
+        // 设置跨页面通信监听
+        this.setupCrossPageCommunication();
     }
 
     /**
@@ -260,6 +263,60 @@ class GenreManager {
             this.notifyDataUpdate();
         }
         return deleted;
+    }
+
+    /**
+     * 设置跨页面通信监听
+     */
+    setupCrossPageCommunication() {
+        // 监听 BroadcastChannel 消息
+        if (typeof BroadcastChannel !== 'undefined') {
+            try {
+                this.broadcastChannel = new BroadcastChannel('genre-updates');
+                this.broadcastChannel.addEventListener('message', (event) => {
+                    if (event.data.type === 'GENRES_UPDATED') {
+                        console.log('收到风格更新通知，准备刷新数据...');
+                        this.handleGenreUpdate();
+                    }
+                });
+                console.log('BroadcastChannel 监听已设置');
+            } catch (error) {
+                console.warn('BroadcastChannel 设置失败:', error);
+            }
+        }
+
+        // 监听 postMessage 消息
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'GENRES_UPDATED') {
+                console.log('收到 postMessage 风格更新通知，准备刷新数据...');
+                this.handleGenreUpdate();
+            }
+        });
+    }
+
+    /**
+     * 处理风格更新通知
+     */
+    async handleGenreUpdate() {
+        try {
+            console.log('处理风格更新通知...');
+
+            // 延迟一点时间确保服务器数据已写入
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // 强制刷新数据
+            await this.refresh();
+
+            console.log('风格数据刷新完成');
+
+            // 触发自定义事件，通知页面组件更新
+            window.dispatchEvent(new CustomEvent('genresUpdated', {
+                detail: { genres: this.getAllGenres() }
+            }));
+
+        } catch (error) {
+            console.error('处理风格更新失败:', error);
+        }
     }
 
     /**

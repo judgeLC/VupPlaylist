@@ -294,6 +294,14 @@ class VTuberPlaylist {
             });
         }
 
+        // 监听 GenreManager 的风格更新事件
+        window.addEventListener('genresUpdated', (event) => {
+            console.log('收到风格更新事件，刷新页面显示...');
+            this.updateGenreNavigation();
+            this.renderPlaylist();
+            this.showNotification('风格数据已更新', 'success');
+        });
+
         // 监听来自后台的设置更新
         window.addEventListener('message', (event) => {
             if (event.data && event.data.type === 'settingsUpdated') {
