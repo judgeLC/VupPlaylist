@@ -215,7 +215,7 @@ class VTuberPlaylist {
         });
 
         // 监听来自后台的消息
-        window.addEventListener('message', (event) => {
+        window.addEventListener('message', async (event) => {
             if (event.data) {
                 switch (event.data.type) {
                     case 'profileUpdated':
@@ -227,6 +227,13 @@ class VTuberPlaylist {
                         this.reloadData();
                         this.renderPlaylist();
                         this.updateProfile();
+                        break;
+                    case 'genreDataUpdated':
+                        // 风格数据更新，刷新 GenreManager
+                        await window.genreManager.refresh();
+                        this.updateGenreNavigation();
+                        this.renderPlaylist(); // 重新渲染歌曲以更新风格显示
+                        this.showNotification('风格数据已更新', 'success');
                         break;
                     case 'faviconUpdated':
                         if (event.data.favicon) {
@@ -241,6 +248,19 @@ class VTuberPlaylist {
                 }
             }
         });
+
+        // 监听跨标签页的风格数据更新
+        if (typeof BroadcastChannel !== 'undefined') {
+            const genreChannel = new BroadcastChannel('vup-playlist-genres');
+            genreChannel.addEventListener('message', async (event) => {
+                if (event.data.type === 'genreDataUpdated') {
+                    await window.genreManager.refresh();
+                    this.updateGenreNavigation();
+                    this.renderPlaylist();
+                    this.showNotification('风格数据已同步更新', 'info');
+                }
+            });
+        }
 
         // 监听来自后台的设置更新
         window.addEventListener('message', (event) => {

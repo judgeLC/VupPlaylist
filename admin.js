@@ -1790,6 +1790,53 @@ class AdminManager {
         return window.genreManager.getDisplayName(genreId);
     }
 
+    // 同步风格数据到服务器
+    async syncGenresToServer() {
+        const session = this.getSession();
+        if (!session || !session.token) {
+            throw new Error('未登录，无法同步数据');
+        }
+
+        // 获取当前所有风格
+        const allGenres = window.genreManager.getAllGenres();
+
+        // 构建同步数据
+        const dataToSync = {
+            songs: this.songs,
+            profile: JSON.parse(localStorage.getItem('vtuber_profile') || '{}'),
+            customGenres: allGenres
+        };
+
+        let result;
+
+        // 检查是否有API客户端可用
+        if (typeof apiClient !== 'undefined') {
+            // 设置认证令牌到localStorage，供API客户端使用
+            localStorage.setItem('auth_token', session.token);
+
+            // 使用API客户端进行同步
+            result = await apiClient.syncData(dataToSync);
+        } else {
+            // 回退到原生fetch，但包含认证头
+            console.warn('API客户端未加载，使用原生fetch同步风格数据');
+            const response = await fetch('/api/update-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.token}`
+                },
+                body: JSON.stringify(dataToSync, null, 2)
+            });
+            result = await response.json();
+        }
+
+        if (!result.success) {
+            throw new Error(result.message || '同步失败');
+        }
+
+        return result;
+    }
+
     updateGenreSelects() {
         const selects = document.querySelectorAll('select[id$="Genre"], select[id^="songGenre"], select[id="defaultGenre"]');
         const allGenres = this.getAllGenres();
@@ -1833,7 +1880,7 @@ class AdminManager {
         this.renderRemarkManagement();
     }
 
-    addNewGenre() {
+    async addNewGenre() {
         const input = document.getElementById('newGenreInput');
         const name = input.value.trim();
         if (!name) {
@@ -1847,20 +1894,48 @@ class AdminManager {
             input.focus();
             return;
         }
-        window.genreManager.addGenre(name);
+
+        // 添加到 GenreManager
+        const newGenre = window.genreManager.addGenre(name);
+
+        // 同步到服务器
+        try {
+            await this.syncGenresToServer();
+            // 通知数据更新
+            window.genreManager.notifyDataUpdate();
+            this.showNotification('风格添加成功并已同步到服务器', 'success');
+        } catch (error) {
+            console.error('同步风格到服务器失败:', error);
+            this.showNotification('风格添加成功，但同步到服务器失败', 'warning');
+        }
+
         input.value = '';
         this.renderGenreManagement();
         this.updateGenreSelects();
         this.updateGenreAndRemarkSelects();
-        this.showNotification('风格添加成功', 'success');
     }
 
-    deleteGenre(genreId) {
-        window.genreManager.deleteGenre(genreId);
+    async deleteGenre(genreId) {
+        const success = window.genreManager.deleteGenre(genreId);
+        if (!success) {
+            this.showNotification('删除风格失败', 'error');
+            return;
+        }
+
+        // 同步到服务器
+        try {
+            await this.syncGenresToServer();
+            // 通知数据更新
+            window.genreManager.notifyDataUpdate();
+            this.showNotification('风格删除成功并已同步到服务器', 'success');
+        } catch (error) {
+            console.error('同步风格到服务器失败:', error);
+            this.showNotification('风格删除成功，但同步到服务器失败', 'warning');
+        }
+
         this.renderGenreManagement();
         this.updateGenreSelects();
         this.updateGenreAndRemarkSelects();
-        this.showNotification('风格删除成功', 'success');
     }
 
     renderGenreManagement() {

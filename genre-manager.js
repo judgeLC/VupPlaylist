@@ -6,7 +6,7 @@ class GenreManager {
     constructor() {
         this.genres = new Map(); // 使用Map提高查找性能
         this.initialized = false;
-        this.version = '3.0'; // 新版本号
+        this.version = '3.1'; // 新版本号
         this.cacheKey = 'vtuber_genres_v3';
         this.versionKey = 'vtuber_genre_version';
         
@@ -208,6 +208,7 @@ class GenreManager {
         const genre = { id, name, builtIn: false };
         this.genres.set(id, genre);
         this.saveToCache();
+        this.notifyDataUpdate();
         return genre;
     }
 
@@ -218,6 +219,7 @@ class GenreManager {
         const deleted = this.genres.delete(genreId);
         if (deleted) {
             this.saveToCache();
+            this.notifyDataUpdate();
         }
         return deleted;
     }
@@ -228,7 +230,33 @@ class GenreManager {
     async refresh() {
         this.initialized = false;
         this.genres.clear();
+        // 清除缓存，强制从服务器重新加载
+        localStorage.removeItem(this.cacheKey);
+        localStorage.removeItem(this.versionKey);
         await this.initialize();
+    }
+
+    /**
+     * 通知其他页面数据已更新
+     */
+    notifyDataUpdate() {
+        // 通知主页面数据更新
+        if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({
+                type: 'genreDataUpdated',
+                genres: this.getAllGenres()
+            }, '*');
+        }
+
+        // 广播到其他标签页
+        if (typeof BroadcastChannel !== 'undefined') {
+            const channel = new BroadcastChannel('vup-playlist-genres');
+            channel.postMessage({
+                type: 'genreDataUpdated',
+                genres: this.getAllGenres()
+            });
+            channel.close();
+        }
     }
 
     /**
