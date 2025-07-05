@@ -734,6 +734,7 @@ app.post('/api/update-data', authenticateToken, async (req, res) => {
                 ...song,
                 id: song.id || DataManager.generateId()
             })),
+            customGenres: newData.customGenres || [], // 保存自定义风格数据
             metadata: {
                 version: '1.0',
                 lastModified: new Date().toISOString(),

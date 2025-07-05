@@ -27,7 +27,18 @@ class GenreManager {
         }
 
         console.log('开始初始化风格数据...');
-        
+
+        // 调试：输出 window.officialData 的结构
+        if (window.officialData) {
+            console.log('调试：window.officialData 结构:', {
+                hasCustomGenres: !!window.officialData.customGenres,
+                customGenresLength: window.officialData.customGenres ? window.officialData.customGenres.length : 0,
+                hasSongs: !!window.officialData.songs,
+                songsLength: window.officialData.songs ? window.officialData.songs.length : 0,
+                sampleSong: window.officialData.songs ? window.officialData.songs[0] : null
+            });
+        }
+
         try {
             // 1. 首先尝试从 data.js 加载
             if (await this.loadFromDataJs()) {
@@ -241,27 +252,54 @@ class GenreManager {
     async loadFromAPI() {
         try {
             // 首先尝试专门的风格API
+            console.log('尝试从 /api/genres 加载风格数据...');
             const genreResponse = await fetch('/api/genres');
             if (genreResponse.ok) {
                 const result = await genreResponse.json();
+                console.log('风格API响应:', result);
                 if (result.success && result.data && Array.isArray(result.data) && result.data.length > 0) {
+                    console.log(`从风格API获取到 ${result.data.length} 个风格:`, result.data);
                     this.setGenres(result.data);
                     return true;
                 }
+            } else {
+                console.log('风格API响应状态:', genreResponse.status);
             }
 
             // 如果风格API没有数据，尝试从歌曲API获取并提取风格
+            console.log('尝试从 /api/songs 获取歌曲数据并提取风格...');
             const songsResponse = await fetch('/api/songs');
             if (songsResponse.ok) {
                 const songsResult = await songsResponse.json();
-                if (songsResult.success && songsResult.data && songsResult.data.songs) {
-                    const extractedGenres = this.extractGenresFromSongs(songsResult.data.songs);
-                    if (extractedGenres.length > 0) {
-                        console.log('从歌曲API数据中提取风格信息');
-                        this.setGenres(extractedGenres);
+                console.log('歌曲API响应结构:', {
+                    success: songsResult.success,
+                    hasData: !!songsResult.data,
+                    hasSongs: !!(songsResult.data && songsResult.data.songs),
+                    songsLength: songsResult.data && songsResult.data.songs ? songsResult.data.songs.length : 0,
+                    hasCustomGenres: !!(songsResult.data && songsResult.data.customGenres),
+                    customGenresLength: songsResult.data && songsResult.data.customGenres ? songsResult.data.customGenres.length : 0
+                });
+
+                if (songsResult.success && songsResult.data) {
+                    // 优先使用 customGenres 字段
+                    if (songsResult.data.customGenres && Array.isArray(songsResult.data.customGenres) && songsResult.data.customGenres.length > 0) {
+                        console.log(`从歌曲API的customGenres字段获取到 ${songsResult.data.customGenres.length} 个风格:`, songsResult.data.customGenres);
+                        this.setGenres(songsResult.data.customGenres);
                         return true;
                     }
+
+                    // 如果没有 customGenres，从歌曲中提取
+                    if (songsResult.data.songs) {
+                        const extractedGenres = this.extractGenresFromSongs(songsResult.data.songs);
+                        if (extractedGenres.length > 0) {
+                            console.log('从歌曲API数据中提取风格信息');
+                            this.setGenres(extractedGenres);
+                            return true;
+                        }
+                    }
                 }
+            } else {
+                console.log('歌曲API响应状态:', songsResponse.status);
             }
         } catch (error) {
             console.log('从 API 加载风格数据失败:', error.message);
