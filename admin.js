@@ -1861,12 +1861,12 @@ class AdminManager {
     notifyGenreUpdate() {
         console.log('通知其他页面风格数据已更新...');
 
-        // 通过 BroadcastChannel 通知其他标签页
+        // 通过 BroadcastChannel 通知其他标签页（使用正确的频道名称）
         if (typeof BroadcastChannel !== 'undefined') {
             try {
-                const channel = new BroadcastChannel('genre-updates');
+                const channel = new BroadcastChannel('vup-playlist-genres');
                 channel.postMessage({
-                    type: 'GENRES_UPDATED',
+                    type: 'genreDataUpdated',
                     timestamp: Date.now()
                 });
                 channel.close();
@@ -1880,7 +1880,7 @@ class AdminManager {
         if (window.opener && !window.opener.closed) {
             try {
                 window.opener.postMessage({
-                    type: 'GENRES_UPDATED',
+                    type: 'genreDataUpdated',
                     timestamp: Date.now()
                 }, '*');
                 console.log('已通过 postMessage 通知父窗口');
@@ -1957,6 +1957,7 @@ class AdminManager {
             console.log('风格同步到服务器成功，通知其他页面更新');
             // 通知数据更新
             window.genreManager.notifyDataUpdate();
+            this.notifyGenreUpdate(); // 添加这行来通知其他页面
             this.showNotification('风格添加成功并已同步到服务器', 'success');
         } catch (error) {
             console.error('同步风格到服务器失败:', error);
@@ -1982,6 +1983,7 @@ class AdminManager {
             console.log('风格删除同步到服务器成功，通知其他页面更新');
             // 通知数据更新
             window.genreManager.notifyDataUpdate();
+            this.notifyGenreUpdate(); // 添加这行来通知其他页面
             this.showNotification('风格删除成功并已同步到服务器', 'success');
         } catch (error) {
             console.error('同步风格到服务器失败:', error);

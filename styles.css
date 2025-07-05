@@ -341,14 +341,40 @@ body[style*="background-image"]::before {
     color: #f8fafc;
 }
 
-.theme-toggle:hover, .live-btn:hover {
+.theme-toggle:hover, .live-btn:hover, .refresh-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-color: rgba(139, 69, 219, 0.4);
 }
 
-[data-theme="dark"] .theme-toggle:hover, [data-theme="dark"] .live-btn:hover {
+[data-theme="dark"] .theme-toggle:hover, [data-theme="dark"] .live-btn:hover, [data-theme="dark"] .refresh-btn:hover {
     border-color: rgba(196, 181, 253, 0.4);
+}
+
+.refresh-btn {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    color: white;
+    border: 1px solid rgba(78, 205, 196, 0.3);
+}
+
+.refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.refresh-btn .icon {
+    font-size: 16px;
+    animation: none;
+}
+
+.refresh-btn:disabled .icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .icon {

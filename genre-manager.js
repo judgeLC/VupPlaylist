@@ -269,12 +269,12 @@ class GenreManager {
      * 设置跨页面通信监听
      */
     setupCrossPageCommunication() {
-        // 监听 BroadcastChannel 消息
+        // 监听 BroadcastChannel 消息（使用正确的频道名称）
         if (typeof BroadcastChannel !== 'undefined') {
             try {
-                this.broadcastChannel = new BroadcastChannel('genre-updates');
+                this.broadcastChannel = new BroadcastChannel('vup-playlist-genres');
                 this.broadcastChannel.addEventListener('message', (event) => {
-                    if (event.data.type === 'GENRES_UPDATED') {
+                    if (event.data.type === 'genreDataUpdated') {
                         console.log('收到风格更新通知，准备刷新数据...');
                         this.handleGenreUpdate();
                     }
@@ -287,7 +287,7 @@ class GenreManager {
 
         // 监听 postMessage 消息
         window.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'GENRES_UPDATED') {
+            if (event.data && event.data.type === 'genreDataUpdated') {
                 console.log('收到 postMessage 风格更新通知，准备刷新数据...');
                 this.handleGenreUpdate();
             }
@@ -324,6 +324,8 @@ class GenreManager {
      */
     async refresh() {
         console.log('强制刷新风格数据...');
+        const oldGenresCount = this.genres.size;
+
         this.initialized = false;
         this.genres.clear();
 
@@ -335,6 +337,16 @@ class GenreManager {
         if (await this.reloadFromServer()) {
             console.log('从服务器重新加载成功');
             this.initialized = true;
+
+            // 检查是否有新的风格数据
+            const newGenresCount = this.genres.size;
+            if (newGenresCount !== oldGenresCount) {
+                console.log(`风格数据已更新: ${oldGenresCount} -> ${newGenresCount}`);
+                // 触发自定义事件，通知页面组件更新
+                window.dispatchEvent(new CustomEvent('genresUpdated', {
+                    detail: { genres: this.getAllGenres() }
+                }));
+            }
         } else {
             // 如果服务器加载失败，回退到正常初始化流程
             console.log('服务器加载失败，使用正常初始化流程');

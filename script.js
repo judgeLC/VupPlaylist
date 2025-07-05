@@ -214,6 +214,12 @@ class VTuberPlaylist {
             liveBtn.addEventListener('click', () => this.openLiveRoom());
         }
 
+        // 绑定刷新按钮事件
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => this.refreshData());
+        }
+
         // 风格选择下拉框
         const genreSelect = document.getElementById('genreSelect');
         if (genreSelect) {
@@ -302,6 +308,9 @@ class VTuberPlaylist {
             this.showNotification('风格数据已更新', 'success');
         });
 
+        // 定期检查风格数据更新（作为备用机制）
+        this.setupPeriodicGenreCheck();
+
         // 监听来自后台的设置更新
         window.addEventListener('message', (event) => {
             if (event.data && event.data.type === 'settingsUpdated') {
@@ -388,6 +397,55 @@ class VTuberPlaylist {
 
         } catch (error) {
             console.error('数据同步失败:', error);
+        }
+    }
+
+    /**
+     * 设置定期检查风格数据更新
+     */
+    setupPeriodicGenreCheck() {
+        // 每30秒检查一次风格数据是否有更新
+        setInterval(async () => {
+            try {
+                await window.genreManager.refresh();
+            } catch (error) {
+                console.log('定期风格数据检查失败:', error);
+            }
+        }, 30000); // 30秒
+    }
+
+    /**
+     * 手动刷新数据
+     */
+    async refreshData() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) {
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<span class="icon">⏳</span><span class="text">刷新中...</span>';
+        }
+
+        try {
+            console.log('手动刷新数据...');
+
+            // 刷新风格数据
+            await window.genreManager.refresh();
+
+            // 重新加载歌曲数据
+            this.reloadData();
+
+            // 更新界面
+            this.updateGenreNavigation();
+            this.renderPlaylist();
+
+            showNotification('数据刷新成功', 'success');
+        } catch (error) {
+            console.error('刷新数据失败:', error);
+            showNotification('数据刷新失败', 'error');
+        } finally {
+            if (refreshBtn) {
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = '<span class="icon">🔄</span><span class="text">刷新</span>';
+            }
         }
     }
 
