@@ -578,6 +578,32 @@ app.get('/api/genres', async (req, res) => {
     }
 });
 
+// 获取风格名称映射
+app.post('/api/genre-names', async (req, res) => {
+    try {
+        const { genreIds } = req.body;
+        if (!Array.isArray(genreIds)) {
+            return ResponseHelper.error(res, '参数格式错误', 400);
+        }
+
+        const songsData = await DataManager.getSongs();
+        const customGenres = songsData.customGenres || [];
+
+        // 创建ID到名称的映射
+        const nameMapping = {};
+        customGenres.forEach(genre => {
+            if (genreIds.includes(genre.id)) {
+                nameMapping[genre.id] = genre.name;
+            }
+        });
+
+        ResponseHelper.success(res, nameMapping);
+    } catch (error) {
+        console.error('获取风格名称失败:', error);
+        ResponseHelper.error(res, '获取风格名称失败', 500, error);
+    }
+});
+
 // 调试API：获取风格映射信息
 app.get('/api/debug/genres', async (req, res) => {
     try {

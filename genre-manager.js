@@ -69,13 +69,25 @@ class GenreManager {
         return new Promise((resolve) => {
             // 等待 data.js 加载完成
             const checkData = () => {
-                if (window.officialData && window.officialData.customGenres) {
-                    const genres = window.officialData.customGenres;
-                    if (Array.isArray(genres) && genres.length > 0) {
-                        console.log(`从 data.js 加载了 ${genres.length} 个风格:`, genres.map(g => `${g.name}(${g.id})`));
+                if (window.officialData) {
+                    // 首先尝试从 customGenres 字段加载
+                    if (window.officialData.customGenres && Array.isArray(window.officialData.customGenres) && window.officialData.customGenres.length > 0) {
+                        const genres = window.officialData.customGenres;
+                        console.log(`从 data.js customGenres 加载了 ${genres.length} 个风格:`, genres.map(g => `${g.name}(${g.id})`));
                         this.setGenres(genres);
                         resolve(true);
                         return;
+                    }
+
+                    // 如果没有 customGenres 字段，从歌曲数据中提取风格
+                    if (window.officialData.songs && Array.isArray(window.officialData.songs)) {
+                        const extractedGenres = this.extractGenresFromSongs(window.officialData.songs);
+                        if (extractedGenres.length > 0) {
+                            console.log(`从 data.js 歌曲数据中提取了 ${extractedGenres.length} 个风格:`, extractedGenres.map(g => `${g.name}(${g.id})`));
+                            this.setGenres(extractedGenres);
+                            resolve(true);
+                            return;
+                        }
                     }
                 }
 
@@ -90,6 +102,99 @@ class GenreManager {
 
             checkData();
         });
+    }
+
+    /**
+     * 从歌曲数据中提取风格信息
+     */
+    extractGenresFromSongs(songs) {
+        const genreMap = new Map();
+
+        songs.forEach(song => {
+            if (song.genre && song.genre.startsWith('custom_')) {
+                if (!genreMap.has(song.genre)) {
+                    // 尝试从歌曲标题或其他信息推断风格名称
+                    // 这里先用ID作为名称，后续可以通过API获取真实名称
+                    genreMap.set(song.genre, {
+                        id: song.genre,
+                        name: song.genre, // 临时使用ID作为名称
+                        builtIn: false
+                    });
+                }
+            }
+        });
+
+        const genres = Array.from(genreMap.values());
+
+        // 异步获取真实的风格名称
+        this.fetchGenreNames(genres);
+
+        return genres;
+    }
+
+    /**
+     * 异步获取风格的真实名称
+     */
+    async fetchGenreNames(genres) {
+        try {
+            const response = await fetch('/api/genre-names', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    genreIds: genres.map(g => g.id)
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success && result.data) {
+                    // 更新风格名称
+                    let updated = false;
+                    genres.forEach(genre => {
+                        if (result.data[genre.id]) {
+                            genre.name = result.data[genre.id];
+                            this.genres.set(genre.id, genre);
+                            updated = true;
+                        }
+                    });
+
+                    if (updated) {
+                        // 保存到缓存
+                        this.saveToCache();
+                        console.log('风格名称更新完成');
+
+                        // 触发页面更新
+                        this.notifyUpdate();
+                    }
+                }
+            }
+        } catch (error) {
+            console.log('获取风格名称失败，使用ID作为显示名称:', error.message);
+            // 如果API失败，至少确保风格ID可以显示
+            genres.forEach(genre => {
+                if (genre.name === genre.id) {
+                    // 尝试从ID中提取更友好的名称
+                    genre.name = this.generateFriendlyName(genre.id);
+                    this.genres.set(genre.id, genre);
+                }
+            });
+        }
+    }
+
+    /**
+     * 从风格ID生成友好的显示名称
+     */
+    generateFriendlyName(genreId) {
+        if (genreId.startsWith('custom_')) {
+            const timestamp = genreId.replace('custom_', '');
+            const date = new Date(parseInt(timestamp));
+            if (!isNaN(date.getTime())) {
+                return `自定义风格_${date.getMonth() + 1}${date.getDate()}`;
+            }
+        }
+        return genreId;
     }
 
     /**
@@ -131,12 +236,27 @@ class GenreManager {
      */
     async loadFromAPI() {
         try {
-            const response = await fetch('/api/genres');
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success && result.data) {
+            // 首先尝试专门的风格API
+            const genreResponse = await fetch('/api/genres');
+            if (genreResponse.ok) {
+                const result = await genreResponse.json();
+                if (result.success && result.data && Array.isArray(result.data) && result.data.length > 0) {
                     this.setGenres(result.data);
                     return true;
+                }
+            }
+
+            // 如果风格API没有数据，尝试从歌曲API获取并提取风格
+            const songsResponse = await fetch('/api/songs');
+            if (songsResponse.ok) {
+                const songsResult = await songsResponse.json();
+                if (songsResult.success && songsResult.data && songsResult.data.songs) {
+                    const extractedGenres = this.extractGenresFromSongs(songsResult.data.songs);
+                    if (extractedGenres.length > 0) {
+                        console.log('从歌曲API数据中提取风格信息');
+                        this.setGenres(extractedGenres);
+                        return true;
+                    }
                 }
             }
         } catch (error) {
@@ -392,6 +512,37 @@ class GenreManager {
      */
     isReady() {
         return this.initialized && this.genres.size > 0;
+    }
+
+    /**
+     * 通知页面更新
+     */
+    notifyUpdate() {
+        // 触发自定义事件
+        window.dispatchEvent(new CustomEvent('genreDataUpdated', {
+            detail: { genres: Array.from(this.genres.values()) }
+        }));
+
+        // 如果有回调函数，也调用它们
+        if (this.updateCallbacks) {
+            this.updateCallbacks.forEach(callback => {
+                try {
+                    callback();
+                } catch (error) {
+                    console.error('风格更新回调执行失败:', error);
+                }
+            });
+        }
+    }
+
+    /**
+     * 注册更新回调
+     */
+    onUpdate(callback) {
+        if (!this.updateCallbacks) {
+            this.updateCallbacks = [];
+        }
+        this.updateCallbacks.push(callback);
     }
 }
 
