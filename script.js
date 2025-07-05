@@ -93,10 +93,39 @@ class VTuberPlaylist {
 
     // 初始化自定义风格
     initCustomGenres() {
+        // 检查数据版本，如果版本不匹配则清除旧数据
+        const dataVersion = localStorage.getItem('vtuber_data_version');
+        const currentVersion = '2.0'; // 增加版本号以强制更新
+
+        if (dataVersion !== currentVersion) {
+            console.log('数据版本更新，清除旧的风格数据');
+            localStorage.removeItem('vtuber_custom_genres');
+            localStorage.setItem('vtuber_data_version', currentVersion);
+        }
+
         const savedGenres = localStorage.getItem('vtuber_custom_genres');
         if (!savedGenres) {
-             const initialGenres = (window.officialData && window.officialData.customGenres) ? window.officialData.customGenres : [];
+             const initialGenres = (window.officialData && window.officialData.customGenres) ? window.officialData.customGenres : this.getDefaultGenres();
              localStorage.setItem('vtuber_custom_genres', JSON.stringify(initialGenres));
+             console.log('初始化风格数据:', initialGenres);
+        } else {
+            // 检查是否需要更新风格数据（如果服务器数据更新了）
+            const saved = JSON.parse(savedGenres);
+            if (window.officialData && window.officialData.customGenres && window.officialData.customGenres.length > 0) {
+                // 合并服务器数据和本地数据，优先使用服务器数据
+                const serverGenres = window.officialData.customGenres;
+                const mergedGenres = [...serverGenres];
+
+                // 添加本地独有的风格
+                saved.forEach(localGenre => {
+                    if (!serverGenres.find(sg => sg.id === localGenre.id)) {
+                        mergedGenres.push(localGenre);
+                    }
+                });
+
+                localStorage.setItem('vtuber_custom_genres', JSON.stringify(mergedGenres));
+                console.log('更新风格数据:', mergedGenres);
+            }
         }
     }
 

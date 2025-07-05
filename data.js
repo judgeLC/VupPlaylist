@@ -3010,5 +3010,17 @@ window.officialData = {
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
     }
+  ],
+  "customGenres": [
+    { "id": "custom_1751485097686", "name": "情歌", "builtIn": false },
+    { "id": "custom_1751506273759", "name": "甜蜜情歌", "builtIn": false },
+    { "id": "custom_1751506269360", "name": "古风", "builtIn": false },
+    { "id": "custom_1751506264888", "name": "戏曲", "builtIn": false },
+    { "id": "custom_1751506259744", "name": "京剧", "builtIn": false },
+    { "id": "custom_1751506255759", "name": "豫剧", "builtIn": false },
+    { "id": "custom_1751506245176", "name": "儿歌", "builtIn": false },
+    { "id": "custom_1751506243976", "name": "流行", "builtIn": false },
+    { "id": "custom_1751656714021", "name": "黄梅戏", "builtIn": false },
+    { "id": "custom_1751656716807", "name": "现代戏曲", "builtIn": false }
   ]
 };
