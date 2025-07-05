@@ -668,6 +668,16 @@ class AuthManager {
         localStorage.removeItem('vtuber_admin_lockout');
         localStorage.removeItem('vtuber_admin_session');
         localStorage.removeItem('vtuber_admin_attempts');
+        localStorage.removeItem('vtuber_admin_logs');
+    }
+
+    // 重置密码到初始状态
+    resetPassword() {
+        this.clearLoginData();
+        this.showNotification('密码已重置到初始状态，请刷新页面重新设置密码', 'success');
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
     }
 }
 
