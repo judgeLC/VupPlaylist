@@ -13,7 +13,7 @@ window.officialData = {
     {
       "id": 1751656742283,
       "title": "骗赖",
-      "artist": "/",
+      "artist": "",
       "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
@@ -21,7 +21,7 @@ window.officialData = {
     {
       "id": 1751656742284,
       "title": "比夹夹",
-      "artist": "/",
+      "artist": "",
       "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
@@ -29,7 +29,7 @@ window.officialData = {
     {
       "id": 1751656742285,
       "title": "帮主夫人",
-      "artist": "/",
+      "artist": "",
       "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
@@ -37,7 +37,7 @@ window.officialData = {
     {
       "id": 1751656742286,
       "title": "要把哥哥追",
-      "artist": "/",
+      "artist": "",
       "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
@@ -45,7 +45,7 @@ window.officialData = {
     {
       "id": 1751656742287,
       "title": "老公天下第一",
-      "artist": "/",
+      "artist": "",
       "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
@@ -53,7 +53,7 @@ window.officialData = {
     {
       "id": 1751656742288,
       "title": "百万个吻",
-      "artist": "/",
+      "artist": "",
       "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
@@ -61,7 +61,7 @@ window.officialData = {
     {
       "id": 1751656742289,
       "title": "要抱抱",
-      "artist": "/",
+      "artist": "",
       "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
@@ -69,7 +69,7 @@ window.officialData = {
     {
       "id": 1751656742290,
       "title": "要爱爱",
-      "artist": "/",
+      "artist": "",
       "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
@@ -77,7 +77,7 @@ window.officialData = {
     {
       "id": 1751656742291,
       "title": "夺命十三枪",
-      "artist": "/",
+      "artist": "",
       "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
@@ -85,7 +85,7 @@ window.officialData = {
     {
       "id": 1751656733160,
       "title": "赤伶",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -93,7 +93,7 @@ window.officialData = {
     {
       "id": 1751656733161,
       "title": "回马枪",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -101,7 +101,7 @@ window.officialData = {
     {
       "id": 1751656733162,
       "title": "不问天",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -109,7 +109,7 @@ window.officialData = {
     {
       "id": 1751656733163,
       "title": "苏幕遮",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -117,7 +117,7 @@ window.officialData = {
     {
       "id": 1751656733164,
       "title": "扶桑树",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -125,7 +125,7 @@ window.officialData = {
     {
       "id": 1751656733165,
       "title": "左手指月",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -133,7 +133,7 @@ window.officialData = {
     {
       "id": 1751656733166,
       "title": "鱼跃而上",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -141,7 +141,7 @@ window.officialData = {
     {
       "id": 1751656733167,
       "title": "神女劈观",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -149,7 +149,7 @@ window.officialData = {
     {
       "id": 1751656733168,
       "title": "同光十三绝",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -157,7 +157,7 @@ window.officialData = {
     {
       "id": 1751656733169,
       "title": "天堂岛之歌",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -165,7 +165,7 @@ window.officialData = {
     {
       "id": 1751656733170,
       "title": "九九八十一",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -173,7 +173,7 @@ window.officialData = {
     {
       "id": 1751656733171,
       "title": "上下五千年",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656716807",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
@@ -181,7 +181,7 @@ window.officialData = {
     {
       "id": 1751656725549,
       "title": "夫妻双双把家还",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656714021",
       "note": "/",
       "addedDate": "2025-07-04T19:18:45.549Z"
@@ -189,7 +189,7 @@ window.officialData = {
     {
       "id": 1751656725550,
       "title": "为救李郎离家园",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751656714021",
       "note": "/",
       "addedDate": "2025-07-04T19:18:45.549Z"
@@ -197,7 +197,7 @@ window.officialData = {
     {
       "id": 1751656699486,
       "title": "武家坡对唱",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -205,7 +205,7 @@ window.officialData = {
     {
       "id": 1751656699487,
       "title": "苏三起解",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -213,7 +213,7 @@ window.officialData = {
     {
       "id": 1751656699488,
       "title": "卖水表花",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -221,7 +221,7 @@ window.officialData = {
     {
       "id": 1751656699489,
       "title": "贵妃醉酒",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -229,7 +229,7 @@ window.officialData = {
     {
       "id": 1751656699490,
       "title": "游龙戏凤选段",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -237,7 +237,7 @@ window.officialData = {
     {
       "id": 1751656699491,
       "title": "这才是人生难预料",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -245,7 +245,7 @@ window.officialData = {
     {
       "id": 1751656699492,
       "title": "有金珠和珍宝光华灿烂",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -253,7 +253,7 @@ window.officialData = {
     {
       "id": 1751656699493,
       "title": "猛听得金鼓响画角声震",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -261,7 +261,7 @@ window.officialData = {
     {
       "id": 1751656699494,
       "title": "叫张生隐藏在棋盘之下",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -269,7 +269,7 @@ window.officialData = {
     {
       "id": 1751656699495,
       "title": "这兄妹本是夫人话",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -277,7 +277,7 @@ window.officialData = {
     {
       "id": 1751656699496,
       "title": "说什么花好月圆人亦寿",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506259744",
       "note": "/",
       "addedDate": "2025-07-04T19:18:19.486Z"
@@ -285,7 +285,7 @@ window.officialData = {
     {
       "id": 1751656692439,
       "title": "抬花轿",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -293,7 +293,7 @@ window.officialData = {
     {
       "id": 1751656692440,
       "title": "娘子军",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -301,7 +301,7 @@ window.officialData = {
     {
       "id": 1751656692441,
       "title": "对绣鞋",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -309,7 +309,7 @@ window.officialData = {
     {
       "id": 1751656692442,
       "title": "亲家母",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -317,7 +317,7 @@ window.officialData = {
     {
       "id": 1751656692443,
       "title": "辕门外三声炮",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -325,7 +325,7 @@ window.officialData = {
     {
       "id": 1751656692444,
       "title": "谁说女子不如男",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -333,7 +333,7 @@ window.officialData = {
     {
       "id": 1751656692445,
       "title": "花木兰羞答答施礼拜上",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -341,7 +341,7 @@ window.officialData = {
     {
       "id": 1751656692446,
       "title": "听罢奶奶说红灯",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -349,7 +349,7 @@ window.officialData = {
     {
       "id": 1751656692447,
       "title": "叫先生切莫要忧先虑后",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -357,7 +357,7 @@ window.officialData = {
     {
       "id": 1751656692448,
       "title": "祖国的大建设一日千里",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -365,7 +365,7 @@ window.officialData = {
     {
       "id": 1751656692449,
       "title": "朝阳沟好地方名不虚传",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506255759",
       "note": "/",
       "addedDate": "2025-07-04T19:18:12.439Z"
@@ -373,7 +373,7 @@ window.officialData = {
     {
       "id": 1751656682387,
       "title": "不怕",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -381,7 +381,7 @@ window.officialData = {
     {
       "id": 1751656682388,
       "title": "洗澡歌",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -389,7 +389,7 @@ window.officialData = {
     {
       "id": 1751656682389,
       "title": "加油鸭",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -397,7 +397,7 @@ window.officialData = {
     {
       "id": 1751656682390,
       "title": "小跳蛙",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -405,7 +405,7 @@ window.officialData = {
     {
       "id": 1751656682391,
       "title": "虫儿飞",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -413,7 +413,7 @@ window.officialData = {
     {
       "id": 1751656682392,
       "title": "大风车",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -421,7 +421,7 @@ window.officialData = {
     {
       "id": 1751656682393,
       "title": "小哪吒",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -429,7 +429,7 @@ window.officialData = {
     {
       "id": 1751656682394,
       "title": "晚安喵",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -437,7 +437,7 @@ window.officialData = {
     {
       "id": 1751656682395,
       "title": "宝贝宝贝",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -445,7 +445,7 @@ window.officialData = {
     {
       "id": 1751656682396,
       "title": "快乐女孩",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -453,7 +453,7 @@ window.officialData = {
     {
       "id": 1751656682397,
       "title": "快乐星猫",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -461,7 +461,7 @@ window.officialData = {
     {
       "id": 1751656682398,
       "title": "快乐小孩",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -469,7 +469,7 @@ window.officialData = {
     {
       "id": 1751656682399,
       "title": "一只螃蟹",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -477,7 +477,7 @@ window.officialData = {
     {
       "id": 1751656682400,
       "title": "问题小孩",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -485,7 +485,7 @@ window.officialData = {
     {
       "id": 1751656682401,
       "title": "左手右手",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -493,7 +493,7 @@ window.officialData = {
     {
       "id": 1751656682402,
       "title": "羊羊顶呱呱",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -501,7 +501,7 @@ window.officialData = {
     {
       "id": 1751656682403,
       "title": "碧波摇篮曲",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -509,7 +509,7 @@ window.officialData = {
     {
       "id": 1751656682404,
       "title": "你从未离去",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -517,7 +517,7 @@ window.officialData = {
     {
       "id": 1751656682405,
       "title": "勇气大爆发",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -525,7 +525,7 @@ window.officialData = {
     {
       "id": 1751656682406,
       "title": "开心往前飞",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -533,7 +533,7 @@ window.officialData = {
     {
       "id": 1751656682407,
       "title": "我不上你的当",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -541,7 +541,7 @@ window.officialData = {
     {
       "id": 1751656682408,
       "title": "蓝多多来了",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -549,7 +549,7 @@ window.officialData = {
     {
       "id": 1751656682409,
       "title": "小英雄大肚腩",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -557,7 +557,7 @@ window.officialData = {
     {
       "id": 1751656682410,
       "title": "巴啦啦小魔仙",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -565,7 +565,7 @@ window.officialData = {
     {
       "id": 1751656682411,
       "title": "大家一起喜羊羊",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -573,7 +573,7 @@ window.officialData = {
     {
       "id": 1751656682412,
       "title": "爱我你就抱抱我",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -581,7 +581,7 @@ window.officialData = {
     {
       "id": 1751656682413,
       "title": "我还有点小糊涂",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -589,7 +589,7 @@ window.officialData = {
     {
       "id": 1751656682414,
       "title": "我是一个粉刷匠",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -597,7 +597,7 @@ window.officialData = {
     {
       "id": 1751656682415,
       "title": "天上掉下个猪八戒",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -605,7 +605,7 @@ window.officialData = {
     {
       "id": 1751656682416,
       "title": "大头儿子小头爸爸",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506245176",
       "note": "/",
       "addedDate": "2025-07-04T19:18:02.387Z"
@@ -613,7 +613,7 @@ window.officialData = {
     {
       "id": 1751656672641,
       "title": "醉",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -621,7 +621,7 @@ window.officialData = {
     {
       "id": 1751656672642,
       "title": "囍",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -629,7 +629,7 @@ window.officialData = {
     {
       "id": 1751656672643,
       "title": "痒",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -637,7 +637,7 @@ window.officialData = {
     {
       "id": 1751656672644,
       "title": "探窗",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -645,7 +645,7 @@ window.officialData = {
     {
       "id": 1751656672645,
       "title": "难却",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -653,7 +653,7 @@ window.officialData = {
     {
       "id": 1751656672646,
       "title": "谁家",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -661,7 +661,7 @@ window.officialData = {
     {
       "id": 1751656672647,
       "title": "若梦",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -669,7 +669,7 @@ window.officialData = {
     {
       "id": 1751656672648,
       "title": "昔言",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -677,7 +677,7 @@ window.officialData = {
     {
       "id": 1751656672649,
       "title": "浮光",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -685,7 +685,7 @@ window.officialData = {
     {
       "id": 1751656672650,
       "title": "谁家",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -693,7 +693,7 @@ window.officialData = {
     {
       "id": 1751656672651,
       "title": "难却",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -701,7 +701,7 @@ window.officialData = {
     {
       "id": 1751656672652,
       "title": "狐言",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -709,7 +709,7 @@ window.officialData = {
     {
       "id": 1751656672653,
       "title": "琴师",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -717,7 +717,7 @@ window.officialData = {
     {
       "id": 1751656672654,
       "title": "蜉蝣",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -725,7 +725,7 @@ window.officialData = {
     {
       "id": 1751656672655,
       "title": "酒家",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -733,7 +733,7 @@ window.officialData = {
     {
       "id": 1751656672656,
       "title": "万疆",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -741,7 +741,7 @@ window.officialData = {
     {
       "id": 1751656672657,
       "title": "时候",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -749,7 +749,7 @@ window.officialData = {
     {
       "id": 1751656672658,
       "title": "赐我",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -757,7 +757,7 @@ window.officialData = {
     {
       "id": 1751656672659,
       "title": "大喜",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -765,7 +765,7 @@ window.officialData = {
     {
       "id": 1751656672660,
       "title": "年轮",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -773,7 +773,7 @@ window.officialData = {
     {
       "id": 1751656672661,
       "title": "婚约",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -781,7 +781,7 @@ window.officialData = {
     {
       "id": 1751656672662,
       "title": "下山",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -789,7 +789,7 @@ window.officialData = {
     {
       "id": 1751656672663,
       "title": "小雨",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -797,7 +797,7 @@ window.officialData = {
     {
       "id": 1751656672664,
       "title": "故梦",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -805,7 +805,7 @@ window.officialData = {
     {
       "id": 1751656672665,
       "title": "月光",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -813,7 +813,7 @@ window.officialData = {
     {
       "id": 1751656672666,
       "title": "铃舟",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -821,7 +821,7 @@ window.officialData = {
     {
       "id": 1751656672667,
       "title": "走卒",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -829,7 +829,7 @@ window.officialData = {
     {
       "id": 1751656672668,
       "title": "夜奔",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -837,7 +837,7 @@ window.officialData = {
     {
       "id": 1751656672669,
       "title": "戒网",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -845,7 +845,7 @@ window.officialData = {
     {
       "id": 1751656672670,
       "title": "传说",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -853,7 +853,7 @@ window.officialData = {
     {
       "id": 1751656672671,
       "title": "迢迢",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -861,7 +861,7 @@ window.officialData = {
     {
       "id": 1751656672672,
       "title": "吉祥话",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -869,7 +869,7 @@ window.officialData = {
     {
       "id": 1751656672673,
       "title": "秦淮景",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -877,7 +877,7 @@ window.officialData = {
     {
       "id": 1751656672674,
       "title": "红烛泪",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -885,7 +885,7 @@ window.officialData = {
     {
       "id": 1751656672675,
       "title": "比天高",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -893,7 +893,7 @@ window.officialData = {
     {
       "id": 1751656672676,
       "title": "上春山",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -901,7 +901,7 @@ window.officialData = {
     {
       "id": 1751656672677,
       "title": "小柳儿",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -909,7 +909,7 @@ window.officialData = {
     {
       "id": 1751656672678,
       "title": "良辰夜",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -917,7 +917,7 @@ window.officialData = {
     {
       "id": 1751656672679,
       "title": "眉南边",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -925,7 +925,7 @@ window.officialData = {
     {
       "id": 1751656672680,
       "title": "梦回还",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -933,7 +933,7 @@ window.officialData = {
     {
       "id": 1751656672681,
       "title": "九万字",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -941,7 +941,7 @@ window.officialData = {
     {
       "id": 1751656672682,
       "title": "壁上观",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -949,7 +949,7 @@ window.officialData = {
     {
       "id": 1751656672683,
       "title": "鱼玄机",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -957,7 +957,7 @@ window.officialData = {
     {
       "id": 1751656672684,
       "title": "与君愿",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -965,7 +965,7 @@ window.officialData = {
     {
       "id": 1751656672685,
       "title": "三国恋",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -973,7 +973,7 @@ window.officialData = {
     {
       "id": 1751656672686,
       "title": "两相欢",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -981,7 +981,7 @@ window.officialData = {
     {
       "id": 1751656672687,
       "title": "虞兮叹",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -989,7 +989,7 @@ window.officialData = {
     {
       "id": 1751656672688,
       "title": "敕勒歌",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -997,7 +997,7 @@ window.officialData = {
     {
       "id": 1751656672689,
       "title": "红叶寺",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1005,7 +1005,7 @@ window.officialData = {
     {
       "id": 1751656672690,
       "title": "伯虎说",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1013,7 +1013,7 @@ window.officialData = {
     {
       "id": 1751656672691,
       "title": "鸳鸯戏",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1021,7 +1021,7 @@ window.officialData = {
     {
       "id": 1751656672692,
       "title": "广寒宫",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1029,7 +1029,7 @@ window.officialData = {
     {
       "id": 1751656672693,
       "title": "广寒谣",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1037,7 +1037,7 @@ window.officialData = {
     {
       "id": 1751656672694,
       "title": "九尾狐",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1045,7 +1045,7 @@ window.officialData = {
     {
       "id": 1751656672695,
       "title": "入梦也",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1053,7 +1053,7 @@ window.officialData = {
     {
       "id": 1751656672696,
       "title": "春庭雪",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1061,7 +1061,7 @@ window.officialData = {
     {
       "id": 1751656672697,
       "title": "求神呐",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1069,7 +1069,7 @@ window.officialData = {
     {
       "id": 1751656672698,
       "title": "声声慢",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1077,7 +1077,7 @@ window.officialData = {
     {
       "id": 1751656672699,
       "title": "恋人心",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1085,7 +1085,7 @@ window.officialData = {
     {
       "id": 1751656672700,
       "title": "半壶纱",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1093,7 +1093,7 @@ window.officialData = {
     {
       "id": 1751656672701,
       "title": "玉簪记",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1101,7 +1101,7 @@ window.officialData = {
     {
       "id": 1751656672702,
       "title": "卷珠帘",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1109,7 +1109,7 @@ window.officialData = {
     {
       "id": 1751656672703,
       "title": "离人赋",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1117,7 +1117,7 @@ window.officialData = {
     {
       "id": 1751656672704,
       "title": "黄梅戏",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1125,7 +1125,7 @@ window.officialData = {
     {
       "id": 1751656672705,
       "title": "牵丝戏",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1133,7 +1133,7 @@ window.officialData = {
     {
       "id": 1751656672706,
       "title": "桃花笑",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1141,7 +1141,7 @@ window.officialData = {
     {
       "id": 1751656672707,
       "title": "书中有",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1149,7 +1149,7 @@ window.officialData = {
     {
       "id": 1751656672708,
       "title": "相思遥",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1157,7 +1157,7 @@ window.officialData = {
     {
       "id": 1751656672709,
       "title": "春不晚",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1165,7 +1165,7 @@ window.officialData = {
     {
       "id": 1751656672710,
       "title": "多情种",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1173,7 +1173,7 @@ window.officialData = {
     {
       "id": 1751656672711,
       "title": "须尽欢",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1181,7 +1181,7 @@ window.officialData = {
     {
       "id": 1751656672712,
       "title": "星月落",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1189,7 +1189,7 @@ window.officialData = {
     {
       "id": 1751656672713,
       "title": "此一别",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1197,7 +1197,7 @@ window.officialData = {
     {
       "id": 1751656672714,
       "title": "照花台",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1205,7 +1205,7 @@ window.officialData = {
     {
       "id": 1751656672715,
       "title": "女儿情",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1213,7 +1213,7 @@ window.officialData = {
     {
       "id": 1751656672716,
       "title": "女儿国",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1221,7 +1221,7 @@ window.officialData = {
     {
       "id": 1751656672717,
       "title": "白石溪",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1229,7 +1229,7 @@ window.officialData = {
     {
       "id": 1751656672718,
       "title": "红昭愿",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1237,7 +1237,7 @@ window.officialData = {
     {
       "id": 1751656672719,
       "title": "谢东风",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1245,7 +1245,7 @@ window.officialData = {
     {
       "id": 1751656672720,
       "title": "求神呐",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1253,7 +1253,7 @@ window.officialData = {
     {
       "id": 1751656672721,
       "title": "小嫦娥",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1261,7 +1261,7 @@ window.officialData = {
     {
       "id": 1751656672722,
       "title": "万物生",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1269,7 +1269,7 @@ window.officialData = {
     {
       "id": 1751656672723,
       "title": "梨花颂",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1277,7 +1277,7 @@ window.officialData = {
     {
       "id": 1751656672724,
       "title": "红颜劫",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1285,7 +1285,7 @@ window.officialData = {
     {
       "id": 1751656672725,
       "title": "戏游九州",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1293,7 +1293,7 @@ window.officialData = {
     {
       "id": 1751656672726,
       "title": "繁华唱遍",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1301,7 +1301,7 @@ window.officialData = {
     {
       "id": 1751656672727,
       "title": "探清水河",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1309,7 +1309,7 @@ window.officialData = {
     {
       "id": 1751656672728,
       "title": "一笑江湖",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1317,7 +1317,7 @@ window.officialData = {
     {
       "id": 1751656672729,
       "title": "弱水三千",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1325,7 +1325,7 @@ window.officialData = {
     {
       "id": 1751656672730,
       "title": "烟雨行舟",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1333,7 +1333,7 @@ window.officialData = {
     {
       "id": 1751656672731,
       "title": "十年人间",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1341,7 +1341,7 @@ window.officialData = {
     {
       "id": 1751656672732,
       "title": "入画江南",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1349,7 +1349,7 @@ window.officialData = {
     {
       "id": 1751656672733,
       "title": "人间烟火",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1357,7 +1357,7 @@ window.officialData = {
     {
       "id": 1751656672734,
       "title": "莫问归期",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1365,7 +1365,7 @@ window.officialData = {
     {
       "id": 1751656672735,
       "title": "一生独一",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1373,7 +1373,7 @@ window.officialData = {
     {
       "id": 1751656672736,
       "title": "霜雪千年",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1381,7 +1381,7 @@ window.officialData = {
     {
       "id": 1751656672737,
       "title": "戏台勾栏",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1389,7 +1389,7 @@ window.officialData = {
     {
       "id": 1751656672738,
       "title": "夜宴风波",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1397,7 +1397,7 @@ window.officialData = {
     {
       "id": 1751656672739,
       "title": "绮梦夜谭",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1405,7 +1405,7 @@ window.officialData = {
     {
       "id": 1751656672740,
       "title": "玉环悲歌",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1413,7 +1413,7 @@ window.officialData = {
     {
       "id": 1751656672741,
       "title": "泼墨漓江",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1421,7 +1421,7 @@ window.officialData = {
     {
       "id": 1751656672742,
       "title": "世末歌者",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1429,7 +1429,7 @@ window.officialData = {
     {
       "id": 1751656672743,
       "title": "红拂夜奔",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1437,7 +1437,7 @@ window.officialData = {
     {
       "id": 1751656672744,
       "title": "铃儿铛铛",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1445,7 +1445,7 @@ window.officialData = {
     {
       "id": 1751656672745,
       "title": "此去半生",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1453,7 +1453,7 @@ window.officialData = {
     {
       "id": 1751656672746,
       "title": "再见月光",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1461,7 +1461,7 @@ window.officialData = {
     {
       "id": 1751656672747,
       "title": "绝世舞姬",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1469,7 +1469,7 @@ window.officialData = {
     {
       "id": 1751656672748,
       "title": "凤凰于飞",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1477,7 +1477,7 @@ window.officialData = {
     {
       "id": 1751656672749,
       "title": "帅印未摘",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1485,7 +1485,7 @@ window.officialData = {
     {
       "id": 1751656672750,
       "title": "人间不值得",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1493,7 +1493,7 @@ window.officialData = {
     {
       "id": 1751656672751,
       "title": "辞九门回忆",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1501,7 +1501,7 @@ window.officialData = {
     {
       "id": 1751656672752,
       "title": "三拜红尘凉",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1509,7 +1509,7 @@ window.officialData = {
     {
       "id": 1751656672753,
       "title": "免我蹉跎苦",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1517,7 +1517,7 @@ window.officialData = {
     {
       "id": 1751656672754,
       "title": "相思赋予谁",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1525,7 +1525,7 @@ window.officialData = {
     {
       "id": 1751656672755,
       "title": "刚好遇见你",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1533,7 +1533,7 @@ window.officialData = {
     {
       "id": 1751656672756,
       "title": "千年等一回",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1541,7 +1541,7 @@ window.officialData = {
     {
       "id": 1751656672757,
       "title": "新贵妃醉酒",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1549,7 +1549,7 @@ window.officialData = {
     {
       "id": 1751656672758,
       "title": "武家坡2023",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1557,7 +1557,7 @@ window.officialData = {
     {
       "id": 1751656672759,
       "title": "武家坡2022",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1565,7 +1565,7 @@ window.officialData = {
     {
       "id": 1751656672760,
       "title": "吹梦到西洲",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1573,7 +1573,7 @@ window.officialData = {
     {
       "id": 1751656672761,
       "title": "山花寻海树",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1581,7 +1581,7 @@ window.officialData = {
     {
       "id": 1751656672762,
       "title": "清明上河图",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1589,7 +1589,7 @@ window.officialData = {
     {
       "id": 1751656672763,
       "title": "氍毹林园一梦牵",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1597,7 +1597,7 @@ window.officialData = {
     {
       "id": 1751656672764,
       "title": "青城山下白素贞",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1605,7 +1605,7 @@ window.officialData = {
     {
       "id": 1751656672765,
       "title": "金风玉露夜语迟",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1613,7 +1613,7 @@ window.officialData = {
     {
       "id": 1751656672766,
       "title": "杨花落尽子规啼",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1621,7 +1621,7 @@ window.officialData = {
     {
       "id": 1751656672767,
       "title": "雪落下的声音",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1629,7 +1629,7 @@ window.officialData = {
     {
       "id": 1751656672768,
       "title": "红透晚烟青",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1637,7 +1637,7 @@ window.officialData = {
     {
       "id": 1751656672769,
       "title": "还是你的笑容最可爱",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1645,7 +1645,7 @@ window.officialData = {
     {
       "id": 1751656672770,
       "title": "秦淮河边的陈年往事",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1653,7 +1653,7 @@ window.officialData = {
     {
       "id": 1751656672771,
       "title": "天上掉下个林妹妹",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506269360",
       "note": "/",
       "addedDate": "2025-07-04T19:17:52.641Z"
@@ -1661,7 +1661,7 @@ window.officialData = {
     {
       "id": 1751656640230,
       "title": "流行",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1669,7 +1669,7 @@ window.officialData = {
     {
       "id": 1751656640231,
       "title": "光",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1677,7 +1677,7 @@ window.officialData = {
     {
       "id": 1751656640232,
       "title": "堕",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1685,7 +1685,7 @@ window.officialData = {
     {
       "id": 1751656640233,
       "title": "你",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1693,7 +1693,7 @@ window.officialData = {
     {
       "id": 1751656640234,
       "title": "当",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1701,7 +1701,7 @@ window.officialData = {
     {
       "id": 1751656640235,
       "title": "麦浪",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1709,7 +1709,7 @@ window.officialData = {
     {
       "id": 1751656640236,
       "title": "传奇",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1717,7 +1717,7 @@ window.officialData = {
     {
       "id": 1751656640237,
       "title": "预谋",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1725,7 +1725,7 @@ window.officialData = {
     {
       "id": 1751656640238,
       "title": "宁夏",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1733,7 +1733,7 @@ window.officialData = {
     {
       "id": 1751656640239,
       "title": "大鱼",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1741,7 +1741,7 @@ window.officialData = {
     {
       "id": 1751656640240,
       "title": "答案",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1749,7 +1749,7 @@ window.officialData = {
     {
       "id": 1751656640241,
       "title": "爱你",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1757,7 +1757,7 @@ window.officialData = {
     {
       "id": 1751656640242,
       "title": "骗我",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1765,7 +1765,7 @@ window.officialData = {
     {
       "id": 1751656640243,
       "title": "所爱",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1773,7 +1773,7 @@ window.officialData = {
     {
       "id": 1751656640244,
       "title": "九儿",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1781,7 +1781,7 @@ window.officialData = {
     {
       "id": 1751656640245,
       "title": "太阳",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1789,7 +1789,7 @@ window.officialData = {
     {
       "id": 1751656640246,
       "title": "青柠",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1797,7 +1797,7 @@ window.officialData = {
     {
       "id": 1751656640247,
       "title": "东西",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1805,7 +1805,7 @@ window.officialData = {
     {
       "id": 1751656640248,
       "title": "小孩",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1813,7 +1813,7 @@ window.officialData = {
     {
       "id": 1751656640249,
       "title": "芒种",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1821,7 +1821,7 @@ window.officialData = {
     {
       "id": 1751656640250,
       "title": "海底",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1829,7 +1829,7 @@ window.officialData = {
     {
       "id": 1751656640251,
       "title": "假装",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1837,7 +1837,7 @@ window.officialData = {
     {
       "id": 1751656640252,
       "title": "鸽子",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1845,7 +1845,7 @@ window.officialData = {
     {
       "id": 1751656640253,
       "title": "火苗",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1853,7 +1853,7 @@ window.officialData = {
     {
       "id": 1751656640254,
       "title": "房间",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1861,7 +1861,7 @@ window.officialData = {
     {
       "id": 1751656640255,
       "title": "宝贝",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1869,7 +1869,7 @@ window.officialData = {
     {
       "id": 1751656640256,
       "title": "唯一",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1877,7 +1877,7 @@ window.officialData = {
     {
       "id": 1751656640257,
       "title": "阿刁",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.230Z"
@@ -1885,7 +1885,7 @@ window.officialData = {
     {
       "id": 1751656640259,
       "title": "南下",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1893,7 +1893,7 @@ window.officialData = {
     {
       "id": 1751656640260,
       "title": "素颜",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1901,7 +1901,7 @@ window.officialData = {
     {
       "id": 1751656640261,
       "title": "天下",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1909,7 +1909,7 @@ window.officialData = {
     {
       "id": 1751656640262,
       "title": "卜卦",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1917,7 +1917,7 @@ window.officialData = {
     {
       "id": 1751656640263,
       "title": "致你",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1925,7 +1925,7 @@ window.officialData = {
     {
       "id": 1751656640264,
       "title": "虚拟",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1933,7 +1933,7 @@ window.officialData = {
     {
       "id": 1751656640265,
       "title": "晴天",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1941,7 +1941,7 @@ window.officialData = {
     {
       "id": 1751656640266,
       "title": "破茧",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1949,7 +1949,7 @@ window.officialData = {
     {
       "id": 1751656640267,
       "title": "绿色",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1957,7 +1957,7 @@ window.officialData = {
     {
       "id": 1751656640268,
       "title": "踏浪",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1965,7 +1965,7 @@ window.officialData = {
     {
       "id": 1751656640269,
       "title": "逆战",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1973,7 +1973,7 @@ window.officialData = {
     {
       "id": 1751656640270,
       "title": "戒烟",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1981,7 +1981,7 @@ window.officialData = {
     {
       "id": 1751656640271,
       "title": "可乐",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1989,7 +1989,7 @@ window.officialData = {
     {
       "id": 1751656640272,
       "title": "黄昏",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -1997,7 +1997,7 @@ window.officialData = {
     {
       "id": 1751656640273,
       "title": "暖暖",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2005,7 +2005,7 @@ window.officialData = {
     {
       "id": 1751656640274,
       "title": "人是",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2013,7 +2013,7 @@ window.officialData = {
     {
       "id": 1751656640275,
       "title": "演员",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2021,7 +2021,7 @@ window.officialData = {
     {
       "id": 1751656640276,
       "title": "指纹",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2029,7 +2029,7 @@ window.officialData = {
     {
       "id": 1751656640277,
       "title": "成都",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2037,7 +2037,7 @@ window.officialData = {
     {
       "id": 1751656640278,
       "title": "喂猪",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2045,7 +2045,7 @@ window.officialData = {
     {
       "id": 1751656640279,
       "title": "DADADA",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2053,7 +2053,7 @@ window.officialData = {
     {
       "id": 1751656640280,
       "title": "5.20AM",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2061,7 +2061,7 @@ window.officialData = {
     {
       "id": 1751656640281,
       "title": "小红象",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2069,7 +2069,7 @@ window.officialData = {
     {
       "id": 1751656640282,
       "title": "同花顺",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2077,7 +2077,7 @@ window.officialData = {
     {
       "id": 1751656640283,
       "title": "凑热闹",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2085,7 +2085,7 @@ window.officialData = {
     {
       "id": 1751656640284,
       "title": "小幸运",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2093,7 +2093,7 @@ window.officialData = {
     {
       "id": 1751656640285,
       "title": "醒着醉",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2101,7 +2101,7 @@ window.officialData = {
     {
       "id": 1751656640286,
       "title": "有你在",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2109,7 +2109,7 @@ window.officialData = {
     {
       "id": 1751656640287,
       "title": "萱草花",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2117,7 +2117,7 @@ window.officialData = {
     {
       "id": 1751656640288,
       "title": "我要你",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2125,7 +2125,7 @@ window.officialData = {
     {
       "id": 1751656640289,
       "title": "我想你",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2133,7 +2133,7 @@ window.officialData = {
     {
       "id": 1751656640290,
       "title": "日不落",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2141,7 +2141,7 @@ window.officialData = {
     {
       "id": 1751656640291,
       "title": "小嫦娥",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2149,7 +2149,7 @@ window.officialData = {
     {
       "id": 1751656640292,
       "title": "红山果",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2157,7 +2157,7 @@ window.officialData = {
     {
       "id": 1751656640293,
       "title": "爱如火",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2165,7 +2165,7 @@ window.officialData = {
     {
       "id": 1751656640294,
       "title": "白山茶",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2173,7 +2173,7 @@ window.officialData = {
     {
       "id": 1751656640295,
       "title": "他不懂",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2181,7 +2181,7 @@ window.officialData = {
     {
       "id": 1751656640296,
       "title": "找自己",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2189,7 +2189,7 @@ window.officialData = {
     {
       "id": 1751656640297,
       "title": "小美满",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2197,7 +2197,7 @@ window.officialData = {
     {
       "id": 1751656640298,
       "title": "小模样",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2205,7 +2205,7 @@ window.officialData = {
     {
       "id": 1751656640299,
       "title": "老可爱",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2213,7 +2213,7 @@ window.officialData = {
     {
       "id": 1751656640300,
       "title": "太聪明",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2221,7 +2221,7 @@ window.officialData = {
     {
       "id": 1751656640301,
       "title": "纯妹妹",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2229,7 +2229,7 @@ window.officialData = {
     {
       "id": 1751656640302,
       "title": "王招君",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2237,7 +2237,7 @@ window.officialData = {
     {
       "id": 1751656640303,
       "title": "带我走",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2245,7 +2245,7 @@ window.officialData = {
     {
       "id": 1751656640304,
       "title": "胡广生",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2253,7 +2253,7 @@ window.officialData = {
     {
       "id": 1751656640305,
       "title": "安和桥",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2261,7 +2261,7 @@ window.officialData = {
     {
       "id": 1751656640306,
       "title": "怎么了",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2269,7 +2269,7 @@ window.officialData = {
     {
       "id": 1751656640307,
       "title": "向云端",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2277,7 +2277,7 @@ window.officialData = {
     {
       "id": 1751656640308,
       "title": "追光者",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2285,7 +2285,7 @@ window.officialData = {
     {
       "id": 1751656640309,
       "title": "兰亭序",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2293,7 +2293,7 @@ window.officialData = {
     {
       "id": 1751656640310,
       "title": "起风了",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2301,7 +2301,7 @@ window.officialData = {
     {
       "id": 1751656640311,
       "title": "刚刚好",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2309,7 +2309,7 @@ window.officialData = {
     {
       "id": 1751656640312,
       "title": "童话镇",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2317,7 +2317,7 @@ window.officialData = {
     {
       "id": 1751656640313,
       "title": "月牙湾",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2325,7 +2325,7 @@ window.officialData = {
     {
       "id": 1751656640314,
       "title": "关键词",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2333,7 +2333,7 @@ window.officialData = {
     {
       "id": 1751656640315,
       "title": "处处傻",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2341,7 +2341,7 @@ window.officialData = {
     {
       "id": 1751656640316,
       "title": "失眠飞行",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2349,7 +2349,7 @@ window.officialData = {
     {
       "id": 1751656640317,
       "title": "奈何花落",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2357,7 +2357,7 @@ window.officialData = {
     {
       "id": 1751656640318,
       "title": "未闻花名",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2365,7 +2365,7 @@ window.officialData = {
     {
       "id": 1751656640319,
       "title": "危险派对",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2373,7 +2373,7 @@ window.officialData = {
     {
       "id": 1751656640320,
       "title": "再见深海",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2381,7 +2381,7 @@ window.officialData = {
     {
       "id": 1751656640321,
       "title": "恋爱告急",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2389,7 +2389,7 @@ window.officialData = {
     {
       "id": 1751656640322,
       "title": "爱的魔法",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2397,7 +2397,7 @@ window.officialData = {
     {
       "id": 1751656640323,
       "title": "普通朋友",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2405,7 +2405,7 @@ window.officialData = {
     {
       "id": 1751656640324,
       "title": "小镇姑娘",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2413,7 +2413,7 @@ window.officialData = {
     {
       "id": 1751656640325,
       "title": "芭蕉夜雨",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2421,7 +2421,7 @@ window.officialData = {
     {
       "id": 1751656640326,
       "title": "暮色回响",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2429,7 +2429,7 @@ window.officialData = {
     {
       "id": 1751656640327,
       "title": "像风一样",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2437,7 +2437,7 @@ window.officialData = {
     {
       "id": 1751656640328,
       "title": "一荤一素",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2445,7 +2445,7 @@ window.officialData = {
     {
       "id": 1751656640329,
       "title": "纸短情长",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2453,7 +2453,7 @@ window.officialData = {
     {
       "id": 1751656640330,
       "title": "夏天的风",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2461,7 +2461,7 @@ window.officialData = {
     {
       "id": 1751656640331,
       "title": ";路过人间",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2469,7 +2469,7 @@ window.officialData = {
     {
       "id": 1751656640332,
       "title": "勾指起誓",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2477,7 +2477,7 @@ window.officialData = {
     {
       "id": 1751656640333,
       "title": "歌行四方",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2485,7 +2485,7 @@ window.officialData = {
     {
       "id": 1751656640334,
       "title": "蝴蝶泉边",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2493,7 +2493,7 @@ window.officialData = {
     {
       "id": 1751656640335,
       "title": "时间煮雨",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2501,7 +2501,7 @@ window.officialData = {
     {
       "id": 1751656640336,
       "title": "风吹麦浪",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2509,7 +2509,7 @@ window.officialData = {
     {
       "id": 1751656640337,
       "title": "云烟成雨",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2517,7 +2517,7 @@ window.officialData = {
     {
       "id": 1751656640338,
       "title": "我的美丽",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2525,7 +2525,7 @@ window.officialData = {
     {
       "id": 1751656640339,
       "title": "彩云之南",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2533,7 +2533,7 @@ window.officialData = {
     {
       "id": 1751656640340,
       "title": "花好月圆",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2541,7 +2541,7 @@ window.officialData = {
     {
       "id": 1751656640341,
       "title": "爱如潮水",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2549,7 +2549,7 @@ window.officialData = {
     {
       "id": 1751656640342,
       "title": "最后一页",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2557,7 +2557,7 @@ window.officialData = {
     {
       "id": 1751656640343,
       "title": "身骑白马",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2565,7 +2565,7 @@ window.officialData = {
     {
       "id": 1751656640344,
       "title": "说散就散",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2573,7 +2573,7 @@ window.officialData = {
     {
       "id": 1751656640345,
       "title": "三天三夜",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2581,7 +2581,7 @@ window.officialData = {
     {
       "id": 1751656640346,
       "title": "香水百合",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2589,7 +2589,7 @@ window.officialData = {
     {
       "id": 1751656640347,
       "title": "爱情买卖",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2597,7 +2597,7 @@ window.officialData = {
     {
       "id": 1751656640348,
       "title": "有何不可",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2605,7 +2605,7 @@ window.officialData = {
     {
       "id": 1751656640349,
       "title": "海绵宝宝",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2613,7 +2613,7 @@ window.officialData = {
     {
       "id": 1751656640350,
       "title": "天若有情",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2621,7 +2621,7 @@ window.officialData = {
     {
       "id": 1751656640351,
       "title": "兔子先生",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2629,7 +2629,7 @@ window.officialData = {
     {
       "id": 1751656640352,
       "title": "特别的人",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2637,7 +2637,7 @@ window.officialData = {
     {
       "id": 1751656640353,
       "title": "不眠之夜",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2645,7 +2645,7 @@ window.officialData = {
     {
       "id": 1751656640354,
       "title": "知否知否",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2653,7 +2653,7 @@ window.officialData = {
     {
       "id": 1751656640355,
       "title": "你啊你啊",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2661,7 +2661,7 @@ window.officialData = {
     {
       "id": 1751656640356,
       "title": "往后余生",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2669,7 +2669,7 @@ window.officialData = {
     {
       "id": 1751656640357,
       "title": "第二杯半价",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2677,7 +2677,7 @@ window.officialData = {
     {
       "id": 1751656640358,
       "title": "如果有来生",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2685,7 +2685,7 @@ window.officialData = {
     {
       "id": 1751656640359,
       "title": "寂寞沙洲冷",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2693,7 +2693,7 @@ window.officialData = {
     {
       "id": 1751656640360,
       "title": "爱的华尔兹",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2701,7 +2701,7 @@ window.officialData = {
     {
       "id": 1751656640361,
       "title": "如此大世界",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2709,7 +2709,7 @@ window.officialData = {
     {
       "id": 1751656640362,
       "title": "彩虹的微笑",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2717,7 +2717,7 @@ window.officialData = {
     {
       "id": 1751656640363,
       "title": "马马嘟嘟骑",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2725,7 +2725,7 @@ window.officialData = {
     {
       "id": 1751656640364,
       "title": "如果爱忘了",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2733,7 +2733,7 @@ window.officialData = {
     {
       "id": 1751656640365,
       "title": "客官不可以",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2741,7 +2741,7 @@ window.officialData = {
     {
       "id": 1751656640366,
       "title": "我不曾忘记",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2749,7 +2749,7 @@ window.officialData = {
     {
       "id": 1751656640367,
       "title": "让风告诉你",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2757,7 +2757,7 @@ window.officialData = {
     {
       "id": 1751656640368,
       "title": "想你时风起",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2765,7 +2765,7 @@ window.officialData = {
     {
       "id": 1751656640369,
       "title": "呜哇哈哈哈",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2773,7 +2773,7 @@ window.officialData = {
     {
       "id": 1751656640370,
       "title": "打工人之歌",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2781,7 +2781,7 @@ window.officialData = {
     {
       "id": 1751656640371,
       "title": "最美的期待",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2789,7 +2789,7 @@ window.officialData = {
     {
       "id": 1751656640372,
       "title": "红色高跟鞋",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2797,7 +2797,7 @@ window.officialData = {
     {
       "id": 1751656640373,
       "title": "最炫民族风",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2805,7 +2805,7 @@ window.officialData = {
     {
       "id": 1751656640374,
       "title": "给你点颜色",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2813,7 +2813,7 @@ window.officialData = {
     {
       "id": 1751656640375,
       "title": "这,就是爱",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2821,7 +2821,7 @@ window.officialData = {
     {
       "id": 1751656640376,
       "title": "我是你的小狗",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2829,7 +2829,7 @@ window.officialData = {
     {
       "id": 1751656640377,
       "title": "少女作妖日记",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2837,7 +2837,7 @@ window.officialData = {
     {
       "id": 1751656640378,
       "title": "永不失联的爱",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2845,7 +2845,7 @@ window.officialData = {
     {
       "id": 1751656640379,
       "title": "是妈妈是女儿",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2853,7 +2853,7 @@ window.officialData = {
     {
       "id": 1751656640380,
       "title": "星光下的梦想",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2861,7 +2861,7 @@ window.officialData = {
     {
       "id": 1751656640381,
       "title": "粉红色的回忆",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2869,7 +2869,7 @@ window.officialData = {
     {
       "id": 1751656640382,
       "title": "乌兰巴托的夜",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2877,7 +2877,7 @@ window.officialData = {
     {
       "id": 1751656640383,
       "title": "你还要我怎样",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2885,7 +2885,7 @@ window.officialData = {
     {
       "id": 1751656640384,
       "title": "像我这样的人",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2893,7 +2893,7 @@ window.officialData = {
     {
       "id": 1751656640385,
       "title": "Letting",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2901,7 +2901,7 @@ window.officialData = {
     {
       "id": 1751656640386,
       "title": "Go",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2909,7 +2909,7 @@ window.officialData = {
     {
       "id": 1751656640387,
       "title": "阿拉斯加的海湾",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2917,7 +2917,7 @@ window.officialData = {
     {
       "id": 1751656640388,
       "title": "这世界那么多人",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2925,7 +2925,7 @@ window.officialData = {
     {
       "id": 1751656640389,
       "title": "带我去找夜生活",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2933,7 +2933,7 @@ window.officialData = {
     {
       "id": 1751656640390,
       "title": "如果突然想起我",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2941,7 +2941,7 @@ window.officialData = {
     {
       "id": 1751656640391,
       "title": "在东北的小偶像",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2949,7 +2949,7 @@ window.officialData = {
     {
       "id": 1751656640392,
       "title": "夜空中最亮的星",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2957,7 +2957,7 @@ window.officialData = {
     {
       "id": 1751656640393,
       "title": "今天你要嫁给我",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2965,7 +2965,7 @@ window.officialData = {
     {
       "id": 1751656640394,
       "title": "好像掉进爱情海里",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2973,7 +2973,7 @@ window.officialData = {
     {
       "id": 1751656640395,
       "title": "在加纳共和国离婚",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2981,7 +2981,7 @@ window.officialData = {
     {
       "id": 1751656640396,
       "title": "我的悲伤是水做的",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2989,7 +2989,7 @@ window.officialData = {
     {
       "id": 1751656640397,
       "title": "自己按门铃自己听",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -2997,7 +2997,7 @@ window.officialData = {
     {
       "id": 1751656640398,
       "title": "我在人民广场吃着炸鸡",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
@@ -3005,21 +3005,10 @@ window.officialData = {
     {
       "id": 1751656640399,
       "title": "好一朵美丽的茉莉花",
-      "artist": "/",
+      "artist": "",
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
     }
-  ],
-  "settings": {
-    "commandPrefix": "/点歌",
-    "commandSuffix": "",
-    "theme": "light",
-    "autoSave": true,
-    "backupEnabled": true,
-    "maxSongsPerPage": 50,
-    "allowGuestView": true,
-    "enableSearch": true,
-    "enableFilter": true
-  }
+  ]
 };

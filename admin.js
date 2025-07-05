@@ -73,6 +73,9 @@ class AdminManager {
      * 加载数据和绑定事件
      */
     init() {
+        // 设置API认证令牌
+        this.setupApiAuth();
+
         this.initCustomGenres();
         this.loadData();
         this.bindEvents();
@@ -85,6 +88,19 @@ class AdminManager {
         this.updateGenreAndRemarkSelects();
         this.startAuthCheck();
         this.setupMessageListener();
+    }
+
+    /**
+     * 设置API认证令牌
+     */
+    setupApiAuth() {
+        const session = this.getSession();
+        if (session && session.token) {
+            localStorage.setItem('auth_token', session.token);
+            console.log('API认证令牌已设置');
+        } else {
+            console.warn('未找到有效的会话令牌');
+        }
     }
 
     /**
@@ -574,10 +590,23 @@ class AdminManager {
     // 加载主题
     async loadTheme() {
         try {
-            // 从API加载主题设置
-            const response = await fetch('/api/settings');
-            if (response.ok) {
-                const result = await response.json();
+            let result;
+
+            // 检查是否有API客户端可用
+            if (typeof apiClient !== 'undefined') {
+                // 从API加载主题设置（GET请求不需要认证）
+                result = await apiClient.get('/settings');
+            } else {
+                // 回退到原生fetch
+                const response = await fetch('/api/settings');
+                if (response.ok) {
+                    result = await response.json();
+                } else {
+                    throw new Error('API请求失败');
+                }
+            }
+
+            if (result.success && result.data) {
                 const serverTheme = result.data.settings.theme || 'light';
 
                 // 使用服务器主题
@@ -1046,9 +1075,8 @@ class AdminManager {
     // 加载个人资料
     async loadProfile() {
         try {
-            // 尝试从API加载个人资料
-            const response = await fetch('/api/profile');
-            const result = await response.json();
+            // 尝试从API加载个人资料（GET请求不需要认证）
+            const result = await apiClient.getProfile();
 
             let profile;
             if (result.success && result.data) {
@@ -1130,16 +1158,8 @@ class AdminManager {
         };
 
         try {
-            // 尝试使用API保存
-            const response = await fetch('/api/profile', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(profile)
-            });
-
-            const result = await response.json();
+            // 尝试使用API保存（需要认证）
+            const result = await apiClient.updateProfile(profile);
 
             if (result.success) {
                 // API保存成功，同时也保存到localStorage作为备份
@@ -1299,9 +1319,16 @@ class AdminManager {
                         const formData = new FormData();
                         formData.append('file', new File([blob], filename, { type: 'image/jpeg' }));
 
-                        // 上传文件
+                        // 上传文件（需要认证）
+                        const session = this.getSession();
+                        const headers = {};
+                        if (session && session.token) {
+                            headers['Authorization'] = `Bearer ${session.token}`;
+                        }
+
                         const response = await fetch(`/api/upload?type=${type}s`, {
                             method: 'POST',
+                            headers: headers,
                             body: formData
                         });
 
@@ -1357,8 +1384,8 @@ class AdminManager {
     // 加载图片列表
     async loadImageList(type) {
         try {
-            const response = await fetch(`/api/images?type=${type}s`);
-            const result = await response.json();
+            // GET请求不需要认证
+            const result = await apiClient.get(`/images?type=${type}s`);
 
             if (result.success && result.data) {
                 this.populateImageSelect(type, result.data.images || []);
@@ -1522,16 +1549,36 @@ class AdminManager {
     // 保存主题设置
     async saveThemeSetting(theme) {
         try {
-            // 保存到服务器
-            const response = await fetch('/api/settings', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ theme: theme })
-            });
+            let result;
 
-            if (response.ok) {
+            // 检查是否有API客户端可用
+            if (typeof apiClient !== 'undefined') {
+                // 保存到服务器（需要认证）
+                result = await apiClient.put('/settings', { theme: theme });
+            } else {
+                // 回退到原生fetch，包含认证头
+                const session = this.getSession();
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (session && session.token) {
+                    headers['Authorization'] = `Bearer ${session.token}`;
+                }
+
+                const response = await fetch('/api/settings', {
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify({ theme: theme })
+                });
+
+                if (response.ok) {
+                    result = await response.json();
+                } else {
+                    throw new Error('服务器保存失败');
+                }
+            }
+
+            if (result.success) {
                 // 服务器保存成功后更新本地
                 localStorage.setItem('vtuber_theme', theme);
                 document.documentElement.setAttribute('data-theme', theme);
@@ -1554,7 +1601,7 @@ class AdminManager {
 
                 this.showNotification('主题设置已保存', 'success');
             } else {
-                throw new Error('服务器保存失败');
+                throw new Error(result.message || '服务器保存失败');
             }
         } catch (error) {
             console.error('保存主题设置失败:', error);
@@ -2331,11 +2378,28 @@ class AdminManager {
                 throw new Error('认证令牌缺失，请重新登录');
             }
 
-            // 设置认证令牌到localStorage，供API客户端使用
-            localStorage.setItem('auth_token', session.token);
+            let result;
 
-            // 使用API客户端进行同步
-            const result = await apiClient.syncData(dataToSync);
+            // 检查是否有API客户端可用
+            if (typeof apiClient !== 'undefined') {
+                // 设置认证令牌到localStorage，供API客户端使用
+                localStorage.setItem('auth_token', session.token);
+
+                // 使用API客户端进行同步
+                result = await apiClient.syncData(dataToSync);
+            } else {
+                // 回退到原生fetch，但包含认证头
+                console.warn('API客户端未加载，使用原生fetch');
+                const response = await fetch('/api/update-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.token}`
+                    },
+                    body: JSON.stringify(dataToSync, null, 2)
+                });
+                result = await response.json();
+            }
 
             if (result.success) {
                 this.showNotification('官网数据已同步！', 'success');

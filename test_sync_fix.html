@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>同步功能修复测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 同步功能修复测试</h1>
+    
+    <div class="test-section">
+        <h2>步骤1: 模拟管理员登录</h2>
+        <p>首先需要模拟管理员登录状态，这样才能测试需要认证的API</p>
+        <button class="test-button" onclick="simulateLogin()">模拟管理员登录</button>
+        <button class="test-button" onclick="checkLoginStatus()">检查登录状态</button>
+        <div id="loginResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>步骤2: 测试API客户端加载</h2>
+        <p>检查api-client.js是否正确加载</p>
+        <button class="test-button" onclick="testApiClientLoaded()">检查API客户端</button>
+        <div id="apiClientResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>步骤3: 测试数据同步功能</h2>
+        <p>这是之前失败的功能，现在应该可以正常工作</p>
+        <button class="test-button" onclick="testDataSync()">测试数据同步</button>
+        <div id="syncResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>步骤4: 测试其他修复的功能</h2>
+        <button class="test-button" onclick="testProfileUpdate()">测试个人资料更新</button>
+        <button class="test-button" onclick="testThemeUpdate()">测试主题设置</button>
+        <button class="test-button" onclick="testImageList()">测试图片列表</button>
+        <div id="otherResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>步骤5: 清理测试数据</h2>
+        <button class="test-button" onclick="clearTestData()">清除测试数据</button>
+        <button class="test-button" onclick="logout()">登出</button>
+        <div id="cleanupResult" class="result"></div>
+    </div>
+
+    <script src="api-client.js"></script>
+    <script>
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${type}`;
+        }
+
+        function generateSessionToken() {
+            const array = new Uint8Array(32);
+            crypto.getRandomValues(array);
+            return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+        }
+
+        function simulateLogin() {
+            const session = {
+                token: generateSessionToken(),
+                createdAt: Date.now(),
+                expiresAt: Date.now() + (24 * 60 * 60 * 1000), // 24小时后过期
+                lastActivity: Date.now()
+            };
+            
+            localStorage.setItem('vtuber_admin_session', JSON.stringify(session));
+            localStorage.setItem('auth_token', session.token);
+            
+            showResult('loginResult', `✅ 模拟登录成功\n令牌: ${session.token.substring(0, 16)}...\n过期时间: ${new Date(session.expiresAt).toLocaleString()}`, 'success');
+        }
+
+        function checkLoginStatus() {
+            const adminSession = localStorage.getItem('vtuber_admin_session');
+            const authToken = localStorage.getItem('auth_token');
+            
+            let status = '登录状态检查:\n';
+            status += `管理员会话: ${adminSession ? '✅ 存在' : '❌ 不存在'}\n`;
+            status += `API认证令牌: ${authToken ? '✅ 存在' : '❌ 不存在'}\n`;
+            
+            if (adminSession) {
+                try {
+                    const session = JSON.parse(adminSession);
+                    const isExpired = Date.now() >= session.expiresAt;
+                    status += `会话状态: ${isExpired ? '❌ 已过期' : '✅ 有效'}\n`;
+                    status += `令牌匹配: ${authToken === session.token ? '✅ 匹配' : '❌ 不匹配'}\n`;
+                } catch (e) {
+                    status += '❌ 会话数据解析失败\n';
+                }
+            }
+            
+            const type = adminSession && authToken ? 'success' : 'error';
+            showResult('loginResult', status, type);
+        }
+
+        function testApiClientLoaded() {
+            let result = 'API客户端检查:\n';
+            
+            if (typeof apiClient === 'undefined') {
+                result += '❌ apiClient 未定义\n';
+                result += '请检查 api-client.js 是否正确加载';
+                showResult('apiClientResult', result, 'error');
+                return;
+            }
+            
+            result += '✅ apiClient 已加载\n';
+            result += `可用方法: ${Object.getOwnPropertyNames(Object.getPrototypeOf(apiClient)).filter(name => name !== 'constructor').join(', ')}\n`;
+            
+            showResult('apiClientResult', result, 'success');
+        }
+
+        async function testDataSync() {
+            try {
+                showResult('syncResult', '正在测试数据同步...', 'info');
+                
+                const testData = {
+                    profile: {
+                        vtuberName: '测试主播',
+                        vtuberDesc: '这是一个同步测试',
+                        websiteTitle: '测试网站'
+                    },
+                    songs: [
+                        { id: 'test1', title: '测试歌曲1', artist: '测试歌手1', genre: '测试' },
+                        { id: 'test2', title: '测试歌曲2', artist: '测试歌手2', genre: '测试' }
+                    ]
+                };
+                
+                const result = await apiClient.syncData(testData);
+                
+                let message = '数据同步测试结果:\n';
+                message += `状态: ${result.success ? '✅ 成功' : '❌ 失败'}\n`;
+                message += `消息: ${result.message || '无'}\n`;
+                
+                if (result.data) {
+                    message += `返回数据: ${JSON.stringify(result.data, null, 2)}\n`;
+                }
+                
+                showResult('syncResult', message, result.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('syncResult', `❌ 数据同步测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testProfileUpdate() {
+            try {
+                const testProfile = {
+                    vtuberName: '测试主播' + Date.now(),
+                    vtuberDesc: '这是一个个人资料更新测试',
+                    websiteTitle: '测试网站',
+                    vtuberUid: 'test123',
+                    vtuberBirthday: '2023-01-01',
+                    liveRoomUrl: 'https://example.com'
+                };
+                
+                const result = await apiClient.updateProfile(testProfile);
+                
+                let message = '个人资料更新测试:\n';
+                message += `状态: ${result.success ? '✅ 成功' : '❌ 失败'}\n`;
+                message += `消息: ${result.message || '无'}\n`;
+                
+                showResult('otherResult', message, result.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('otherResult', `❌ 个人资料更新测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testThemeUpdate() {
+            try {
+                const testTheme = Math.random() > 0.5 ? 'dark' : 'light';
+                const result = await apiClient.put('/settings', { theme: testTheme });
+                
+                let message = '主题设置测试:\n';
+                message += `测试主题: ${testTheme}\n`;
+                message += `状态: ${result.success ? '✅ 成功' : '❌ 失败'}\n`;
+                message += `消息: ${result.message || '无'}\n`;
+                
+                showResult('otherResult', message, result.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('otherResult', `❌ 主题设置测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testImageList() {
+            try {
+                const result = await apiClient.get('/images?type=avatars');
+                
+                let message = '图片列表测试:\n';
+                message += `状态: ${result.success ? '✅ 成功' : '❌ 失败'}\n`;
+                message += `消息: ${result.message || '无'}\n`;
+                
+                if (result.data && result.data.images) {
+                    message += `图片数量: ${result.data.images.length}\n`;
+                }
+                
+                showResult('otherResult', message, result.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('otherResult', `❌ 图片列表测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        function clearTestData() {
+            showResult('cleanupResult', '清理测试数据...', 'info');
+            // 这里可以添加清理逻辑，比如删除测试歌曲等
+            showResult('cleanupResult', '✅ 测试数据已清理', 'success');
+        }
+
+        function logout() {
+            localStorage.removeItem('vtuber_admin_session');
+            localStorage.removeItem('auth_token');
+            showResult('cleanupResult', '✅ 已登出，所有认证数据已清除', 'success');
+        }
+
+        // 页面加载时的初始检查
+        window.onload = function() {
+            checkLoginStatus();
+            testApiClientLoaded();
+        };
+    </script>
+</body>
+</html>

@@ -185,7 +185,7 @@ const validateSong = (req, res, next) => {
 // 改进的认证中间件
 const authenticateToken = (req, res, next) => {
     // 对于GET请求（读取操作），可以不需要认证
-    if (req.method === 'GET' && req.path.startsWith('/api/songs')) {
+    if (req.method === 'GET' && (req.path.startsWith('/api/songs') || req.path.startsWith('/api/profile') || req.path.startsWith('/api/stats') || req.path.startsWith('/api/settings'))) {
         return next();
     }
 
@@ -198,15 +198,19 @@ const authenticateToken = (req, res, next) => {
 
     // 验证token格式和有效性
     try {
-        // 这里应该实现真正的token验证逻辑
-        // 目前简化处理，检查token是否为有效的会话标识
-        if (token.length < 10) {
-            return ResponseHelper.unauthorized(res, '无效的认证令牌');
+        // 检查token是否为有效的会话标识（64位十六进制字符串）
+        if (token.length !== 64 || !/^[a-f0-9]{64}$/i.test(token)) {
+            return ResponseHelper.unauthorized(res, '无效的认证令牌格式');
         }
+
+        // 这里可以添加更复杂的token验证逻辑
+        // 比如检查token是否在有效会话列表中，是否过期等
+        // 目前简化处理，只验证格式
 
         req.user = { authenticated: true, token };
         next();
     } catch (error) {
+        console.error('认证令牌验证失败:', error);
         return ResponseHelper.unauthorized(res, '认证令牌验证失败');
     }
 };

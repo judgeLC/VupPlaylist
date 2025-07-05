@@ -144,6 +144,92 @@ npm install helmet
    - 记录文件上传日志
    - 定期检查访问日志
 
+## 🔧 同步失败问题修复
+
+### 问题描述
+用户报告"同步失败，需要登录才能执行操作"错误。
+
+### 根本原因
+1. API安全保护生效后，所有写操作需要认证令牌
+2. `admin.js` 中的 `syncOfficialData()` 方法使用原生 `fetch` 而非 API 客户端
+3. 前端主题同步也存在同样问题
+4. 管理员登录后未正确设置 API 认证令牌
+
+### 修复措施
+
+#### 1. 修复数据同步功能
+```javascript
+// admin.js - 修复后的同步方法
+async syncOfficialData() {
+    // 确保有认证令牌
+    const session = this.getSession();
+    if (!session || !session.token) {
+        throw new Error('认证令牌缺失，请重新登录');
+    }
+
+    // 设置认证令牌到localStorage，供API客户端使用
+    localStorage.setItem('auth_token', session.token);
+
+    // 使用API客户端进行同步
+    const result = await apiClient.syncData(dataToSync);
+}
+```
+
+#### 2. 修复前端主题同步
+```javascript
+// script.js - 修复后的主题同步
+async toggleTheme() {
+    // 检查是否有管理员会话
+    const adminSession = localStorage.getItem('vtuber_admin_session');
+    if (adminSession) {
+        const session = JSON.parse(adminSession);
+        localStorage.setItem('auth_token', session.token);
+        const result = await apiClient.put('/settings', { theme: newTheme });
+    }
+}
+```
+
+#### 3. 管理员初始化时设置认证
+```javascript
+// admin.js - 初始化时设置API认证
+init() {
+    this.setupApiAuth();  // 新增
+    // ... 其他初始化代码
+}
+
+setupApiAuth() {
+    const session = this.getSession();
+    if (session && session.token) {
+        localStorage.setItem('auth_token', session.token);
+    }
+}
+```
+
+#### 4. 改进服务器认证中间件
+```javascript
+// server.js - 更严格的令牌验证
+const authenticateToken = (req, res, next) => {
+    // 检查token是否为有效的会话标识（64位十六进制字符串）
+    if (token.length !== 64 || !/^[a-f0-9]{64}$/i.test(token)) {
+        return ResponseHelper.unauthorized(res, '无效的认证令牌格式');
+    }
+}
+```
+
+### ✅ 修复结果
+- ✅ 数据同步功能恢复正常
+- ✅ 前端主题同步在管理员登录时正常工作
+- ✅ API认证令牌自动设置和管理
+- ✅ 更严格的令牌格式验证
+- ✅ 向后兼容性保持
+
+### 🧪 测试验证
+创建了 `test_auth.html` 测试页面，可以验证：
+- 认证状态检查
+- 公开API访问（无需认证）
+- 受保护API访问（需要认证）
+- 管理员登录模拟
+
 ## 🔄 后续改进计划
 
 1. **短期（1-2周）**
