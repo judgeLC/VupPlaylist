@@ -13,11 +13,9 @@ class VTuberPlaylist {
      * @constructor
      */
     constructor() {
-        // 从全局数据加载配置
-        this.profile = window.officialData.profile || {};
-        this.songs = this.sortSongsByFirstLetter(window.officialData.songs || []);
-        
         // 初始化状态
+        this.profile = {};
+        this.songs = [];
         this.genres = [];
         this.notes = [];
         this.searchTerm = '';
@@ -25,33 +23,67 @@ class VTuberPlaylist {
             commandPrefix: '/点歌',
             commandSuffix: ''
         };
-        
+
         // 添加设备检测和动态类名
         this.detectDeviceAndSetClasses();
-        
-        this.init();
+
+        // 异步初始化
+        this.initAsync();
     }
 
     /**
-     * 系统初始化
-     * 加载必要的数据和设置
+     * 异步初始化方法
+     */
+    async initAsync() {
+        try {
+            console.log('开始异步初始化...');
+
+            // 1. 首先加载基础数据
+            this.loadData();
+            console.log('基础数据加载完成');
+
+            // 2. 等待风格管理器初始化完成
+            await window.genreManager.initialize();
+            console.log('GenreManager 初始化完成，开始渲染页面');
+
+            // 3. 绑定事件和渲染页面
+            this.bindEvents();
+            this.updateFilterOptions();
+            this.updateGenreNavigation(); // 确保风格导航正确更新
+            this.filteredSongs = this.songs;
+            this.renderPlaylist();
+            this.updateProfile();
+
+            // 4. 加载其他设置
+            await this.loadThemeFromAPI(); // 从API加载主题
+            this.loadSettings();
+            this.loadFavicon();
+            this.loadBeianInfo();
+
+            // 5. 启动定期数据同步
+            this.startDataSync();
+
+            console.log('页面初始化完成');
+        } catch (error) {
+            console.error('页面初始化失败:', error);
+        }
+    }
+
+    /**
+     * 加载基础数据
+     */
+    loadData() {
+        // 从全局数据加载配置
+        this.profile = window.officialData.profile || {};
+        this.songs = this.sortSongsByFirstLetter(window.officialData.songs || []);
+        console.log(`加载了 ${this.songs.length} 首歌曲`);
+    }
+
+    /**
+     * 系统初始化（保留兼容性）
      */
     async init() {
-        // 等待风格管理器初始化完成
-        await window.genreManager.initialize();
-
-        this.bindEvents();
-        this.updateFilterOptions();
-        this.filteredSongs = this.songs;
-        this.renderPlaylist();
-        this.updateProfile();
-        await this.loadThemeFromAPI(); // 从API加载主题
-        this.loadSettings();
-        this.loadFavicon();
-        this.loadBeianInfo();
-
-        // 启动定期数据同步
-        this.startDataSync();
+        return this.initAsync();
     }
 
     // 设备检测方法
@@ -1067,14 +1099,18 @@ function showGeneralNotification(message, type = 'info') {
 }
 
 // 确保数据加载完成后再初始化
-function initializeApp() {
+async function initializeApp() {
     console.log('初始化应用，检查数据状态...');
     console.log('window.officialData 存在:', !!window.officialData);
 
     if (window.officialData) {
         console.log('数据已加载，开始初始化应用');
+
         // 初始化歌单应用
         window.vtuberPlaylist = new VTuberPlaylist();
+
+        // 等待应用完全初始化
+        console.log('等待应用异步初始化完成...');
 
         // 添加页面加载动画
         const cards = document.querySelectorAll('.glass-card');

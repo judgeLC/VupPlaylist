@@ -14,7 +14,7 @@ window.officialData = {
       "id": 1751656742283,
       "title": "骗赖",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -22,7 +22,7 @@ window.officialData = {
       "id": 1751656742284,
       "title": "比夹夹",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -30,7 +30,7 @@ window.officialData = {
       "id": 1751656742285,
       "title": "帮主夫人",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -38,7 +38,7 @@ window.officialData = {
       "id": 1751656742286,
       "title": "要把哥哥追",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -46,7 +46,7 @@ window.officialData = {
       "id": 1751656742287,
       "title": "老公天下第一",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -54,7 +54,7 @@ window.officialData = {
       "id": 1751656742288,
       "title": "百万个吻",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -62,7 +62,7 @@ window.officialData = {
       "id": 1751656742289,
       "title": "要抱抱",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -70,7 +70,7 @@ window.officialData = {
       "id": 1751656742290,
       "title": "要爱爱",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -78,7 +78,7 @@ window.officialData = {
       "id": 1751656742291,
       "title": "夺命十三枪",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -86,7 +86,7 @@ window.officialData = {
       "id": 1751656733160,
       "title": "赤伶",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -94,7 +94,7 @@ window.officialData = {
       "id": 1751656733161,
       "title": "回马枪",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -102,7 +102,7 @@ window.officialData = {
       "id": 1751656733162,
       "title": "不问天",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -110,7 +110,7 @@ window.officialData = {
       "id": 1751656733163,
       "title": "苏幕遮",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -118,7 +118,7 @@ window.officialData = {
       "id": 1751656733164,
       "title": "扶桑树",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -126,7 +126,7 @@ window.officialData = {
       "id": 1751656733165,
       "title": "左手指月",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -134,7 +134,7 @@ window.officialData = {
       "id": 1751656733166,
       "title": "鱼跃而上",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -142,7 +142,7 @@ window.officialData = {
       "id": 1751656733167,
       "title": "神女劈观",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -150,7 +150,7 @@ window.officialData = {
       "id": 1751656733168,
       "title": "同光十三绝",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -158,7 +158,7 @@ window.officialData = {
       "id": 1751656733169,
       "title": "天堂岛之歌",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -166,7 +166,7 @@ window.officialData = {
       "id": 1751656733170,
       "title": "九九八十一",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -174,7 +174,7 @@ window.officialData = {
       "id": 1751656733171,
       "title": "上下五千年",
       "artist": "",
-      "genre": "custom_1751656716807",
+      "genre": "custom_1751691275246",
       "note": "/",
       "addedDate": "2025-07-04T19:18:53.160Z"
     },
@@ -3009,58 +3009,6 @@ window.officialData = {
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
-    }
-  ],
-  "customGenres": [
-    {
-      "id": "custom_1751485097686",
-      "name": "情歌",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506273759",
-      "name": "甜蜜情歌",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506269360",
-      "name": "古风",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506264888",
-      "name": "戏曲",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506259744",
-      "name": "京剧",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506255759",
-      "name": "豫剧",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506245176",
-      "name": "儿歌",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506243976",
-      "name": "流行",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751656714021",
-      "name": "黄梅戏",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751656716807",
-      "name": "现代戏曲",
-      "builtIn": false
     }
   ]
 };

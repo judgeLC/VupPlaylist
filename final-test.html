@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增风格显示问题最终测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .test-step {
+            background: rgba(255, 255, 255, 0.1);
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .success { background: rgba(76, 175, 80, 0.3); border: 1px solid #4CAF50; }
+        .error { background: rgba(244, 67, 54, 0.3); border: 1px solid #f44336; }
+        .warning { background: rgba(255, 193, 7, 0.3); border: 1px solid #FFC107; }
+        .info { background: rgba(33, 150, 243, 0.3); border: 1px solid #2196F3; }
+        
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 8px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        input {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 6px;
+            margin: 8px;
+            width: 200px;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .genre-display {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 新增风格显示问题最终测试</h1>
+        <p>这个测试将验证新增风格是否能正确显示名称而不是 custom_ ID</p>
+        
+        <div class="test-step">
+            <h3><span class="step-number">1</span>初始化检查</h3>
+            <button onclick="checkInitialization()">检查系统初始化状态</button>
+            <div id="initResult"></div>
+        </div>
+
+        <div class="test-step">
+            <h3><span class="step-number">2</span>添加新风格</h3>
+            <input type="text" id="newGenreName" placeholder="输入新风格名称" value="测试新风格" />
+            <button onclick="addNewGenre()">添加新风格</button>
+            <div id="addResult"></div>
+        </div>
+
+        <div class="test-step">
+            <h3><span class="step-number">3</span>测试风格显示</h3>
+            <button onclick="testGenreDisplay()">测试新增风格显示</button>
+            <div id="displayResult"></div>
+        </div>
+
+        <div class="test-step">
+            <h3><span class="step-number">4</span>模拟歌曲渲染</h3>
+            <button onclick="simulateSongRendering()">模拟歌曲风格显示</button>
+            <div id="songResult"></div>
+        </div>
+
+        <div class="test-step">
+            <h3><span class="step-number">5</span>跨页面测试</h3>
+            <button onclick="openMainPage()">打开主页面</button>
+            <button onclick="openAdminPage()">打开管理页面</button>
+            <div class="result info">
+                💡 在管理页面添加风格后，检查主页面是否能正确显示新风格名称
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="genre-manager.js"></script>
+    <script>
+        let testGenreId = null;
+
+        function showResult(elementId, message, type = 'success') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        window.addEventListener('load', async () => {
+            console.log('页面加载完成，开始初始化...');
+            try {
+                await window.genreManager.initialize();
+                console.log('GenreManager 初始化完成');
+            } catch (error) {
+                console.error('GenreManager 初始化失败:', error);
+            }
+        });
+
+        async function checkInitialization() {
+            console.log('检查系统初始化状态...');
+            
+            let html = '<strong>系统状态检查:</strong><br><br>';
+            let allGood = true;
+            
+            // 检查 GenreManager
+            if (window.genreManager && window.genreManager.isReady()) {
+                const genres = window.genreManager.getAllGenres();
+                html += `✅ GenreManager: 已初始化，${genres.length} 个风格<br>`;
+            } else {
+                html += `❌ GenreManager: 未初始化<br>`;
+                allGood = false;
+            }
+            
+            // 检查数据源
+            if (window.officialData && window.officialData.customGenres) {
+                html += `✅ data.js: 已加载，${window.officialData.customGenres.length} 个风格<br>`;
+            } else {
+                html += `❌ data.js: 未加载<br>`;
+                allGood = false;
+            }
+            
+            showResult('initResult', html, allGood ? 'success' : 'error');
+        }
+
+        async function addNewGenre() {
+            const input = document.getElementById('newGenreName');
+            const name = input.value.trim();
+            
+            if (!name) {
+                showResult('addResult', '请输入风格名称', 'warning');
+                return;
+            }
+            
+            if (!window.genreManager || !window.genreManager.isReady()) {
+                showResult('addResult', 'GenreManager 未准备就绪', 'error');
+                return;
+            }
+
+            try {
+                console.log(`添加新风格: ${name}`);
+                const newGenre = window.genreManager.addGenre(name);
+                testGenreId = newGenre.id;
+                
+                console.log(`风格添加成功: ${newGenre.name} (${newGenre.id})`);
+                
+                let html = `<strong>添加结果:</strong><br><br>`;
+                html += `✅ 风格ID: ${newGenre.id}<br>`;
+                html += `✅ 风格名称: ${newGenre.name}<br>`;
+                html += `✅ 添加时间: ${new Date().toLocaleTimeString()}<br>`;
+                
+                showResult('addResult', html, 'success');
+                
+            } catch (error) {
+                console.error(`添加风格失败: ${error.message}`);
+                showResult('addResult', `❌ 添加失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGenreDisplay() {
+            if (!testGenreId) {
+                showResult('displayResult', '请先添加新风格', 'warning');
+                return;
+            }
+            
+            if (!window.genreManager || !window.genreManager.isReady()) {
+                showResult('displayResult', 'GenreManager 未准备就绪', 'error');
+                return;
+            }
+
+            console.log('测试新增风格显示...');
+            
+            const displayName = window.genreManager.getDisplayName(testGenreId);
+            const isCorrect = !displayName.startsWith('custom_');
+            
+            let html = `<strong>显示测试结果:</strong><br><br>`;
+            html += `🔍 风格ID: ${testGenreId}<br>`;
+            html += `📝 显示名称: "${displayName}"<br>`;
+            html += `${isCorrect ? '✅' : '❌'} 显示状态: ${isCorrect ? '正确显示名称' : '显示为 custom_ ID'}<br>`;
+            
+            if (isCorrect) {
+                html += `<br><div class="genre-display">🎉 成功！新增风格正确显示为: "${displayName}"</div>`;
+            } else {
+                html += `<br><div class="genre-display">❌ 失败！新增风格显示为: "${displayName}"</div>`;
+            }
+            
+            showResult('displayResult', html, isCorrect ? 'success' : 'error');
+        }
+
+        async function simulateSongRendering() {
+            if (!testGenreId) {
+                showResult('songResult', '请先添加新风格', 'warning');
+                return;
+            }
+            
+            console.log('模拟歌曲风格显示...');
+            
+            // 模拟歌曲数据
+            const mockSong = {
+                title: '测试歌曲',
+                artist: '测试歌手',
+                genre: testGenreId
+            };
+            
+            // 模拟主页面的风格显示逻辑
+            const displayName = window.genreManager.getDisplayName(mockSong.genre);
+            const isCorrect = !displayName.startsWith('custom_');
+            
+            let html = `<strong>歌曲渲染模拟:</strong><br><br>`;
+            html += `🎵 歌曲: ${mockSong.title} - ${mockSong.artist}<br>`;
+            html += `🏷️ 风格ID: ${mockSong.genre}<br>`;
+            html += `📋 前端显示: "${displayName}"<br>`;
+            html += `${isCorrect ? '✅' : '❌'} 渲染结果: ${isCorrect ? '正确' : '错误'}<br>`;
+            
+            if (isCorrect) {
+                html += `<br><div class="genre-display">🎯 完美！歌曲风格正确显示为: "${displayName}"</div>`;
+            } else {
+                html += `<br><div class="genre-display">⚠️ 问题！歌曲风格显示为: "${displayName}"</div>`;
+            }
+            
+            showResult('songResult', html, isCorrect ? 'success' : 'error');
+        }
+
+        function openMainPage() {
+            window.open('index.html', '_blank');
+            console.log('打开主页面');
+        }
+
+        function openAdminPage() {
+            window.open('admin.html', '_blank');
+            console.log('打开管理页面');
+        }
+    </script>
+</body>
+</html>

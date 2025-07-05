@@ -1901,6 +1901,7 @@ class AdminManager {
         // 同步到服务器
         try {
             await this.syncGenresToServer();
+            console.log('风格同步到服务器成功，通知其他页面更新');
             // 通知数据更新
             window.genreManager.notifyDataUpdate();
             this.showNotification('风格添加成功并已同步到服务器', 'success');
@@ -1925,6 +1926,7 @@ class AdminManager {
         // 同步到服务器
         try {
             await this.syncGenresToServer();
+            console.log('风格删除同步到服务器成功，通知其他页面更新');
             // 通知数据更新
             window.genreManager.notifyDataUpdate();
             this.showNotification('风格删除成功并已同步到服务器', 'success');

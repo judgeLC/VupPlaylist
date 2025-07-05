@@ -221,12 +221,12 @@
             const input = document.getElementById('newGenreInput');
             const resultDiv = document.getElementById('addResult');
             const name = input.value.trim();
-            
+
             if (!name) {
                 resultDiv.innerHTML = '<div class="status warning">请输入风格名称</div>';
                 return;
             }
-            
+
             if (!window.genreManager || !window.genreManager.isReady()) {
                 resultDiv.innerHTML = '<div class="status error">GenreManager 未准备就绪</div>';
                 return;
@@ -235,15 +235,16 @@
             try {
                 log(`尝试添加风格: ${name}`);
                 const newGenre = window.genreManager.addGenre(name);
-                
+
                 resultDiv.innerHTML = `<div class="status success">✅ 成功添加风格: ${newGenre.name} (${newGenre.id})</div>`;
                 input.value = '';
-                
+
                 log(`风格添加成功: ${newGenre.name} (${newGenre.id})`);
-                
+                log(`测试 getDisplayName: ${window.genreManager.getDisplayName(newGenre.id)}`);
+
                 // 刷新显示
                 await refreshGenres();
-                
+
             } catch (error) {
                 log(`添加风格失败: ${error.message}`);
                 resultDiv.innerHTML = `<div class="status error">❌ 添加失败: ${error.message}</div>`;

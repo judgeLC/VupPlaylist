@@ -6,7 +6,7 @@ class GenreManager {
     constructor() {
         this.genres = new Map(); // 使用Map提高查找性能
         this.initialized = false;
-        this.version = '3.1'; // 新版本号
+        this.version = '3.2'; // 新版本号
         this.cacheKey = 'vtuber_genres_v3';
         this.versionKey = 'vtuber_genre_version';
         
@@ -69,12 +69,13 @@ class GenreManager {
                 if (window.officialData && window.officialData.customGenres) {
                     const genres = window.officialData.customGenres;
                     if (Array.isArray(genres) && genres.length > 0) {
+                        console.log(`从 data.js 加载了 ${genres.length} 个风格:`, genres.map(g => `${g.name}(${g.id})`));
                         this.setGenres(genres);
                         resolve(true);
                         return;
                     }
                 }
-                
+
                 // 如果数据还没加载，等待一段时间后重试
                 if (this.retryCount < 50) { // 最多等待5秒
                     this.retryCount = (this.retryCount || 0) + 1;
@@ -83,9 +84,43 @@ class GenreManager {
                     resolve(false);
                 }
             };
-            
+
             checkData();
         });
+    }
+
+    /**
+     * 从服务器重新加载最新的 data.js
+     */
+    async reloadFromServer() {
+        try {
+            console.log('从服务器重新加载风格数据...');
+
+            // 添加时间戳避免缓存
+            const timestamp = Date.now();
+            const response = await fetch(`/data.js?t=${timestamp}`);
+            const text = await response.text();
+
+            // 解析 data.js 内容
+            const match = text.match(/window\.officialData\s*=\s*({[\s\S]*?});/);
+            if (match) {
+                const dataStr = match[1];
+                const data = eval('(' + dataStr + ')');
+
+                if (data.customGenres && Array.isArray(data.customGenres)) {
+                    console.log(`从服务器重新加载了 ${data.customGenres.length} 个风格`);
+                    this.setGenres(data.customGenres);
+                    this.saveToCache();
+                    return true;
+                }
+            }
+
+            console.warn('服务器数据格式不正确');
+            return false;
+        } catch (error) {
+            console.error('从服务器重新加载风格数据失败:', error);
+            return false;
+        }
     }
 
     /**
@@ -190,6 +225,9 @@ class GenreManager {
         }
 
         const genre = this.genres.get(genreId);
+        if (!genre) {
+            console.warn(`未找到风格 ID: ${genreId}，当前已加载的风格:`, Array.from(this.genres.keys()));
+        }
         return genre ? genre.name : genreId;
     }
 
@@ -228,12 +266,23 @@ class GenreManager {
      * 强制刷新数据
      */
     async refresh() {
+        console.log('强制刷新风格数据...');
         this.initialized = false;
         this.genres.clear();
+
         // 清除缓存，强制从服务器重新加载
         localStorage.removeItem(this.cacheKey);
         localStorage.removeItem(this.versionKey);
-        await this.initialize();
+
+        // 尝试从服务器重新加载最新数据
+        if (await this.reloadFromServer()) {
+            console.log('从服务器重新加载成功');
+            this.initialized = true;
+        } else {
+            // 如果服务器加载失败，回退到正常初始化流程
+            console.log('服务器加载失败，使用正常初始化流程');
+            await this.initialize();
+        }
     }
 
     /**
