@@ -1,31 +1,40 @@
 /**
  * 虚拟主播歌单系统 - 服务器端认证模块
+ * 版本: v2.0 (前后端分离架构)
  *
- * 主要功能：
- * - 服务器端密码验证
- * - JWT Token 管理
- * - 会话管理
- * - 首次设置流程
+ * 核心功能：
+ * - 服务器端密码验证与存储
+ * - JWT Token 生成与管理
+ * - 用户会话管理
+ * - 首次密码设置流程
+ * - 登录状态检查与维护
  *
  * 安全特性：
- * - 服务器端密码存储
- * - Token 过期验证
- * - 防爆破保护
- * - 统一认证管理
+ * - 服务器端密码哈希存储 (PBKDF2)
+ * - Token 自动过期验证 (24小时)
+ * - 防暴力破解保护 (5次失败锁定15分钟)
+ * - IP地址跟踪与限制
+ * - 统一认证状态管理
  */
 
+/**
+ * 认证管理器类
+ * 负责用户认证、会话管理和安全控制
+ */
 class AuthManager {
     /**
      * 初始化认证管理器
+     * 设置API基础URL、加载本地存储的认证信息并启动系统
      * @constructor
      */
     constructor() {
-        this.apiBase = window.location.origin;
-        this.token = localStorage.getItem('vtuber_admin_token');
-        this.sessionId = localStorage.getItem('vtuber_admin_session_id');
-        this.isSettingPassword = false; // 防止密码设置过程中的页面跳转
-        this.isCheckingAuth = false; // 防止重复认证检查导致循环
+        this.apiBase = window.location.origin;                                    // API基础URL
+        this.token = localStorage.getItem('vtuber_admin_token');                  // 用户认证令牌
+        this.sessionId = localStorage.getItem('vtuber_admin_session_id');         // 会话ID
+        this.isSettingPassword = false;                                           // 密码设置状态标志
+        this.isCheckingAuth = false;                                              // 认证检查状态标志
 
+        // 启动认证系统初始化
         this.init();
     }
 

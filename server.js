@@ -1,3 +1,25 @@
+/**
+ * 虚拟主播歌单系统 - 后端服务器
+ * 版本: v2.0 (前后端分离架构)
+ *
+ * 核心功能：
+ * - RESTful API 服务
+ * - 歌曲数据管理 (CRUD)
+ * - 个人资料管理
+ * - 系统设置管理
+ * - 风格分类管理
+ * - 服务器端认证系统
+ * - 文件上传处理
+ * - 静态文件服务
+ *
+ * 技术栈：
+ * - Express.js 框架
+ * - JSON 文件数据存储
+ * - Multer 文件上传
+ * - PBKDF2 密码哈希
+ * - JWT Token 认证
+ */
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
@@ -9,7 +31,7 @@ const crypto = require('crypto');
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// 数据文件路径
+// 数据文件路径配置
 const DATA_DIR = path.join(__dirname, 'data');
 const SONGS_FILE = path.join(DATA_DIR, 'songs.json');
 const PROFILE_FILE = path.join(DATA_DIR, 'profile.json');
@@ -22,9 +44,18 @@ if (!fsSync.existsSync(DATA_DIR)) {
     fsSync.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// 数据管理工具函数
+/**
+ * 数据管理工具类
+ * 提供JSON文件的读写操作和数据管理功能
+ */
 class DataManager {
-    // 读取JSON文件
+    /**
+     * 读取JSON文件
+     * 如果文件不存在则创建默认文件
+     * @param {string} filePath - 文件路径
+     * @param {Object} defaultData - 默认数据
+     * @returns {Promise<Object>} 文件内容对象
+     */
     static async readJsonFile(filePath, defaultData = {}) {
         try {
             if (!fsSync.existsSync(filePath)) {
@@ -39,7 +70,13 @@ class DataManager {
         }
     }
 
-    // 写入JSON文件
+    /**
+     * 写入JSON文件
+     * 将数据对象写入指定的JSON文件
+     * @param {string} filePath - 文件路径
+     * @param {Object} data - 要写入的数据
+     * @returns {Promise<boolean>} 是否写入成功
+     */
     static async writeJsonFile(filePath, data) {
         try {
             await fs.writeFile(filePath, JSON.stringify(data, null, 2));

@@ -1,52 +1,66 @@
 /**
- * 虚拟主播歌单系统 - 前端脚本
- * 主要功能：
- * - 歌单展示和管理
- * - 主题切换
- * - 个人资料展示
+ * 虚拟主播歌单系统 - 前端主要逻辑
+ * 版本: v2.0 (前后端分离架构)
+ *
+ * 核心功能：
+ * - 歌曲展示与智能筛选
+ * - 点歌指令自动生成
+ * - 主题切换 (明暗模式)
+ * - 个人资料动态展示
+ * - 实时API数据同步
+ * - 响应式设计适配
  * - 备案信息展示
  */
 
+/**
+ * 虚拟主播歌单应用主类
+ * 负责整个前端应用的状态管理和用户交互
+ */
 class VTuberPlaylist {
     /**
      * 初始化歌单系统
+     * 设置应用状态、配置参数并启动异步初始化流程
      * @constructor
      */
     constructor() {
-        // 初始化状态
-        this.profile = {};
-        this.songs = [];
-        this.genres = [];
-        this.notes = [];
-        this.searchTerm = '';
+        // 应用核心数据状态
+        this.profile = {};            // 主播个人资料
+        this.songs = [];              // 歌曲数据列表
+        this.genres = [];             // 风格分类数据
+        this.notes = [];              // 备注分类数据
+        this.searchTerm = '';         // 当前搜索关键词
+
+        // 点歌指令配置
         this.settings = {
-            commandPrefix: '/点歌',
-            commandSuffix: ''
+            commandPrefix: '/点歌',   // 指令前缀
+            commandSuffix: ''        // 指令后缀
         };
 
-        // 添加设备检测和动态类名
+        // 检测设备类型并设置相应的CSS类
         this.detectDeviceAndSetClasses();
 
-        // 异步初始化
+        // 启动异步初始化流程
         this.initAsync();
     }
 
     /**
      * 异步初始化方法
+     * 按顺序执行数据加载、组件初始化和页面渲染
+     * @async
      */
     async initAsync() {
         try {
             console.log('开始异步初始化...');
 
-            // 1. 首先加载基础数据
+            // 步骤1: 加载基础数据 (歌曲、个人资料等)
             this.loadData();
             console.log('基础数据加载完成');
 
-            // 2. 等待风格管理器初始化完成
+            // 步骤2: 等待风格管理器初始化完成
             await window.simpleGenreManager.initialize();
             console.log('SimpleGenreManager 初始化完成，开始渲染页面');
 
-            // 3. 绑定事件和渲染页面
+            // 步骤3: 绑定用户交互事件
             this.bindEvents();
             this.updateFilterOptions();
             this.updateGenreNavigation(); // 确保风格导航正确更新
@@ -71,22 +85,31 @@ class VTuberPlaylist {
 
     /**
      * 加载基础数据
+     * 从全局数据对象中加载个人资料和歌曲数据
      */
     loadData() {
-        // 从全局数据加载配置
+        // 从全局数据对象加载主播个人资料
         this.profile = window.officialData.profile || {};
+
+        // 加载歌曲数据并按首字母排序
         this.songs = this.sortSongsByFirstLetter(window.officialData.songs || []);
-        console.log(`加载了 ${this.songs.length} 首歌曲`);
+        console.log(`成功加载 ${this.songs.length} 首歌曲`);
     }
 
     /**
-     * 系统初始化（保留兼容性）
+     * 系统初始化方法 (兼容性接口)
+     * 为了保持向后兼容性而保留的方法
+     * @async
+     * @returns {Promise} 返回异步初始化的Promise
      */
     async init() {
         return this.initAsync();
     }
 
-    // 设备检测方法
+    /**
+     * 设备检测和CSS类设置
+     * 根据屏幕尺寸和方向为body元素添加相应的CSS类
+     */
     detectDeviceAndSetClasses() {
         const width = window.innerWidth;
         const height = window.innerHeight;
@@ -127,7 +150,10 @@ class VTuberPlaylist {
 
 
 
-    // 重新加载数据
+    /**
+     * 重新加载数据
+     * 从全局数据对象重新加载个人资料和歌曲数据，并更新筛选选项
+     */
     reloadData() {
         if (window.officialData) {
             this.profile = window.officialData.profile || {};
@@ -136,7 +162,12 @@ class VTuberPlaylist {
         }
     }
 
-    // 按首字母排序歌曲
+    /**
+     * 按首字母排序歌曲
+     * 支持中文、英文、数字的首字母排序，中文使用拼音首字母
+     * @param {Array} songs - 歌曲数组
+     * @returns {Array} 排序后的歌曲数组
+     */
     sortSongsByFirstLetter(songs) {
         return songs.sort((a, b) => {
             // 获取首字母（支持中文、英文、数字）
@@ -198,25 +229,24 @@ class VTuberPlaylist {
         });
     }
 
-    // loadData 函数不再需要，因为数据直接在 constructor 中加载
-    // saveData 函数也不再需要，因为前端页面是只读的
-
+    /**
+     * 绑定用户交互事件
+     * 为页面元素添加事件监听器，处理用户操作和数据更新
+     */
     bindEvents() {
-        // 主题切换
+        // 主题切换按钮事件
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) {
             themeToggle.addEventListener('click', () => this.toggleTheme());
         }
 
-        // 直播间按钮
+        // 直播间跳转按钮事件
         const liveBtn = document.getElementById('liveBtn');
         if (liveBtn) {
             liveBtn.addEventListener('click', () => this.openLiveRoom());
         }
 
-
-
-        // 风格选择下拉框
+        // 风格筛选下拉框事件
         const genreSelect = document.getElementById('genreSelect');
         if (genreSelect) {
             genreSelect.addEventListener('change', (e) => {
@@ -225,7 +255,7 @@ class VTuberPlaylist {
             });
         }
 
-        // 备注选择下拉框
+        // 备注筛选下拉框事件
         const noteSelect = document.getElementById('noteSelect');
         if (noteSelect) {
             noteSelect.addEventListener('change', (e) => {
@@ -234,7 +264,7 @@ class VTuberPlaylist {
             });
         }
 
-        // 搜索功能
+        // 搜索输入框事件
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
@@ -412,7 +442,11 @@ class VTuberPlaylist {
 
 
 
-    // 主题切换
+    /**
+     * 主题切换功能
+     * 在明暗主题之间切换，并同步到服务器和本地存储
+     * @async
+     */
     async toggleTheme() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -463,7 +497,11 @@ class VTuberPlaylist {
         }, 400);
     }
 
-    // 从API加载主题
+    /**
+     * 从API加载主题设置
+     * 优先从服务器获取主题配置，失败时使用本地备用方案
+     * @async
+     */
     async loadThemeFromAPI() {
         try {
             const response = await fetch('/api/settings');
@@ -547,26 +585,35 @@ class VTuberPlaylist {
         }
     }
 
-    // 应用筛选
+    /**
+     * 应用筛选条件
+     * 根据当前的风格、备注和搜索条件筛选歌曲，并重新渲染歌单
+     */
     applyFilters() {
         this.filteredSongs = this.songs.filter(song => {
-            const genre = this.genres.find(g => g.id === this.currentGenre);
-            const note = this.notes.find(n => n.id === this.currentNote);
-
+            // 风格筛选匹配
             const matchesGenre = !this.currentGenre || this.currentGenre === 'all' || song.genre === this.currentGenre;
+
+            // 备注筛选匹配
             const matchesNote = !this.currentNote || this.currentNote === 'all' || song.note === this.currentNote;
-            const matchesSearch = !this.searchTerm || 
+
+            // 搜索关键词匹配 (支持歌名、歌手、备注搜索)
+            const matchesSearch = !this.searchTerm ||
                 song.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                 song.artist.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                 (song.note && song.note.toLowerCase().includes(this.searchTerm.toLowerCase()));
-            
+
             return matchesGenre && matchesNote && matchesSearch;
         });
-        
+
+        // 重新渲染筛选后的歌单
         this.renderPlaylist();
     }
 
-    // 更新筛选选项
+    /**
+     * 更新筛选选项
+     * 根据当前歌曲数据动态生成风格和备注的筛选选项
+     */
     updateFilterOptions() {
         // 更新风格选项
         const genreSelect = document.getElementById('genreSelect');
@@ -593,7 +640,10 @@ class VTuberPlaylist {
         }
     }
 
-    // 渲染歌单
+    /**
+     * 渲染歌单
+     * 将筛选后的歌曲数据渲染到页面上，包括歌曲信息和点歌指令
+     */
     renderPlaylist() {
         const playlistContent = document.getElementById('playlistContent');
         const songCount = document.getElementById('songCount');
@@ -658,7 +708,11 @@ class VTuberPlaylist {
 
 
 
-    // 获取所有风格（内置+自定义）
+    /**
+     * 获取所有风格分类
+     * 从SimpleGenreManager获取内置和自定义风格的完整列表
+     * @returns {Array} 风格对象数组，包含id、name和displayName属性
+     */
     getAllGenres() {
         return window.simpleGenreManager.getAllGenres().map(g => ({
             id: g.id,
@@ -667,7 +721,10 @@ class VTuberPlaylist {
         }));
     }
 
-    // 更新风格导航
+    /**
+     * 更新风格导航选择框
+     * 根据当前歌曲数据动态生成风格筛选选项，包含歌曲数量统计
+     */
     updateGenreNavigation() {
         const genreSelect = document.getElementById('genreSelect');
         if (!genreSelect) return;
@@ -722,13 +779,24 @@ class VTuberPlaylist {
         }
     }
 
-    // 检测是否为移动设备
+    /**
+     * 检测是否为移动设备
+     * 通过屏幕宽度和用户代理字符串判断设备类型
+     * @returns {boolean} 是否为移动设备
+     */
     isMobile() {
-        return window.innerWidth <= 768 || 
+        return window.innerWidth <= 768 ||
                /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // 处理移动端歌名点击
+    /**
+     * 处理移动端歌名点击事件
+     * 在移动设备上点击歌名时复制点歌指令
+     * @param {Element} titleElement - 歌名元素
+     * @param {string} title - 歌曲标题
+     * @param {string} artist - 歌手名称
+     * @param {string} songId - 歌曲ID
+     */
     handleMobileTitleClick(titleElement, title, artist, songId) {
         // 防止重复点击
         if (titleElement.classList.contains('copying')) {
@@ -780,19 +848,32 @@ class VTuberPlaylist {
         }, 3000);
     }
 
-    // 获取风格显示名称
+    /**
+     * 获取风格显示名称
+     * 通过SimpleGenreManager获取风格的友好显示名称
+     * @param {string} genre - 风格ID
+     * @returns {string} 风格显示名称
+     */
     getGenreDisplayName(genre) {
         return window.simpleGenreManager.getDisplayName(genre);
     }
 
-    // HTML转义
+    /**
+     * HTML转义函数
+     * 防止XSS攻击，将特殊字符转换为HTML实体
+     * @param {string} text - 需要转义的文本
+     * @returns {string} 转义后的HTML安全文本
+     */
     escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
 
-    // 更新主播资料
+    /**
+     * 更新主播资料显示
+     * 根据个人资料数据更新页面上的所有相关元素
+     */
     updateProfile() {
         const profile = this.profile;
         
@@ -879,11 +960,14 @@ class VTuberPlaylist {
         }
     }
 
-    // 打开直播间
+    /**
+     * 打开直播间
+     * 在新标签页中打开主播的直播间链接
+     */
     openLiveRoom() {
         const profile = this.profile;
         const liveRoomUrl = profile.liveRoomUrl;
-        
+
         if (liveRoomUrl && liveRoomUrl.trim() !== '') {
             // 在新标签页打开直播间链接
             window.open(liveRoomUrl, '_blank');
@@ -893,7 +977,11 @@ class VTuberPlaylist {
         }
     }
 
-    // 更新直播间按钮状态
+    /**
+     * 更新直播间按钮状态
+     * 根据是否设置了直播间链接来更新按钮的显示状态
+     * @param {string} liveRoomUrl - 直播间链接
+     */
     updateLiveRoomButton(liveRoomUrl) {
         const liveBtn = document.getElementById('liveBtn');
         if (liveBtn) {
@@ -911,13 +999,23 @@ class VTuberPlaylist {
         }
     }
 
-    // 处理搜索
+    /**
+     * 处理搜索功能
+     * 设置搜索关键词并重新应用筛选条件
+     * @param {string} term - 搜索关键词
+     */
     handleSearch(term) {
         this.searchTerm = term;
         this.applyFilters();
     }
 
-    // 格式化点歌指令
+    /**
+     * 格式化点歌指令
+     * 根据设置的前缀和后缀格式化点歌指令文本
+     * @param {string} title - 歌曲标题
+     * @param {string} artist - 歌手名称
+     * @returns {string} 格式化后的点歌指令
+     */
     formatCommand(title, artist) {
         const prefix = this.settings.commandPrefix || '/点歌';
         const suffix = this.settings.commandSuffix || '';
@@ -930,15 +1028,23 @@ class VTuberPlaylist {
         }
     }
 
-    // 复制点歌指令
+    /**
+     * 复制点歌指令到剪贴板
+     * 使用现代Clipboard API或降级方案复制指令文本
+     * @param {string} title - 歌曲标题
+     * @param {string} artist - 歌手名称
+     * @param {string} songId - 歌曲ID (未使用，保留兼容性)
+     */
     copyCommand(title, artist, songId) {
         const command = this.formatCommand(title, artist);
-        
+
+        // 优先使用现代Clipboard API
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(command).then(() => {
                 this.showCopyNotification();
             });
         } else {
+            // 降级使用传统复制方法
             const success = this.fallbackCopyCommand(command);
             if (success) {
                 this.showCopyNotification();
@@ -946,7 +1052,10 @@ class VTuberPlaylist {
         }
     }
 
-    // 显示复制成功提示
+    /**
+     * 显示复制成功提示
+     * 创建并显示一个临时的成功提示通知
+     */
     showCopyNotification() {
         // 移除现有的通知（如果有）
         const existingNotification = document.querySelector('.copy-notification');
@@ -977,7 +1086,12 @@ class VTuberPlaylist {
         }, 3000);
     }
 
-    // 降级复制方案
+    /**
+     * 降级复制方案
+     * 当现代Clipboard API不可用时使用的传统复制方法
+     * @param {string} command - 要复制的指令文本
+     * @returns {boolean} 是否复制成功
+     */
     fallbackCopyCommand(command) {
         const textarea = document.createElement('textarea');
         textarea.value = command;
@@ -997,7 +1111,10 @@ class VTuberPlaylist {
         }
     }
 
-    // 加载设置
+    /**
+     * 加载点歌指令设置
+     * 从localStorage加载用户自定义的点歌指令格式设置
+     */
     loadSettings() {
         try {
             const savedSettings = localStorage.getItem('vtuber_command_settings');
@@ -1009,10 +1126,10 @@ class VTuberPlaylist {
                 };
                 console.log('已加载点歌指令设置:', this.settings);
             } else {
-                // 默认设置
+                // 使用默认设置
                 this.settings = {
                     commandPrefix: '/点歌',
-                    commandSuffix: '' // 默认后缀为空
+                    commandSuffix: ''
                 };
                 console.log('使用默认点歌指令设置:', this.settings);
             }
@@ -1026,7 +1143,10 @@ class VTuberPlaylist {
         }
     }
 
-    // 加载网站图标
+    /**
+     * 加载网站图标
+     * 从localStorage加载用户自定义的网站图标
+     */
     loadFavicon() {
         const savedFavicon = localStorage.getItem('vtuber_favicon');
         if (savedFavicon) {
@@ -1034,7 +1154,11 @@ class VTuberPlaylist {
         }
     }
 
-    // 更新网站图标
+    /**
+     * 更新网站图标
+     * 动态更新页面的favicon图标
+     * @param {string} url - 图标URL，如果为空则使用默认图标
+     */
     updateFavicon(url) {
         let link = document.querySelector("link[rel*='icon']");
         if (!link) {
@@ -1045,13 +1169,20 @@ class VTuberPlaylist {
         link.href = url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSIxNiIgZmlsbD0iIzYzNjZmMSIvPjwvc3ZnPg==';
     }
 
-    // 加载备案信息
+    /**
+     * 加载备案信息
+     * 从localStorage加载备案信息设置并更新页面显示
+     */
     loadBeianInfo() {
         const settings = this.getBeianSettings();
         this.updateBeianInfo(settings);
     }
 
-    // 获取备案信息设置
+    /**
+     * 获取备案信息设置
+     * 从localStorage获取备案信息配置，如果不存在则返回默认配置
+     * @returns {Object} 备案信息配置对象
+     */
     getBeianSettings() {
         const saved = localStorage.getItem('vtuber_beian_settings');
         return saved ? JSON.parse(saved) : {
@@ -1062,7 +1193,11 @@ class VTuberPlaylist {
         };
     }
 
-    // 更新备案信息显示
+    /**
+     * 更新备案信息显示
+     * 根据配置动态生成备案信息HTML并更新到页面
+     * @param {Object} settings - 备案信息配置
+     */
     updateBeianInfo(settings) {
         const container = document.getElementById('beianInfo');
         if (!container) return;
@@ -1093,7 +1228,12 @@ class VTuberPlaylist {
     }
 }
 
-// 显示通用通知
+/**
+ * 显示通用通知
+ * 在页面右上角显示一个临时的通知消息
+ * @param {string} message - 通知消息内容
+ * @param {string} type - 通知类型 ('info', 'success', 'warning', 'error')
+ */
 function showGeneralNotification(message, type = 'info') {
     // 创建通知元素
     const notification = document.createElement('div');
@@ -1113,16 +1253,16 @@ function showGeneralNotification(message, type = 'info') {
         transition: transform 0.3s ease;
         max-width: 300px;
     `;
-    
+
     notification.textContent = message;
     document.body.appendChild(notification);
-    
+
     // 显示动画
     setTimeout(() => {
         notification.style.transform = 'translateX(0)';
     }, 100);
-    
-    // 自动隐藏
+
+    // 自动隐藏 (3秒后)
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => {
@@ -1131,7 +1271,11 @@ function showGeneralNotification(message, type = 'info') {
     }, 3000);
 }
 
-// 确保数据加载完成后再初始化
+/**
+ * 应用初始化函数
+ * 确保数据加载完成后再初始化VTuberPlaylist应用
+ * @async
+ */
 async function initializeApp() {
     console.log('初始化应用，检查数据状态...');
     console.log('window.officialData 存在:', !!window.officialData);
@@ -1164,17 +1308,24 @@ async function initializeApp() {
     }
 }
 
-// 页面加载完成后初始化
+/**
+ * 页面DOM加载完成后初始化应用
+ */
 document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
 });
 
-// 页面加载后清除刷新标志位
+/**
+ * 页面完全加载后清理会话数据
+ */
 window.addEventListener('load', () => {
     sessionStorage.removeItem('isReloading');
 });
 
-// 不再需要 storage 监听和全局函数导出
-// window.addEventListener('storage', ...);
-// window.VTuberPlaylist = VTuberPlaylist;
-// ... 
+/**
+ * 注释说明：
+ * 以下功能已在v2.0架构中移除或重构：
+ * - localStorage监听机制 (已改为服务器端同步)
+ * - 全局函数导出 (已改为模块化设计)
+ * - 跨标签页通信 (已改为BroadcastChannel API)
+ */

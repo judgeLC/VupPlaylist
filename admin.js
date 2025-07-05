@@ -1,39 +1,54 @@
 /**
  * 虚拟主播歌单系统 - 后台管理脚本
- * 主要功能：
- * - 歌单管理（CRUD操作）
+ * 版本: v2.0 (前后端分离架构)
+ *
+ * 核心功能：
+ * - 歌单管理 (增删改查操作)
  * - 个人资料管理
- * - 系统设置
- * - 安全认证
+ * - 系统设置配置
+ * - 安全认证与权限控制
  * - 数据备份与恢复
+ * - 风格管理系统
+ * - 实时数据同步
  */
 
+/**
+ * 后台管理系统主类
+ * 负责整个后台管理界面的功能实现和状态管理
+ */
 class AdminManager {
     /**
-     * 初始化管理系统
+     * 初始化后台管理系统
+     * 设置应用状态、验证用户权限并启动系统
      * @constructor
      */
     constructor() {
-        // 初始化状态
-        this.songs = [];
-        this.filteredSongs = [];
-        this.currentEditingSong = null;
-        this.currentSection = 'songs';
-        this.profileLoaded = false;
-        this.authCheckInterval = null;
-        this.searchTerm = '';
-        this.genreFilter = 'all';
-        this.remarkFilter = 'all';
-        
-        // 验证登录状态
+        // 应用核心状态
+        this.songs = [];                    // 歌曲数据列表
+        this.filteredSongs = [];            // 筛选后的歌曲列表
+        this.currentEditingSong = null;     // 当前编辑的歌曲
+        this.currentSection = 'songs';      // 当前显示的管理页面
+        this.profileLoaded = false;         // 个人资料加载状态
+        this.authCheckInterval = null;      // 认证检查定时器
+        this.searchTerm = '';               // 搜索关键词
+        this.genreFilter = 'all';           // 风格筛选条件
+        this.remarkFilter = 'all';          // 备注筛选条件
+
+        // 验证用户登录状态
         if (!this.checkAuth()) {
             return;
         }
-        
+
+        // 启动系统初始化
         this.init();
     }
 
-    // 安全地获取DOM元素
+    /**
+     * 安全地获取DOM元素
+     * 获取指定ID的DOM元素，如果不存在则输出警告
+     * @param {string} id - 元素ID
+     * @returns {Element|null} DOM元素或null
+     */
     safeGetElement(id) {
         const element = document.getElementById(id);
         if (!element) {
@@ -42,7 +57,13 @@ class AdminManager {
         return element;
     }
 
-    // 安全地设置元素内容
+    /**
+     * 安全地设置元素内容
+     * 设置指定ID元素的文本内容，如果元素不存在则忽略
+     * @param {string} id - 元素ID
+     * @param {string} content - 要设置的内容
+     * @returns {boolean} 是否成功设置
+     */
     safeSetContent(id, content) {
         const element = this.safeGetElement(id);
         if (element) {
@@ -52,13 +73,24 @@ class AdminManager {
         return false;
     }
 
-    // 安全地获取元素值
+    /**
+     * 安全地获取元素值
+     * 防止因元素不存在而导致的错误
+     * @param {string} id - 元素ID
+     * @returns {string} 元素值，元素不存在时返回空字符串
+     */
     safeGetValue(id) {
         const element = this.safeGetElement(id);
         return element ? element.value : '';
     }
 
-    // 安全地设置元素值
+    /**
+     * 安全地设置元素值
+     * 防止因元素不存在而导致的错误
+     * @param {string} id - 元素ID
+     * @param {string} value - 要设置的值
+     * @returns {boolean} 是否设置成功
+     */
     safeSetValue(id, value) {
         const element = this.safeGetElement(id);
         if (element) {
@@ -157,7 +189,11 @@ class AdminManager {
         return true;
     }
 
-    // 获取会话信息 - 兼容新的认证系统
+    /**
+     * 获取会话信息
+     * 兼容新的服务器端认证系统，获取当前用户的认证令牌和会话ID
+     * @returns {Object|null} 会话对象包含token和sessionId，未登录时返回null
+     */
     getSession() {
         const token = localStorage.getItem('vtuber_admin_token');
         const sessionId = localStorage.getItem('vtuber_admin_session_id');
@@ -171,13 +207,19 @@ class AdminManager {
         return null;
     }
 
-    // 更新会话活动时间 - 新认证系统中不需要客户端管理
+    /**
+     * 更新会话活动时间
+     * 在新的服务器端认证系统中，会话活动由服务器自动管理
+     */
     updateSessionActivity() {
         // 服务器端认证系统自动管理会话活动
         console.log('会话活动已更新');
     }
 
-    // 开始定期检查登录状态
+    /**
+     * 开始定期检查登录状态
+     * 设置定时器和事件监听器来维护用户会话
+     */
     startAuthCheck() {
         // 每2分钟检查一次登录状态
         this.authCheckInterval = setInterval(() => {
