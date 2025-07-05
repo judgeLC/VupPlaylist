@@ -1772,8 +1772,11 @@ class AdminManager {
 
         // 如果localStorage为空，初始化默认风格数据
         if (customGenres.length === 0) {
-            customGenres = this.getDefaultGenres();
+            // 优先从 window.officialData 获取，然后是默认数据
+            const initialGenres = (window.officialData && window.officialData.customGenres) ? window.officialData.customGenres : this.getDefaultGenres();
+            customGenres = initialGenres;
             localStorage.setItem('vtuber_custom_genres', JSON.stringify(customGenres));
+            console.log('admin getCustomGenres: 初始化风格数据', customGenres);
         }
 
         return customGenres;
@@ -1789,7 +1792,9 @@ class AdminManager {
             { id: 'custom_1751506259744', name: '京剧', builtIn: false },
             { id: 'custom_1751506255759', name: '豫剧', builtIn: false },
             { id: 'custom_1751506245176', name: '儿歌', builtIn: false },
-            { id: 'custom_1751506243976', name: '流行', builtIn: false }
+            { id: 'custom_1751506243976', name: '流行', builtIn: false },
+            { id: 'custom_1751656714021', name: '黄梅戏', builtIn: false },
+            { id: 'custom_1751656716807', name: '现代戏曲', builtIn: false }
         ];
     }
 
@@ -2736,8 +2741,11 @@ class AdminManager {
 
         // 如果localStorage为空，初始化默认风格数据
         if (customGenres.length === 0) {
-            customGenres = this.getDefaultGenres();
+            // 优先从 window.officialData 获取，然后是默认数据
+            const initialGenres = (window.officialData && window.officialData.customGenres) ? window.officialData.customGenres : this.getDefaultGenres();
+            customGenres = initialGenres;
             localStorage.setItem('vtuber_custom_genres', JSON.stringify(customGenres));
+            console.log('admin getCustomGenres: 初始化风格数据', customGenres);
         }
 
         return customGenres;
@@ -2753,7 +2761,9 @@ class AdminManager {
             { id: 'custom_1751506259744', name: '京剧', builtIn: false },
             { id: 'custom_1751506255759', name: '豫剧', builtIn: false },
             { id: 'custom_1751506245176', name: '儿歌', builtIn: false },
-            { id: 'custom_1751506243976', name: '流行', builtIn: false }
+            { id: 'custom_1751506243976', name: '流行', builtIn: false },
+            { id: 'custom_1751656714021', name: '黄梅戏', builtIn: false },
+            { id: 'custom_1751656716807', name: '现代戏曲', builtIn: false }
         ];
     }
 
@@ -2952,6 +2962,21 @@ function saveSettings() {
     }
 }
 
+// 确保数据加载完成后再初始化管理界面
+function initializeAdmin() {
+    console.log('初始化管理界面，检查数据状态...');
+    console.log('window.officialData 存在:', !!window.officialData);
+
+    if (window.officialData) {
+        console.log('数据已加载，开始初始化管理界面');
+        window.adminManager = new AdminManager();
+    } else {
+        console.log('数据未加载，等待数据加载完成...');
+        // 如果数据还没加载，等待一段时间后重试
+        setTimeout(initializeAdmin, 100);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    window.adminManager = new AdminManager();
+    initializeAdmin();
 });

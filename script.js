@@ -95,7 +95,11 @@ class VTuberPlaylist {
     initCustomGenres() {
         // 检查数据版本，如果版本不匹配则清除旧数据
         const dataVersion = localStorage.getItem('vtuber_data_version');
-        const currentVersion = '2.0'; // 增加版本号以强制更新
+        const currentVersion = '2.1'; // 增加版本号以强制更新
+
+        console.log('initCustomGenres: 当前版本', currentVersion, '本地版本', dataVersion);
+        console.log('initCustomGenres: window.officialData存在?', !!window.officialData);
+        console.log('initCustomGenres: window.officialData.customGenres存在?', !!(window.officialData && window.officialData.customGenres));
 
         if (dataVersion !== currentVersion) {
             console.log('数据版本更新，清除旧的风格数据');
@@ -111,6 +115,7 @@ class VTuberPlaylist {
         } else {
             // 检查是否需要更新风格数据（如果服务器数据更新了）
             const saved = JSON.parse(savedGenres);
+            console.log('已有本地风格数据:', saved);
             if (window.officialData && window.officialData.customGenres && window.officialData.customGenres.length > 0) {
                 // 合并服务器数据和本地数据，优先使用服务器数据
                 const serverGenres = window.officialData.customGenres;
@@ -616,8 +621,11 @@ class VTuberPlaylist {
 
         // 如果localStorage为空，初始化默认风格数据
         if (customGenres.length === 0) {
-            customGenres = this.getDefaultGenres();
+            // 优先从 window.officialData 获取，然后是默认数据
+            const initialGenres = (window.officialData && window.officialData.customGenres) ? window.officialData.customGenres : this.getDefaultGenres();
+            customGenres = initialGenres;
             localStorage.setItem('vtuber_custom_genres', JSON.stringify(customGenres));
+            console.log('getCustomGenres: 初始化风格数据', customGenres);
         }
 
         return customGenres;
@@ -633,7 +641,9 @@ class VTuberPlaylist {
             { id: 'custom_1751506259744', name: '京剧', builtIn: false },
             { id: 'custom_1751506255759', name: '豫剧', builtIn: false },
             { id: 'custom_1751506245176', name: '儿歌', builtIn: false },
-            { id: 'custom_1751506243976', name: '流行', builtIn: false }
+            { id: 'custom_1751506243976', name: '流行', builtIn: false },
+            { id: 'custom_1751656714021', name: '黄梅戏', builtIn: false },
+            { id: 'custom_1751656716807', name: '现代戏曲', builtIn: false }
         ];
     }
 
@@ -1117,23 +1127,38 @@ function showGeneralNotification(message, type = 'info') {
     }, 3000);
 }
 
+// 确保数据加载完成后再初始化
+function initializeApp() {
+    console.log('初始化应用，检查数据状态...');
+    console.log('window.officialData 存在:', !!window.officialData);
+
+    if (window.officialData) {
+        console.log('数据已加载，开始初始化应用');
+        // 初始化歌单应用
+        window.vtuberPlaylist = new VTuberPlaylist();
+
+        // 添加页面加载动画
+        const cards = document.querySelectorAll('.glass-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 150);
+        });
+    } else {
+        console.log('数据未加载，等待数据加载完成...');
+        // 如果数据还没加载，等待一段时间后重试
+        setTimeout(initializeApp, 100);
+    }
+}
+
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
-    // 初始化歌单应用
-    window.vtuberPlaylist = new VTuberPlaylist();
-    
-    // 添加页面加载动画
-    const cards = document.querySelectorAll('.glass-card');
-    cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            card.style.transition = 'all 0.5s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 150);
-    });
+    initializeApp();
 });
 
 // 页面加载后清除刷新标志位

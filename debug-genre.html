@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>风格调试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .genre-test { margin: 10px 0; padding: 10px; background: #f5f5f5; }
+        .success { color: green; }
+        .error { color: red; }
+        pre { background: #f0f0f0; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>风格显示调试</h1>
+    
+    <div class="debug-section">
+        <h2>1. 数据加载状态</h2>
+        <div id="dataStatus"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>2. 风格映射测试</h2>
+        <div id="genreTest"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>3. 本地存储状态</h2>
+        <div id="storageStatus"></div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // 调试脚本
+        function debugGenreSystem() {
+            const dataStatusDiv = document.getElementById('dataStatus');
+            const genreTestDiv = document.getElementById('genreTest');
+            const storageStatusDiv = document.getElementById('storageStatus');
+
+            // 1. 检查数据加载状态
+            let dataStatus = '';
+            dataStatus += `<p><strong>window.officialData 存在:</strong> ${!!window.officialData ? '✓' : '✗'}</p>`;
+            
+            if (window.officialData) {
+                dataStatus += `<p><strong>songs 数量:</strong> ${window.officialData.songs ? window.officialData.songs.length : 0}</p>`;
+                dataStatus += `<p><strong>customGenres 存在:</strong> ${!!window.officialData.customGenres ? '✓' : '✗'}</p>`;
+                
+                if (window.officialData.customGenres) {
+                    dataStatus += `<p><strong>customGenres 数量:</strong> ${window.officialData.customGenres.length}</p>`;
+                    dataStatus += '<p><strong>customGenres 内容:</strong></p>';
+                    dataStatus += '<pre>' + JSON.stringify(window.officialData.customGenres, null, 2) + '</pre>';
+                }
+            }
+            dataStatusDiv.innerHTML = dataStatus;
+
+            // 2. 测试风格映射
+            const testGenreIds = [
+                'custom_1751506243976', // 应该是 "流行"
+                'custom_1751506269360', // 应该是 "古风"
+                'custom_1751506245176', // 应该是 "儿歌"
+                'custom_1751656714021', // 应该是 "黄梅戏"
+                'custom_1751656716807'  // 应该是 "现代戏曲"
+            ];
+
+            let genreTestHtml = '';
+            testGenreIds.forEach(genreId => {
+                let displayName = genreId; // 默认显示原ID
+                
+                // 模拟 getGenreDisplayName 逻辑
+                if (window.officialData && window.officialData.customGenres) {
+                    const matchedGenre = window.officialData.customGenres.find(g => g.id === genreId);
+                    if (matchedGenre) {
+                        displayName = matchedGenre.name;
+                    }
+                }
+                
+                const isCorrect = displayName !== genreId;
+                genreTestHtml += `<div class="genre-test ${isCorrect ? 'success' : 'error'}">
+                    <strong>ID:</strong> ${genreId}<br>
+                    <strong>显示名:</strong> ${displayName}<br>
+                    <strong>状态:</strong> ${isCorrect ? '✓ 正确' : '✗ 错误 - 显示原ID'}
+                </div>`;
+            });
+            genreTestDiv.innerHTML = genreTestHtml;
+
+            // 3. 检查本地存储
+            const customGenres = localStorage.getItem('vtuber_custom_genres');
+            const dataVersion = localStorage.getItem('vtuber_data_version');
+            
+            let storageHtml = '';
+            storageHtml += `<p><strong>数据版本:</strong> ${dataVersion || '未设置'}</p>`;
+            storageHtml += `<p><strong>本地风格数据存在:</strong> ${!!customGenres ? '✓' : '✗'}</p>`;
+            
+            if (customGenres) {
+                try {
+                    const genres = JSON.parse(customGenres);
+                    storageHtml += `<p><strong>本地风格数量:</strong> ${genres.length}</p>`;
+                    storageHtml += '<p><strong>本地风格内容:</strong></p>';
+                    storageHtml += '<pre>' + JSON.stringify(genres, null, 2) + '</pre>';
+                } catch (e) {
+                    storageHtml += `<p class="error"><strong>解析错误:</strong> ${e.message}</p>`;
+                }
+            }
+            
+            storageStatusDiv.innerHTML = storageHtml;
+        }
+
+        // 页面加载完成后运行调试
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('开始调试风格系统...');
+            debugGenreSystem();
+        });
+
+        // 添加清除本地存储的功能
+        function clearStorage() {
+            localStorage.removeItem('vtuber_custom_genres');
+            localStorage.removeItem('vtuber_data_version');
+            alert('本地存储已清除，请刷新页面重新测试');
+        }
+    </script>
+
+    <div style="margin-top: 20px;">
+        <button onclick="clearStorage()">清除本地存储</button>
+        <button onclick="debugGenreSystem()">重新测试</button>
+    </div>
+</body>
+</html>
