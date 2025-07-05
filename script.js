@@ -37,7 +37,9 @@ class VTuberPlaylist {
      * 加载必要的数据和设置
      */
     async init() {
-        this.initCustomGenres();
+        // 等待风格管理器初始化完成
+        await window.genreManager.initialize();
+
         this.bindEvents();
         this.updateFilterOptions();
         this.filteredSongs = this.songs;
@@ -91,48 +93,7 @@ class VTuberPlaylist {
         });
     }
 
-    // 初始化自定义风格
-    initCustomGenres() {
-        // 检查数据版本，如果版本不匹配则清除旧数据
-        const dataVersion = localStorage.getItem('vtuber_data_version');
-        const currentVersion = '2.1'; // 增加版本号以强制更新
 
-        console.log('initCustomGenres: 当前版本', currentVersion, '本地版本', dataVersion);
-        console.log('initCustomGenres: window.officialData存在?', !!window.officialData);
-        console.log('initCustomGenres: window.officialData.customGenres存在?', !!(window.officialData && window.officialData.customGenres));
-
-        if (dataVersion !== currentVersion) {
-            console.log('数据版本更新，清除旧的风格数据');
-            localStorage.removeItem('vtuber_custom_genres');
-            localStorage.setItem('vtuber_data_version', currentVersion);
-        }
-
-        const savedGenres = localStorage.getItem('vtuber_custom_genres');
-        if (!savedGenres) {
-             const initialGenres = (window.officialData && window.officialData.customGenres) ? window.officialData.customGenres : this.getDefaultGenres();
-             localStorage.setItem('vtuber_custom_genres', JSON.stringify(initialGenres));
-             console.log('初始化风格数据:', initialGenres);
-        } else {
-            // 检查是否需要更新风格数据（如果服务器数据更新了）
-            const saved = JSON.parse(savedGenres);
-            console.log('已有本地风格数据:', saved);
-            if (window.officialData && window.officialData.customGenres && window.officialData.customGenres.length > 0) {
-                // 合并服务器数据和本地数据，优先使用服务器数据
-                const serverGenres = window.officialData.customGenres;
-                const mergedGenres = [...serverGenres];
-
-                // 添加本地独有的风格
-                saved.forEach(localGenre => {
-                    if (!serverGenres.find(sg => sg.id === localGenre.id)) {
-                        mergedGenres.push(localGenre);
-                    }
-                });
-
-                localStorage.setItem('vtuber_custom_genres', JSON.stringify(mergedGenres));
-                console.log('更新风格数据:', mergedGenres);
-            }
-        }
-    }
 
     // 重新加载数据
     reloadData() {
@@ -614,49 +575,15 @@ class VTuberPlaylist {
         songCount.textContent = `共 ${songsToRender.length} 首歌曲`;
     }
 
-    // 获取自定义风格
-    getCustomGenres() {
-        const saved = localStorage.getItem('vtuber_custom_genres');
-        let customGenres = saved ? JSON.parse(saved) : [];
 
-        // 如果localStorage为空，初始化默认风格数据
-        if (customGenres.length === 0) {
-            // 优先从 window.officialData 获取，然后是默认数据
-            const initialGenres = (window.officialData && window.officialData.customGenres) ? window.officialData.customGenres : this.getDefaultGenres();
-            customGenres = initialGenres;
-            localStorage.setItem('vtuber_custom_genres', JSON.stringify(customGenres));
-            console.log('getCustomGenres: 初始化风格数据', customGenres);
-        }
-
-        return customGenres;
-    }
-
-    // 获取默认风格数据（与硬编码映射保持一致）
-    getDefaultGenres() {
-        return [
-            { id: 'custom_1751485097686', name: '情歌', builtIn: false },
-            { id: 'custom_1751506273759', name: '甜蜜情歌', builtIn: false },
-            { id: 'custom_1751506269360', name: '古风', builtIn: false },
-            { id: 'custom_1751506264888', name: '戏曲', builtIn: false },
-            { id: 'custom_1751506259744', name: '京剧', builtIn: false },
-            { id: 'custom_1751506255759', name: '豫剧', builtIn: false },
-            { id: 'custom_1751506245176', name: '儿歌', builtIn: false },
-            { id: 'custom_1751506243976', name: '流行', builtIn: false },
-            { id: 'custom_1751656714021', name: '黄梅戏', builtIn: false },
-            { id: 'custom_1751656716807', name: '现代戏曲', builtIn: false }
-        ];
-    }
 
     // 获取所有风格（内置+自定义）
     getAllGenres() {
-        // 移除预设风格，只返回自定义风格
-        const custom = this.getCustomGenres().map(g => ({
+        return window.genreManager.getAllGenres().map(g => ({
             id: g.id,
             name: g.name,
             emoji: '🎵'
         }));
-        
-        return custom;
     }
 
     // 更新风格导航
@@ -774,15 +701,7 @@ class VTuberPlaylist {
 
     // 获取风格显示名称
     getGenreDisplayName(genre) {
-        if (!genre || genre.trim() === '') {
-            return '/';
-        }
-
-        // 从localStorage获取自定义风格数据，与后台保持一致
-        const customGenres = this.getCustomGenres();
-        const matchedGenre = customGenres.find(g => g.id === genre);
-
-        return matchedGenre ? matchedGenre.name : genre;
+        return window.genreManager.getDisplayName(genre);
     }
 
     // HTML转义

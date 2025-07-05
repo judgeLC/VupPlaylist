@@ -72,11 +72,13 @@ class AdminManager {
      * 系统初始化
      * 加载数据和绑定事件
      */
-    init() {
+    async init() {
         // 设置API认证令牌
         this.setupApiAuth();
 
-        this.initCustomGenres();
+        // 等待风格管理器初始化完成
+        await window.genreManager.initialize();
+
         this.loadData();
         this.bindEvents();
         this.initSections();
@@ -1767,39 +1769,12 @@ class AdminManager {
     // 移除了子标签切换、预览、模板相关的函数
 
     getCustomGenres() {
-        const saved = localStorage.getItem('vtuber_custom_genres');
-        let customGenres = saved ? JSON.parse(saved) : [];
-
-        // 如果localStorage为空，初始化默认风格数据
-        if (customGenres.length === 0) {
-            // 优先从 window.officialData 获取，然后是默认数据
-            const initialGenres = (window.officialData && window.officialData.customGenres) ? window.officialData.customGenres : this.getDefaultGenres();
-            customGenres = initialGenres;
-            localStorage.setItem('vtuber_custom_genres', JSON.stringify(customGenres));
-            console.log('admin getCustomGenres: 初始化风格数据', customGenres);
-        }
-
-        return customGenres;
-    }
-
-    // 获取默认风格数据（与硬编码映射保持一致）
-    getDefaultGenres() {
-        return [
-            { id: 'custom_1751485097686', name: '情歌', builtIn: false },
-            { id: 'custom_1751506273759', name: '甜蜜情歌', builtIn: false },
-            { id: 'custom_1751506269360', name: '古风', builtIn: false },
-            { id: 'custom_1751506264888', name: '戏曲', builtIn: false },
-            { id: 'custom_1751506259744', name: '京剧', builtIn: false },
-            { id: 'custom_1751506255759', name: '豫剧', builtIn: false },
-            { id: 'custom_1751506245176', name: '儿歌', builtIn: false },
-            { id: 'custom_1751506243976', name: '流行', builtIn: false },
-            { id: 'custom_1751656714021', name: '黄梅戏', builtIn: false },
-            { id: 'custom_1751656716807', name: '现代戏曲', builtIn: false }
-        ];
+        return window.genreManager.getAllGenres();
     }
 
     saveCustomGenres(genres) {
-        localStorage.setItem('vtuber_custom_genres', JSON.stringify(genres));
+        // 不再需要保存到localStorage，由GenreManager统一管理
+        console.log('saveCustomGenres 已废弃，使用 GenreManager');
     }
 
     getBuiltInGenres() {
@@ -1808,6 +1783,11 @@ class AdminManager {
 
     getAllGenres() {
         return this.getCustomGenres();
+    }
+
+    // 获取风格显示名称
+    getGenreDisplayName(genreId) {
+        return window.genreManager.getDisplayName(genreId);
     }
 
     updateGenreSelects() {
@@ -1867,9 +1847,7 @@ class AdminManager {
             input.focus();
             return;
         }
-        const customGenres = this.getCustomGenres();
-        customGenres.push({ id: 'custom_' + Date.now(), name, builtIn: false });
-        this.saveCustomGenres(customGenres);
+        window.genreManager.addGenre(name);
         input.value = '';
         this.renderGenreManagement();
         this.updateGenreSelects();
@@ -1878,9 +1856,7 @@ class AdminManager {
     }
 
     deleteGenre(genreId) {
-        const customGenres = this.getCustomGenres();
-        const updated = customGenres.filter(g => g.id !== genreId);
-        this.saveCustomGenres(updated);
+        window.genreManager.deleteGenre(genreId);
         this.renderGenreManagement();
         this.updateGenreSelects();
         this.updateGenreAndRemarkSelects();
@@ -2696,76 +2672,7 @@ class AdminManager {
     }
 
     // 初始化自定义风格
-    initCustomGenres() {
-        // 检查数据版本，如果版本不匹配则清除旧数据
-        const dataVersion = localStorage.getItem('vtuber_data_version');
-        const currentVersion = '2.0'; // 增加版本号以强制更新
 
-        if (dataVersion !== currentVersion) {
-            console.log('数据版本更新，清除旧的风格数据');
-            localStorage.removeItem('vtuber_custom_genres');
-            localStorage.setItem('vtuber_data_version', currentVersion);
-        }
-
-        const savedGenres = localStorage.getItem('vtuber_custom_genres');
-        if (!savedGenres) {
-            // 从 data.js 或默认列表初始化
-            const initialGenres = (window.officialData && window.officialData.customGenres) ? window.officialData.customGenres : this.getDefaultGenres();
-            localStorage.setItem('vtuber_custom_genres', JSON.stringify(initialGenres));
-            console.log('初始化风格数据:', initialGenres);
-        } else {
-            // 检查是否需要更新风格数据（如果服务器数据更新了）
-            const saved = JSON.parse(savedGenres);
-            if (window.officialData && window.officialData.customGenres && window.officialData.customGenres.length > 0) {
-                // 合并服务器数据和本地数据，优先使用服务器数据
-                const serverGenres = window.officialData.customGenres;
-                const mergedGenres = [...serverGenres];
-
-                // 添加本地独有的风格
-                saved.forEach(localGenre => {
-                    if (!serverGenres.find(sg => sg.id === localGenre.id)) {
-                        mergedGenres.push(localGenre);
-                    }
-                });
-
-                localStorage.setItem('vtuber_custom_genres', JSON.stringify(mergedGenres));
-                console.log('更新风格数据:', mergedGenres);
-            }
-        }
-    }
-
-    // 获取自定义风格
-    getCustomGenres() {
-        const saved = localStorage.getItem('vtuber_custom_genres');
-        let customGenres = saved ? JSON.parse(saved) : [];
-
-        // 如果localStorage为空，初始化默认风格数据
-        if (customGenres.length === 0) {
-            // 优先从 window.officialData 获取，然后是默认数据
-            const initialGenres = (window.officialData && window.officialData.customGenres) ? window.officialData.customGenres : this.getDefaultGenres();
-            customGenres = initialGenres;
-            localStorage.setItem('vtuber_custom_genres', JSON.stringify(customGenres));
-            console.log('admin getCustomGenres: 初始化风格数据', customGenres);
-        }
-
-        return customGenres;
-    }
-
-    // 获取默认风格数据（与硬编码映射保持一致）
-    getDefaultGenres() {
-        return [
-            { id: 'custom_1751485097686', name: '情歌', builtIn: false },
-            { id: 'custom_1751506273759', name: '甜蜜情歌', builtIn: false },
-            { id: 'custom_1751506269360', name: '古风', builtIn: false },
-            { id: 'custom_1751506264888', name: '戏曲', builtIn: false },
-            { id: 'custom_1751506259744', name: '京剧', builtIn: false },
-            { id: 'custom_1751506255759', name: '豫剧', builtIn: false },
-            { id: 'custom_1751506245176', name: '儿歌', builtIn: false },
-            { id: 'custom_1751506243976', name: '流行', builtIn: false },
-            { id: 'custom_1751656714021', name: '黄梅戏', builtIn: false },
-            { id: 'custom_1751656716807', name: '现代戏曲', builtIn: false }
-        ];
-    }
 
     // 填充筛选器
     populateFilters() {

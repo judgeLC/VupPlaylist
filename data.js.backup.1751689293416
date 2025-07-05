@@ -14,7 +14,7 @@ window.officialData = {
       "id": 1751656742283,
       "title": "骗赖",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -22,7 +22,7 @@ window.officialData = {
       "id": 1751656742284,
       "title": "比夹夹",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -30,7 +30,7 @@ window.officialData = {
       "id": 1751656742285,
       "title": "帮主夫人",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -38,7 +38,7 @@ window.officialData = {
       "id": 1751656742286,
       "title": "要把哥哥追",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -46,7 +46,7 @@ window.officialData = {
       "id": 1751656742287,
       "title": "老公天下第一",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -54,7 +54,7 @@ window.officialData = {
       "id": 1751656742288,
       "title": "百万个吻",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -62,7 +62,7 @@ window.officialData = {
       "id": 1751656742289,
       "title": "要抱抱",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -70,7 +70,7 @@ window.officialData = {
       "id": 1751656742290,
       "title": "要爱爱",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -78,7 +78,7 @@ window.officialData = {
       "id": 1751656742291,
       "title": "夺命十三枪",
       "artist": "",
-      "genre": "custom_1751506243976",
+      "genre": "",
       "note": "上舰歌",
       "addedDate": "2025-07-04T19:19:02.283Z"
     },
@@ -3012,55 +3012,15 @@ window.officialData = {
     }
   ],
   "customGenres": [
-    {
-      "id": "custom_1751485097686",
-      "name": "情歌",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506273759",
-      "name": "甜蜜情歌",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506269360",
-      "name": "古风",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506264888",
-      "name": "戏曲",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506259744",
-      "name": "京剧",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506255759",
-      "name": "豫剧",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506245176",
-      "name": "儿歌",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506243976",
-      "name": "流行",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751656714021",
-      "name": "黄梅戏",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751656716807",
-      "name": "现代戏曲",
-      "builtIn": false
-    }
+    { "id": "custom_1751485097686", "name": "情歌", "builtIn": false },
+    { "id": "custom_1751506273759", "name": "甜蜜情歌", "builtIn": false },
+    { "id": "custom_1751506269360", "name": "古风", "builtIn": false },
+    { "id": "custom_1751506264888", "name": "戏曲", "builtIn": false },
+    { "id": "custom_1751506259744", "name": "京剧", "builtIn": false },
+    { "id": "custom_1751506255759", "name": "豫剧", "builtIn": false },
+    { "id": "custom_1751506245176", "name": "儿歌", "builtIn": false },
+    { "id": "custom_1751506243976", "name": "流行", "builtIn": false },
+    { "id": "custom_1751656714021", "name": "黄梅戏", "builtIn": false },
+    { "id": "custom_1751656716807", "name": "现代戏曲", "builtIn": false }
   ]
 };
