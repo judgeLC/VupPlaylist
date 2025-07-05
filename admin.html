@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>虚拟主播歌单 - 管理面板</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=M+PLUS+Rounded+1c:wght@300;400;500;700&family=Cherry+Bomb+One&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+    <script src="data.js"></script>
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="bg-decorations">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-shape shape-3"></div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 顶部导航 -->
+        <header class="header glass-card">
+            <h1 class="logo">后台管理</h1>
+            <div class="controls">
+                <div id="notification-container" class="notification-container"></div>
+                <button class="theme-toggle glass-btn" id="themeToggle">
+                    <span class="icon">🌙</span>
+                </button>
+                <button class="glass-btn" id="logoutBtn">
+                    <span class="icon">🚪</span>
+                    安全登出
+                </button>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="admin-content">
+            <!-- 左侧导航 -->
+            <nav class="admin-nav glass-card">
+                <div class="nav-group">
+                    <h3>内容管理</h3>
+                    <button class="nav-btn active" data-section="songs">
+                        <span class="icon">🎵</span>
+                        歌单管理
+                    </button>
+                    <button class="nav-btn" data-section="profile">
+                        <span class="icon">👤</span>
+                        个人资料
+                    </button>
+                    <button class="nav-btn" data-section="settings">
+                        <span class="icon">⚙️</span>
+                        系统设置
+                    </button>
+                </div>
+                <div class="nav-group">
+                    <h3>快速操作</h3>
+                    <button class="nav-btn" id="exportData">
+                        <span class="icon">📤</span>
+                        导出数据
+                    </button>
+                    <button class="nav-btn" id="importData">
+                        <span class="icon">📥</span>
+                        导入数据
+                    </button>
+                </div>
+            </nav>
+
+            <!-- 右侧内容区域 -->
+            <section class="admin-main">
+                <!-- 歌单管理 -->
+                <div class="admin-section active" id="songs-section">
+                    <div class="section-header">
+                        <div class="search-container">
+                            <input type="text" id="songSearchInput" class="glass-input search-input" placeholder="搜索歌曲...">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                        <div class="filter-container">
+                            <select id="genreFilter" class="glass-input filter-select">
+                                <option value="all">按风格筛选</option>
+                            </select>
+                            <select id="remarkFilter" class="glass-input filter-select">
+                                <option value="all">按备注筛选</option>
+                            </select>
+                        </div>
+                        <div class="song-actions">
+                            <button class="glass-btn primary" id="addSongBtn">
+                                <span class="icon">➕</span>
+                                添加歌曲
+                            </button>
+                            <button class="glass-btn secondary" id="batchAddBtn">
+                                <span class="icon">📝</span>
+                                批量添加
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 批量操作工具栏 -->
+                    <div class="batch-toolbar glass-card" id="batchToolbar" style="display: none;">
+                        <div class="batch-info">
+                            <span id="selectedCount">0</span> 首歌曲已选中
+                        </div>
+                        <div class="batch-actions">
+                            <button class="glass-btn" id="batchSetArtistBtn">
+                                <span class="icon">🎤</span>
+                                批量设置歌手
+                            </button>
+                            <button class="glass-btn" id="batchSetGenreBtn">
+                                <span class="icon">🏷️</span>
+                                批量设置风格
+                            </button>
+                            <button class="glass-btn" id="batchSetRemarkBtn">
+                                <span class="icon">📝</span>
+                                批量设置备注
+                            </button>
+                            <button class="glass-btn danger" id="batchDeleteBtn">
+                                <span class="icon">🗑️</span>
+                                批量删除
+                            </button>
+                            <button class="glass-btn secondary" id="clearSelectionBtn">
+                                <span class="icon">❌</span>
+                                取消选择
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="songs-container glass-card">
+                        <div class="songs-header">
+                            <div class="song-cell select-cell">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="selectAllCheckbox">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="song-cell song-title">歌名</div>
+                            <div class="song-cell song-artist">歌手</div>
+                            <div class="song-cell song-genre">风格</div>
+                            <div class="song-cell song-note">备注</div>
+                            <div class="song-cell song-actions">操作</div>
+                        </div>
+                        <div class="songs-content" id="songsContent">
+                            <!-- 歌曲列表将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 个人资料管理 -->
+                <div class="admin-section" id="profile-section">
+                    <div class="section-header">
+                        <h2>个人资料</h2>
+                        <button class="glass-btn primary" id="saveProfileBtn">
+                            💾 保存资料
+                        </button>
+                    </div>
+
+                    <div class="profile-form glass-card">
+                        <!-- 基础信息 - 紧凑布局 -->
+                        <div class="profile-section">
+                            <h3>基础信息</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="websiteTitleInput">网站标题</label>
+                                    <input type="text" id="websiteTitleInput" class="glass-input" placeholder="虚拟主播歌单">
+                                </div>
+                                <div class="form-group">
+                                    <label for="vtuberNameInput">主播名称</label>
+                                    <input type="text" id="vtuberNameInput" class="glass-input" placeholder="请输入主播名称">
+                                </div>
+                            </div>
+                            <div class="form-row profile-triple">
+                                <div class="form-group">
+                                    <label for="vtuberUidInput">主播UID</label>
+                                    <input type="text" id="vtuberUidInput" class="glass-input" placeholder="VT-001">
+                                </div>
+                                <div class="form-group">
+                                    <label for="vtuberBirthdayInput">生日</label>
+                                    <input type="text" id="vtuberBirthdayInput" class="glass-input" placeholder="01/01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="liveRoomUrlInput">直播间链接</label>
+                                    <input type="url" id="liveRoomUrlInput" class="glass-input" placeholder="https://live.bilibili.com/123456">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 个人介绍 -->
+                        <div class="profile-section">
+                            <h3>个人介绍</h3>
+                            <div class="form-group">
+                                <textarea id="vtuberDescInput" class="glass-input" rows="3" placeholder="请输入个人介绍"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- 图片设置 -->
+                        <div class="profile-section">
+                            <h3>图片设置</h3>
+                            <div class="image-settings-grid">
+                                <div class="form-group">
+                                    <label for="avatarInput">头像设置</label>
+                                    <div class="image-selector">
+                                        <div class="selector-row">
+                                            <select id="avatarSelect" class="glass-select">
+                                                <option value="">选择已上传的头像</option>
+                                            </select>
+                                            <button class="glass-btn" id="refreshAvatarBtn" title="刷新">🔄</button>
+                                        </div>
+                                        <div class="input-group">
+                                            <input type="text" id="avatarInput" class="glass-input" placeholder="或输入头像路径">
+                                            <button class="glass-btn" id="uploadAvatarBtn">📁 上传</button>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+                                    <div class="avatar-preview">
+                                        <img id="avatarPreview" src="" alt="头像预览" style="display: none;">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="backgroundInput">背景图设置</label>
+                                    <div class="image-selector">
+                                        <div class="selector-row">
+                                            <select id="backgroundSelect" class="glass-select">
+                                                <option value="">选择已上传的背景图</option>
+                                            </select>
+                                            <button class="glass-btn" id="refreshBackgroundBtn" title="刷新">🔄</button>
+                                        </div>
+                                        <div class="input-group">
+                                            <input type="text" id="backgroundInput" class="glass-input" placeholder="或输入背景图路径">
+                                            <button class="glass-btn" id="uploadBackgroundBtn">📁 上传</button>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="backgroundFileInput" accept="image/*" style="display: none;">
+                                    <div class="background-preview">
+                                        <img id="backgroundPreview" src="" alt="背景预览" style="display: none;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 系统设置 -->
+                <div class="admin-section" id="settings-section">
+                    <div class="section-header">
+                        <h2>系统设置</h2>
+                    </div>
+
+                    <div class="settings-grid">
+                        <!-- 基础设置 -->
+                        <div class="setting-card glass-card">
+                            <h3>基础设置</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>当前主题</label>
+                                    <select id="defaultTheme" class="glass-select">
+                                        <option value="light">白天模式</option>
+                                        <option value="dark">黑夜模式</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>数据统计</label>
+                                    <div class="stats-compact">
+                                        <span id="totalSongs">0</span> 首歌曲
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 数据管理 -->
+                        <div class="setting-card glass-card">
+                            <h3>数据管理</h3>
+                            <div class="form-group">
+                                <div class="data-actions">
+                                    <button class="glass-btn primary" id="syncDataBtn">
+                                        🔄 同步到官网
+                                    </button>
+                                    <button class="glass-btn" id="restoreBtn">
+                                        📥 从文件恢复
+                                    </button>
+                                    <button class="glass-btn" onclick="window.open('storage-manager.html', '_blank')">
+                                        🗄️ 存储管理
+                                    </button>
+                                </div>
+                                <input type="file" id="restoreFileInput" accept=".json" style="display: none;">
+                            </div>
+                        </div>
+
+                        <!-- 网站设置 -->
+                        <div class="setting-card glass-card">
+                            <h3>网站设置</h3>
+                            <div class="form-group">
+                                <label for="faviconInput">网站图标</label>
+                                <div class="input-group">
+                                    <input type="text" id="faviconInput" class="glass-input" placeholder="输入图标URL">
+                                    <button class="glass-btn" id="uploadFaviconBtn">📁</button>
+                                </div>
+                                <small class="form-text">建议64x64像素，支持.ico、.png、.jpg、.gif格式</small>
+                                <input type="file" id="faviconFileInput" accept="image/*,.ico" style="display: none;">
+                                <div class="favicon-preview">
+                                    <img id="faviconPreview" src="" alt="图标预览" style="display: none; width: 32px; height: 32px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="glass-btn primary" id="saveFaviconBtn">💾 保存设置</button>
+                            </div>
+                        </div>
+
+                        <!-- 备案信息 -->
+                        <div class="setting-card glass-card">
+                            <h3>备案信息</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="icpInput">ICP备案号</label>
+                                    <input type="text" id="icpInput" class="glass-input" placeholder="京ICP备12345678号-1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="icpLinkInput">ICP链接</label>
+                                    <input type="url" id="icpLinkInput" class="glass-input" placeholder="https://beian.miit.gov.cn">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="policeInput">公安备案号</label>
+                                    <input type="text" id="policeInput" class="glass-input" placeholder="京公网安备11010502030088号">
+                                </div>
+                                <div class="form-group">
+                                    <label for="policeLinkInput">公安链接</label>
+                                    <input type="url" id="policeLinkInput" class="glass-input" placeholder="http://www.beian.gov.cn">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="glass-btn primary" id="saveBeianBtn">💾 保存备案设置</button>
+                            </div>
+                        </div>
+
+                        <!-- 点歌指令 -->
+                        <div class="setting-card glass-card">
+                            <h3>点歌指令</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="commandPrefix">指令前缀</label>
+                                    <input type="text" id="commandPrefix" class="glass-input" placeholder="/点歌">
+                                </div>
+                                <div class="form-group">
+                                    <label for="commandSuffix">指令后缀</label>
+                                    <input type="text" id="commandSuffix" class="glass-input" placeholder="-歌手（可选）">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>格式预览</label>
+                                <div id="commandPreview" class="command-preview glass-card">
+                                    <code id="previewText">/点歌 {歌名} -歌手 {歌手}</code>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="glass-btn primary" onclick="saveSettings()">💾 保存设置</button>
+                            </div>
+                        </div>
+
+                        <!-- 修改密码 -->
+                        <div class="setting-card glass-card">
+                            <h3>修改密码</h3>
+                            <div class="form-group">
+                                <label for="oldPassword">当前密码</label>
+                                <input type="password" id="oldPassword" class="glass-input" placeholder="请输入当前密码">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="newPassword">新密码</label>
+                                    <input type="password" id="newPassword" class="glass-input" placeholder="请输入新密码">
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">确认密码</label>
+                                    <input type="password" id="confirmPassword" class="glass-input" placeholder="再次输入新密码">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="glass-btn primary" onclick="adminManager.changePassword()">🔒 修改密码</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 页脚链接 -->
+            <footer class="footer">
+                <a href="https://github.com/judgeLC/VupPlaylist" target="_blank" class="footer-link">@2025于irislc</a>
+            </footer>
+        </main>
+    </div>
+
+    <!-- 添加/编辑歌曲模态框 -->
+    <div class="modal" id="songModal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加歌曲</h3>
+                <button class="close-btn" id="closeSongModal">❌</button>
+            </div>
+            <form class="song-form" id="songForm">
+                <div class="form-group">
+                    <label for="songTitle">歌名 *</label>
+                    <input type="text" id="songTitle" class="glass-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="songArtist">歌手 *</label>
+                    <input type="text" id="songArtist" class="glass-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="songGenre">风格</label>
+                    <select id="songGenre" class="glass-input" onchange="adminManager.handleGenreChange(this.value)">
+                        <option value="">请选择风格（可选）</option>
+                        <option value="custom">添加新风格</option>
+                    </select>
+                </div>
+                <div class="form-group" id="customGenreGroup" style="display: none;">
+                    <label for="customGenre">自定义风格 *</label>
+                    <input type="text" id="customGenre" class="glass-input" placeholder="请输入自定义风格名称">
+                </div>
+                <div class="form-group">
+                    <label for="songNote">备注</label>
+                    <textarea id="songNote" class="glass-input" rows="3" placeholder="可选，添加歌曲相关的备注信息"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="glass-btn" id="cancelSongBtn">取消</button>
+                    <button type="submit" class="glass-btn primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 批量操作模态框 -->
+    <div class="modal" id="batchModal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3 id="batchModalTitle">批量操作</h3>
+                <button class="close-btn" id="closeBatchModal">❌</button>
+            </div>
+            <div class="modal-body">
+                <div class="batch-tabs">
+                    <button class="tab-btn active" data-tab="songs">
+                        <span class="icon">🎵</span>
+                        批量添加歌曲
+                    </button>
+                    <button class="tab-btn" data-tab="genres">
+                        <span class="icon">🏷️</span>
+                        管理风格
+                    </button>
+                    <button class="tab-btn" data-tab="remarks">
+                        <span class="icon">📝</span>
+                        管理备注
+                    </button>
+                </div>
+                
+                <!-- 批量添加歌曲标签页 -->
+                <div class="tab-content active" id="songs-tab">
+                    <div class="form-group">
+                        <label for="batchSongText">歌曲列表</label>
+                        <textarea id="batchSongText" class="glass-input batch-textarea" placeholder="输入歌名，只能使用空格分隔&#10;每行都会被分割处理&#10;注意：不支持逗号分隔&#10;&#10;示例：&#10;夜に駆ける 紅蓮華 打上花火&#10;群青 怪物 夜に駆ける&#10;シャルル マシュマロ アイドル"></textarea>
+                    </div>
+                    
+                    <div class="batch-options">
+                        <div class="form-group">
+                            <label for="batchDefaultGenre">统一风格（可选）</label>
+                            <select id="batchDefaultGenre" class="glass-input">
+                                <option value="">不设置统一风格</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="batchDefaultNote">统一备注（可选）</label>
+                            <select id="batchDefaultNote" class="glass-input">
+                                <option value="">不设置统一备注</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h4>预览解析结果</h4>
+                        <div class="preview-container" id="batchPreview">
+                            <p class="preview-hint">输入歌曲信息后，这里会显示解析预览</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="glass-btn secondary" id="previewBatchBtn">预览解析</button>
+                        <button type="button" class="glass-btn primary" id="confirmBatchAddBtn">确认添加</button>
+                    </div>
+                </div>
+                
+                <!-- 管理风格标签页 -->
+                <div class="tab-content" id="genres-tab">
+                    <div class="management-section">
+                        <h4>📝 添加新风格</h4>
+                        <div class="add-input-group">
+                            <input type="text" id="newGenreInput" class="glass-input" placeholder="输入新的风格名称">
+                            <button class="glass-btn primary" id="addNewGenreBtn">
+                                <span class="icon">➕</span>
+                                添加风格
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="management-section">
+                        <h4>🎨 现有风格列表</h4>
+                        <div class="items-container" id="genresList">
+                            <!-- 风格列表将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 管理备注标签页 -->
+                <div class="tab-content" id="remarks-tab">
+                    <div class="management-section">
+                        <h4>📝 添加新备注</h4>
+                        <div class="add-input-group">
+                            <input type="text" id="newRemarkInput" class="glass-input" placeholder="输入新的备注内容">
+                            <button class="glass-btn primary" id="addNewRemarkBtn">
+                                <span class="icon">➕</span>
+                                添加备注
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="management-section">
+                        <h4>📋 现有备注列表</h4>
+                        <div class="items-container" id="remarksList">
+                            <!-- 备注列表将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="glass-btn" id="closeBatchModalBtn">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认删除模态框 -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3>确认操作</h3>
+                <button class="close-btn" id="closeConfirmModal">❌</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">确定要执行此操作吗？</p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="glass-btn" id="cancelConfirmBtn">取消</button>
+                <button type="button" class="glass-btn danger" id="confirmBtn">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片压缩选项模态框 -->
+    <div class="modal" id="compressionModal">
+        <div class="modal-content glass-card">
+            <div class="compression-modal">
+                <div class="compression-header">
+                    <span class="icon">📸</span>
+                    <h3>图片压缩选项</h3>
+                    <button class="close-btn" onclick="adminManager.closeCompressionModal()">❌</button>
+                </div>
+
+                <div class="compression-info">
+                    原图信息：<span id="originalInfo"></span>
+                </div>
+
+                <div class="compression-options">
+                    <div class="compression-option" data-quality="95" onclick="adminManager.selectCompressionOption(this)">
+                        <span class="option-icon">✨</span>
+                        <div class="option-content">
+                            <div class="option-title">高质量保存</div>
+                            <div class="option-description">保持原始尺寸，质量95%</div>
+                        </div>
+                    </div>
+
+                    <div class="compression-option" data-quality="85" onclick="adminManager.selectCompressionOption(this)">
+                        <span class="option-icon">⚖️</span>
+                        <div class="option-content">
+                            <div class="option-title">均衡压缩</div>
+                            <div class="option-description">适度缩放，质量85%</div>
+                        </div>
+                    </div>
+
+                    <div class="compression-option" data-quality="70" onclick="adminManager.selectCompressionOption(this)">
+                        <span class="option-icon">📦</span>
+                        <div class="option-content">
+                            <div class="option-title">最小文件</div>
+                            <div class="option-description">大幅缩放，质量70%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions" style="margin-top: 20px;">
+                    <button class="glass-btn secondary" onclick="adminManager.closeCompressionModal()">取消</button>
+                    <button class="glass-btn primary" onclick="adminManager.confirmCompression()">确认压缩</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html> 

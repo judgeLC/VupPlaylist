@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>🔐 后台管理 - 登录验证</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=M+PLUS+Rounded+1c:wght@300;400;500;700&family=Cherry+Bomb+One&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+    <style>
+        /* 登录页面特定样式 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: var(--kawaii-gradient);
+            overflow: hidden;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            z-index: -1;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 15px 0 10px 0;
+            background: var(--kawaii-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .login-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .password-input-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 15px;
+            background: var(--kawaii-gradient);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -100%;
+            width: 100%;
+            height: calc(100% + 4px);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+            z-index: 1;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(255, 105, 180, 0.4);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-btn span {
+            position: relative;
+            z-index: 2;
+        }
+
+        .error-message {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .warning-message {
+            background: linear-gradient(45deg, #ffa726, #ff9800);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 167, 38, 0.3);
+            display: none;
+        }
+
+        .warning-message.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .lockout-timer {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 15px;
+        }
+
+        .security-info {
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .security-info h4 {
+            margin: 0 0 10px 0;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .security-info ul {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back-link a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: var(--text-primary);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 15px;
+            }
+
+            .login-card {
+                padding: 30px 25px;
+            }
+
+            .login-title {
+                font-size: 24px;
+            }
+        }
+
+        /* 暗色主题 */
+        [data-theme="dark"] .login-card {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: rgba(148, 163, 184, 0.2);
+        }
+
+        [data-theme="dark"] .security-info {
+            background: rgba(148, 163, 184, 0.1);
+            border-color: rgba(148, 163, 184, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="bg-decorations">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-shape shape-3"></div>
+    </div>
+
+    <!-- 登录容器 -->
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <span class="login-icon">🔐</span>
+                <h1 class="login-title">后台管理</h1>
+                <p class="login-subtitle">请输入密码以访问管理界面</p>
+            </div>
+
+            <!-- 错误消息 -->
+            <div class="error-message" id="errorMessage">
+                密码错误，请重试
+            </div>
+
+            <!-- 警告消息 -->
+            <div class="warning-message" id="warningMessage">
+                连续错误次数过多，请稍后再试
+            </div>
+
+            <!-- 登录表单 -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="password">管理密码</label>
+                    <div class="password-input-container">
+                        <input type="password" id="password" class="glass-input" placeholder="请输入管理密码" required autocomplete="current-password">
+                        <button type="button" class="password-toggle" id="passwordToggle">👁️</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span>🚀 登录管理后台</span>
+                </button>
+
+                <div class="lockout-timer" id="lockoutTimer" style="display: none;">
+                    账户已锁定，请等待 <span id="timerValue">0</span> 秒后重试
+                </div>
+            </form>
+
+            <!-- 安全提示 -->
+            <div class="security-info">
+                <h4>🛡️ 安全提示</h4>
+                <ul>
+                    <li>密码错误超过5次将锁定账户15分钟</li>
+                    <li>登录会话24小时后自动过期</li>
+                    <li>请妥善保管您的管理密码</li>
+                    <li>建议使用强密码并定期更换</li>
+                </ul>
+            </div>
+
+            <!-- 返回链接 -->
+            <div class="back-link">
+                <a href="index.html">🏠 返回主页</a>
+            </div>
+
+            <!-- 页脚链接 -->
+            <footer class="footer">
+                <a href="https://github.com/judgeLC/VupPlaylist" target="_blank" class="footer-link">@2025于irislc</a>
+            </footer>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html> 

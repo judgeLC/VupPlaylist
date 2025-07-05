@@ -1,0 +1,16 @@
+{
+  "profile": {
+    "websiteTitle": "橙汁的歌单",
+    "vtuberName": "橙汁",
+    "vtuberUid": "123456789",
+    "vtuberBirthday": "7/15",
+    "liveRoomUrl": "",
+    "vtuberDesc": "专为虚拟主播开发的轻量化歌单。",
+    "avatar": "images/avatars/1751630546361.jpg",
+    "background": "images/backgrounds/1751630555108.png"
+  },
+  "metadata": {
+    "version": "1.0",
+    "lastModified": "2025-07-04T19:28:25.950Z"
+  }
+}

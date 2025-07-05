@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>虚拟主播歌单</title>
+    <link rel="stylesheet" href="styles.css?v=1.1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=M+PLUS+Rounded+1c:wght@300;400;500;700&family=Cherry+Bomb+One&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="bg-decorations">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-shape shape-3"></div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 顶部控制栏 -->
+        <header class="header glass-card">
+            <h1 class="logo">虚拟主播歌单</h1>
+            <div class="controls">
+                <button class="theme-toggle glass-btn" id="themeToggle">
+                    <span class="icon">🌙</span>
+                    <span class="text">切换主题</span>
+                </button>
+                <button class="live-btn glass-btn" id="liveBtn">
+                    <span class="icon">🎬</span>
+                    <span class="text">直播间</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 左侧：主播信息 -->
+            <aside class="vtuber-profile">
+                <!-- 头像和名称卡片 -->
+                <div class="profile-card glass-card">
+                    <div class="profile-title">关于主播</div>
+                    <div class="avatar-container">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiByeD0iMTAwIiBmaWxsPSIjNjM2NmYxIi8+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuOCIvPgo8Y2lyY2xlIGN4PSI4NSIgY3k9Ijg1IiByPSI4IiBmaWxsPSIjNjM2NmYxIi8+CjxjaXJjbGUgY3g9IjExNSIgY3k9Ijg1IiByPSI4IiBmaWxsPSIjNjM2NmYxIi8+CjxwYXRoIGQ9Ik04NSAxMTVDODUgMTE1IDkyLjUgMTI1IDEwMCAxMjVDMTA3LjUgMTI1IDExNSAxMTUgMTE1IDExNSIgc3Ryb2tlPSIjNjM2NmYxIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K" alt="主播头像" class="avatar" id="vtuberAvatar">
+                    </div>
+                    <h2 class="vtuber-name" id="vtuberName">虚拟主播</h2>
+                    <div class="vtuber-info">
+                        <div class="vtuber-uid" id="vtuberUid">UID: VT-001</div>
+                        <div class="vtuber-birthday" id="vtuberBirthday">🎂 生日: 01/01</div>
+                    </div>
+                </div>
+                
+                <!-- 个人介绍卡片 -->
+                <div class="description-card glass-card">
+                    <p class="vtuber-description" id="vtuberDescription">
+                        欢迎来到我的歌单空间！这里收录了我最喜欢的歌曲，希望能够与大家分享美好的音乐时光。每一首歌都承载着不同的回忆和情感，让我们一起在音乐的海洋中畅游吧！
+                    </p>
+                </div>
+            </aside>
+
+            <!-- 右侧：歌单 -->
+            <section class="playlist-section">
+                <!-- 歌单导航 -->
+                <nav class="playlist-nav glass-card">
+                    <div class="nav-controls">
+                        <div class="filter-group">
+                            <div class="filter-item">
+                                <label for="genreSelect">风格：</label>
+                                <select id="genreSelect" class="filter-select glass-input">
+                                    <option value="all">全部</option>
+                                </select>
+                            </div>
+                            <div class="filter-item">
+                                <label for="noteSelect">备注：</label>
+                                <select id="noteSelect" class="filter-select glass-input">
+                                    <option value="all">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="search-container">
+                            <input type="text" placeholder="搜索你喜欢的歌曲..." class="search-input glass-input" id="searchInput">
+                            <span class="search-icon">搜索</span>
+                        </div>
+                    </div>
+                    <div class="mobile-tip">
+                        💡 点击歌名即可复制点歌指令
+                    </div>
+                </nav>
+
+                <!-- 歌单列表 -->
+                <div class="playlist-container glass-card">
+                    <div class="playlist-header">
+                        <div class="header-cell">歌名</div>
+                        <div class="header-cell">歌手</div>
+                        <div class="header-cell">风格</div>
+                        <div class="header-cell">备注</div>
+                        <div class="header-cell">点歌指令</div>
+                    </div>
+                    <div class="playlist-content" id="playlistContent">
+                        <!-- 歌曲将通过JavaScript动态添加 -->
+                    </div>
+                    <div class="playlist-footer">
+                        <span id="songCount">共 0 首歌曲</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部备案信息 -->
+        <footer class="footer glass-card">
+            <div class="beian-info" id="beianInfo">
+                <!-- 备案信息将通过JavaScript动态添加 -->
+            </div>
+        </footer>
+
+        <!-- 页脚链接 -->
+        <footer class="footer">
+            <a href="https://github.com/judgeLC/VupPlaylist" target="_blank" class="footer-link">@2025于irislc</a>
+        </footer>
+    </div>
+
+    <script src="data.js?v=1.1"></script>
+    <script src="script.js?v=1.1"></script>
+</body>
+</html> 

@@ -1,0 +1,2508 @@
+/* 后台管理页面特定样式 - 可爱二次元风格 */
+
+/* CSS变量定义 - 确保后台页面样式正确 */
+:root {
+    /* 可爱色彩变量 */
+    --cute-pink: #f9a8d4;
+    --cute-purple: #d8b4fe;
+    --cute-blue: #93c5fd;
+    --kawaii-gradient: linear-gradient(45deg, #f9a8d4 0%, #ddd6fe 50%, #bfdbfe 100%);
+    
+    /* 错误颜色 */
+    --error-color: #ef4444;
+    
+    /* 主题色变量 */
+    --primary-color: #ff69b4;
+    --accent-color: #ff69b4;
+    
+    /* 玻璃效果变量 */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    
+    /* 文本颜色 */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    
+    /* 背景色 */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+}
+
+/* 暗色主题变量 */
+[data-theme="dark"] {
+    --cute-pink: #f1f5f9;
+    --cute-purple: #8b5cf6;
+    --cute-blue: #3b82f6;
+    --kawaii-gradient: linear-gradient(45deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+    
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --glass-bg: rgba(15, 23, 42, 0.8);
+    --glass-border: rgba(148, 163, 184, 0.2);
+}
+
+/* 暗色主题下的歌曲行边框优化 */
+[data-theme="dark"] .song-row {
+    border-bottom-color: rgba(148, 163, 184, 0.1) !important;
+}
+
+[data-theme="dark"] .song-row:first-child {
+    border-top-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+[data-theme="dark"] .songs-container {
+    border-color: rgba(148, 163, 184, 0.15) !important;
+}
+
+/* 字体设置 */
+body {
+    font-family: 'Noto Sans JP', 'M PLUS Rounded 1c', 'Inter', 'Hiragino Sans', 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, sans-serif !important;
+}
+
+/* 管理页面布局 */
+.admin-content {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+/* 左侧导航 */
+.admin-nav {
+    padding: 25px 20px;
+    position: sticky;
+    top: 20px;
+}
+
+.nav-group {
+    margin-bottom: 30px;
+}
+
+.nav-group:last-child {
+    margin-bottom: 0;
+}
+
+.nav-group h3 {
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    padding-left: 12px;
+}
+
+.nav-btn {
+    width: 100%;
+    background: var(--glass-bg);
+    border: 2px solid transparent;
+    border-radius: 20px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.1);
+}
+
+.nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--kawaii-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.nav-btn:hover {
+    color: white;
+    border-color: var(--accent-color);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.2);
+}
+
+.nav-btn:hover::before {
+    opacity: 0.8;
+}
+
+.nav-btn.active {
+    color: white;
+    border-color: var(--accent-color);
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+}
+
+.nav-btn.active::before {
+    opacity: 1;
+}
+
+/* 主内容区域 */
+.admin-main {
+    min-height: 600px;
+}
+
+.admin-section {
+    display: none;
+}
+
+.admin-section.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    position: relative;
+    flex: 1 1 250px;
+}
+
+.filter-container {
+    display: flex;
+    gap: 15px;
+    flex: 1 1 320px;
+}
+
+.filter-container .glass-input {
+    flex: 1;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 20px;
+    padding-right: 40px;
+    border-radius: 20px;
+    border: 2px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.1);
+    outline: none;
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus + .search-icon {
+    color: var(--accent-color);
+}
+
+/* 按钮样式变体 - 可爱版本 */
+.glass-btn.primary {
+    background: var(--kawaii-gradient) !important;
+    backdrop-filter: none !important;
+    border: 2px solid transparent !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3) !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    position: relative;
+    overflow: hidden;
+    padding: 12px 20px !important;
+}
+
+.glass-btn.primary::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -100%;
+    width: 100%;
+    height: calc(100% + 4px);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+    z-index: 1;
+    border-radius: 25px;
+}
+
+.glass-btn.primary .icon,
+.glass-btn.primary span:not(.icon) {
+    position: relative;
+    z-index: 2;
+}
+
+.glass-btn.primary:hover::before {
+    left: 100%;
+}
+
+.glass-btn.primary:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.5) !important;
+}
+
+.glass-btn.danger {
+    background: linear-gradient(45deg, var(--error-color), #ff8a80) !important;
+    backdrop-filter: none !important;
+    border: 2px solid transparent !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3) !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    padding: 12px 20px !important;
+}
+
+.glass-btn.danger:hover {
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5) !important;
+}
+
+.glass-btn.secondary {
+    background: linear-gradient(45deg, var(--cute-blue), var(--cute-purple)) !important;
+    backdrop-filter: none !important;
+    border: 2px solid transparent !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(167, 199, 255, 0.3) !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    padding: 12px 20px !important;
+}
+
+.glass-btn.secondary:hover {
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(167, 199, 255, 0.5) !important;
+}
+
+/* 歌曲管理区域 */
+.songs-container {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+.songs-header {
+    display: grid;
+    grid-template-columns: 50px 2fr 1.5fr 1fr 2fr 1.8fr;
+    gap: 20px;
+    padding: 8px 31px 8px 25px;
+    background: var(--kawaii-gradient);
+    border-bottom: none;
+    font-weight: 700;
+    font-size: 16px !important;
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+    border-radius: 15px 15px 0 0;
+    position: relative;
+    margin: 0;
+    min-height: 60px;
+    align-items: center;
+}
+
+/* 统一表头所有单元格的颜色为渐变色 */
+.songs-header .song-cell {
+    background: linear-gradient(90deg, #FF69B4, #8A2BE2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    font-size: 16px !important;
+    text-align: center;
+    padding: 0 10px;
+    justify-content: center;
+}
+
+.song-row {
+    display: grid;
+    grid-template-columns: 50px 2fr 1.5fr 1fr 2fr 1.8fr;
+    gap: 20px;
+    padding: 8px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    margin: 0;
+    min-height: 60px;
+    align-items: center;
+}
+
+/* 内容行的基础样式 */
+.song-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 10px;
+    color: var(--text-primary);
+}
+
+.song-cell.song-title {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.song-cell.song-artist,
+.song-cell.song-note,
+.song-cell.song-genre {
+    color: var(--text-primary);
+}
+
+.song-cell.song-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.songs-header .song-cell.song-actions {
+    justify-content: flex-start;
+    padding-left: 50px;
+    background: linear-gradient(90deg, #FF69B4, #8A2BE2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.songs-content {
+    max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    scrollbar-gutter: stable;
+    border-radius: 0 0 15px 15px;
+}
+
+.songs-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.songs-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.songs-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.songs-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.song-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--kawaii-gradient);
+    opacity: 0;
+    border-radius: 15px;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.song-row:hover {
+    background: transparent;
+    transform: translateY(-2px) scale(1.01);
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.2);
+}
+
+.song-row:hover::before {
+    opacity: 0.9;
+}
+
+.song-row:last-child {
+    border-bottom: none;
+}
+
+.song-row:first-child {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.action-btn {
+    background: var(--glass-bg);
+    border: 2px solid var(--glass-border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.1);
+    position: relative;
+    overflow: hidden;
+    min-width: 70px;
+    white-space: nowrap;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--kawaii-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.3);
+    color: white;
+}
+
+.action-btn:hover::before {
+    opacity: 0.8;
+}
+
+.action-btn.edit {
+    color: var(--warning-color);
+    border-color: var(--warning-color);
+}
+
+.action-btn.delete {
+    color: var(--error-color);
+    border-color: var(--error-color);
+}
+
+/* 表单样式 */
+.profile-form {
+    padding: 24px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 13px;
+}
+
+/* Textarea 特殊样式 */
+.glass-input textarea {
+    resize: vertical;
+    min-height: 80px;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+}
+
+/* 确保长URL在输入框中能正确显示和滚动 */
+.glass-input[type="url"] {
+    white-space: nowrap;
+    overflow: auto;
+}
+
+.input-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.input-group .glass-input {
+    flex: 1;
+}
+
+.input-group .glass-btn {
+    flex-shrink: 0;
+}
+
+.avatar-preview,
+.background-preview {
+    margin-top: 12px;
+}
+
+/* 图片选择器样式 */
+.image-selector {
+    width: 100%;
+}
+
+.selector-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.selector-row select {
+    flex: 1;
+    font-size: 14px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 2px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.1);
+}
+
+.selector-row select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.1);
+}
+
+.selector-row select:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+.selector-row select option {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+}
+
+.refresh-btn {
+    min-width: 40px !important;
+    padding: 10px !important;
+    border-radius: 12px !important;
+    background: var(--glass-bg) !important;
+    border: 2px solid var(--glass-border) !important;
+    color: var(--text-primary) !important;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.refresh-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--kawaii-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.refresh-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.3);
+    color: white !important;
+}
+
+.refresh-btn .icon {
+    font-size: 16px;
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+}
+
+/* 图片预览样式优化 */
+.avatar-preview img,
+.background-preview img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 12px;
+    border: 2px solid var(--glass-border);
+    object-fit: cover;
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.1);
+    transition: all 0.3s ease;
+}
+
+.avatar-preview img:hover,
+.background-preview img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.2);
+}
+
+/* 选择器标签样式 */
+.image-selector label {
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 14px;
+}
+
+/* 暗色主题下的图片选择器 */
+[data-theme="dark"] .selector-row select {
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    border-color: var(--glass-border);
+}
+
+[data-theme="dark"] .selector-row select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+[data-theme="dark"] .selector-row select:hover {
+    border-color: var(--accent-color);
+}
+
+[data-theme="dark"] .selector-row select option {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .selector-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .selector-row select {
+        width: 100%;
+    }
+    
+    .refresh-btn {
+        width: 100% !important;
+        min-width: auto !important;
+    }
+    
+    .avatar-preview img,
+    .background-preview img {
+        max-width: 150px;
+        max-height: 150px;
+    }
+}
+
+.avatar-preview img,
+.background-preview img {
+    max-width: 200px;
+    max-height: 150px;
+    border-radius: 12px;
+    border: 2px solid var(--glass-border);
+}
+
+/* 设置页面 - 优化布局 */
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.setting-card {
+    padding: 20px;
+}
+
+.setting-card h3 {
+    margin-bottom: 16px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* 设置页面表单优化 */
+.setting-card .form-group {
+    margin-bottom: 14px;
+}
+
+.setting-card .form-group label {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.setting-card .glass-input,
+.setting-card .glass-select {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.setting-card .form-text {
+    font-size: 11px;
+    margin-top: 4px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* 设置项分组 */
+.settings-section {
+    margin-bottom: 18px;
+}
+
+.settings-section:last-child {
+    margin-bottom: 0;
+}
+
+/* 紧凑的双列布局 */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+}
+
+/* 开关类设置项的紧凑布局 */
+.switch-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.switch-group:last-child {
+    border-bottom: none;
+}
+
+.switch-group label {
+    margin-bottom: 0 !important;
+    font-size: 13px;
+    flex: 1;
+}
+
+.switch-group .glass-input[type="checkbox"] {
+    margin-left: 12px;
+}
+
+/* 紧凑统计显示 */
+.stats-compact {
+    background: var(--glass-bg);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+/* 输入组合 */
+.input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.input-group .glass-input {
+    flex: 1;
+}
+
+.input-group .glass-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* 数据操作按钮组 */
+.data-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.data-actions .glass-btn {
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .data-actions {
+        flex-direction: column;
+    }
+
+    .data-actions .glass-btn {
+        min-width: auto;
+    }
+
+    .input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* 命令预览优化 */
+.command-preview {
+    background: var(--glass-bg);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--glass-border);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--text-primary);
+    margin-top: 4px;
+}
+
+.command-preview code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+}
+
+/* 个人资料页面优化 */
+.profile-form {
+    padding: 24px;
+}
+
+.profile-section {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.profile-section:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.profile-section h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* 小尺寸表单组 */
+.form-group-small {
+    max-width: 150px;
+}
+
+/* 三列布局用于UID、生日、直播间 */
+.form-row.profile-triple {
+    grid-template-columns: 150px 150px 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+/* 图片设置网格 */
+.image-settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* 选择器行优化 */
+.selector-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.selector-row .glass-select {
+    flex: 1;
+}
+
+.selector-row .glass-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* 图片预览优化 */
+.avatar-preview,
+.background-preview {
+    margin-top: 12px;
+}
+
+.avatar-preview img,
+.background-preview img {
+    max-width: 120px;
+    max-height: 120px;
+    border-radius: 8px;
+    border: 2px solid var(--glass-border);
+    object-fit: cover;
+}
+
+.avatar-preview img {
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+}
+
+/* 移动端个人资料优化 */
+@media (max-width: 768px) {
+    .profile-form {
+        padding: 16px;
+    }
+
+    .profile-section {
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+    }
+
+    .form-group-small {
+        max-width: none;
+    }
+
+    .form-row.profile-triple {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .image-settings-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .selector-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* 紧凑的按钮组 */
+.setting-card .glass-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    min-height: 48px;
+    padding: 8px 0;
+}
+
+.setting-item:last-child {
+    margin-bottom: 0;
+}
+
+.setting-item label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Select 选择框样式 */
+.glass-input[type="text"],
+.glass-input[type="email"],
+.glass-input[type="password"],
+.glass-input[type="url"],
+.glass-input[type="number"],
+.glass-input,
+select.glass-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid rgba(139, 69, 19, 0.3);
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+select.glass-input {
+    cursor: pointer;
+    padding-right: 40px;
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)),
+                      url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center, center;
+    background-size: auto, 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.glass-input:focus,
+select.glass-input:focus {
+    outline: none;
+    border-color: rgba(139, 69, 19, 0.6);
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2), 0 0 0 3px rgba(139, 69, 19, 0.1);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+}
+
+.glass-input:hover,
+select.glass-input:hover {
+    border-color: rgba(139, 69, 19, 0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+}
+
+/* 选择框选项样式 */
+select.glass-input option {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border: none;
+}
+
+.setting-item select {
+    min-width: 150px;
+}
+
+.stats {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.stat-value {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.data-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 模态框样式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    max-width: 90%;
+    width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    position: relative;
+    border-radius: 16px;
+}
+
+.modal-header {
+    margin: -20px -20px 15px;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--glass-border);
+    border-radius: 16px 16px 0 0;
+    position: relative;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 0;
+}
+
+.modal-body p {
+    margin: 0 0 15px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.modal-body textarea,
+.modal-body input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    resize: none;
+    margin-bottom: 15px;
+    min-height: 60px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-footer button {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: 80px;
+}
+
+/* 关闭按钮样式 */
+.close-btn {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: var(--glass-bg);
+    color: var(--text-primary);
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .modal-content {
+        width: calc(100% - 30px);
+        max-width: 350px;
+        margin: 15px auto;
+        padding: 15px;
+    }
+
+    .modal-header {
+        margin: -15px -15px 12px;
+        padding: 12px 15px;
+    }
+
+    .modal-header h3 {
+        font-size: 16px;
+    }
+
+    .modal-body p {
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    .modal-body textarea,
+    .modal-body input {
+        padding: 8px;
+        font-size: 13px;
+        min-height: 50px;
+        margin-bottom: 12px;
+    }
+
+    .modal-footer {
+        margin-top: 12px;
+        gap: 8px;
+    }
+
+    .modal-footer button {
+        padding: 6px 12px;
+        font-size: 13px;
+        min-width: 70px;
+    }
+
+    .close-btn {
+        right: 12px;
+        top: 12px;
+        font-size: 14px;
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* 黑暗模式适配 */
+[data-theme="dark"] .modal-content {
+    background: rgba(30, 41, 59, 0.95);
+    border-color: rgba(71, 85, 105, 0.8);
+}
+
+[data-theme="dark"] .modal-header {
+    border-bottom-color: rgba(71, 85, 105, 0.3);
+}
+
+[data-theme="dark"] .modal-body textarea,
+[data-theme="dark"] .modal-body input {
+    background: rgba(15, 23, 42, 0.3);
+    border-color: rgba(71, 85, 105, 0.3);
+}
+
+/* 批量操作相关的模态框特殊样式 */
+.batch-modal .modal-content {
+    max-width: 350px;
+}
+
+.batch-modal .modal-body textarea {
+    min-height: 80px;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .admin-content {
+        grid-template-columns: 240px 1fr;
+        gap: 20px;
+    }
+    
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .admin-nav {
+        position: static;
+        padding: 20px;
+    }
+    
+    .nav-group {
+        margin-bottom: 20px;
+    }
+    
+    .nav-btn {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .section-header h2 {
+        font-size: 24px;
+    }
+    
+    .songs-header,
+    .song-row {
+        grid-template-columns: 40px 1.5fr 1fr 0.8fr 1.2fr 1.8fr;
+        gap: 12px;
+        padding: 8px 15px;
+        min-height: 50px;
+        align-items: center;
+    }
+
+    .songs-header {
+        font-size: 14px !important;
+    }
+
+    .songs-header .song-cell {
+        font-size: 14px !important;
+    }
+
+    .song-row {
+        font-size: 12px;
+    }
+    
+    .song-row {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    
+    .song-row:first-child {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .modal-header,
+    .song-form,
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .songs-header,
+    .song-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        text-align: left;
+    }
+    
+    .song-row {
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        background: var(--bg-secondary);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .songs-header {
+        display: none;
+    }
+    
+    .song-actions {
+        margin-top: 10px;
+        justify-content: flex-start;
+    }
+    
+    .settings-grid {
+        gap: 12px;
+        grid-template-columns: 1fr;
+    }
+
+    .setting-card {
+        padding: 16px;
+    }
+
+    .setting-card h3 {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+
+    .setting-card .form-group {
+        margin-bottom: 12px;
+    }
+    
+    .data-actions {
+        flex-direction: column;
+    }
+}
+
+/* 特殊效果 */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+/* 拖拽区域 */
+.drop-zone {
+    border: 2px dashed var(--glass-border);
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+    border-color: var(--accent-color);
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--text-primary);
+}
+
+.drop-zone .icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+}
+
+/* 成功/错误状态 */
+.success {
+    color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+}
+
+.error {
+    color: var(--error-color) !important;
+    border-color: var(--error-color) !important;
+}
+
+.warning {
+    color: var(--warning-color) !important;
+    border-color: var(--warning-color) !important;
+}
+
+.info {
+    background: rgba(2, 136, 209, 0.8);
+}
+
+/* 歌单管理操作按钮 */
+.song-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* 大型模态框 */
+.large-modal {
+    max-width: 800px;
+    width: 90vw;
+}
+
+/* 批量添加样式 */
+.batch-add-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.tab-btn.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}
+
+.tab-btn:hover {
+    color: var(--text-primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.batch-textarea {
+    min-height: 200px;
+    resize: vertical;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 14px;
+}
+
+.batch-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+    border-radius: 12px;
+    border: 1px solid rgba(139, 69, 19, 0.2);
+}
+
+.batch-options .form-group {
+    margin-bottom: 0;
+}
+
+.batch-options .form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.batch-options select.glass-input {
+    font-size: 13px;
+    padding: 10px 14px;
+    min-height: 40px;
+}
+
+.batch-options select.glass-input:focus {
+    box-shadow: 0 2px 8px rgba(139, 69, 19, 0.15), 0 0 0 2px rgba(139, 69, 19, 0.1);
+}
+
+/* 模板导入样式 */
+.template-info {
+    text-align: center;
+    padding: 20px;
+}
+
+.upload-area {
+    border: 2px dashed var(--glass-border);
+    border-radius: 12px;
+    padding: 40px 20px;
+    margin: 20px 0;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+    border-color: var(--accent-color);
+    background: var(--glass-bg);
+}
+
+.upload-area.dragover {
+    border-color: var(--accent-color);
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.upload-text .icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.upload-text p {
+    margin: 8px 0 4px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.upload-text small {
+    color: var(--text-secondary);
+}
+
+/* 预览区域 */
+.preview-section {
+    margin-top: 24px;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 20px;
+}
+
+.preview-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 16px;
+    background: var(--glass-bg);
+}
+
+.preview-hint {
+    color: var(--text-secondary);
+    text-align: center;
+    font-style: italic;
+}
+
+.preview-song {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 2fr;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 14px;
+}
+
+.preview-song:last-child {
+    border-bottom: none;
+}
+
+.preview-song-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.preview-song-artist {
+    color: var(--text-secondary);
+}
+
+.preview-song-genre {
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.preview-song-note {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.preview-error {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* 附加响应式设计 */
+@media (max-width: 768px) {
+    .song-actions {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 50px;
+        padding: 6px 0;
+    }
+    
+    .song-actions button {
+        flex: 1;
+        padding: 6px 8px;
+        font-size: 10px;
+        min-width: 50px;
+        height: 32px;
+    }
+    
+    .large-modal {
+        width: 95vw;
+        max-width: none;
+    }
+    
+    .batch-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .preview-song {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+}
+
+/* 批量操作工具栏 */
+.batch-toolbar {
+    margin: 1rem 0;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid var(--primary-color);
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.1), rgba(255, 182, 193, 0.1));
+    min-height: 64px;
+}
+
+.batch-info {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.batch-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 48px;
+}
+
+.batch-actions .glass-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* 复选框样式 */
+.checkbox-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    width: 0;
+    height: 0;
+}
+
+.checkmark {
+    position: relative;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 2px solid rgba(139, 69, 19, 0.6);
+    border-radius: 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.checkbox-container:hover .checkmark {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    border-color: rgba(139, 69, 19, 0.8);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.9), rgba(139, 69, 19, 0.7));
+    border-color: rgba(139, 69, 19, 1);
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.checkbox-container input:checked:hover ~ .checkmark {
+    background: linear-gradient(135deg, rgba(139, 69, 19, 1), rgba(139, 69, 19, 0.8));
+    box-shadow: 0 6px 16px rgba(139, 69, 19, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid rgba(255, 255, 255, 0.95);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+    animation: checkmarkAppear 0.3s ease-out;
+}
+
+@keyframes checkmarkAppear {
+    0% {
+        opacity: 0;
+        transform: rotate(45deg) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: rotate(45deg) scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(45deg) scale(1);
+    }
+}
+
+/* 选择列样式 */
+.select-cell {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    padding: 0;
+}
+
+.select-cell .checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 60px;
+}
+
+/* 表头复选框特殊样式 */
+.songs-header .select-cell .checkmark {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+    border-color: rgba(139, 69, 19, 0.7);
+}
+
+.songs-header .select-cell .checkbox-container:hover .checkmark {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+    border-color: rgba(139, 69, 19, 0.9);
+}
+
+/* 歌曲行选中状态 */
+.song-row.selected {
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.15), rgba(255, 182, 193, 0.15));
+    border-left: 3px solid rgba(139, 69, 19, 0.8);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 8px rgba(139, 69, 19, 0.1);
+    position: relative;
+}
+
+.song-row.selected::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(139, 69, 19, 0.05) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+/* 移动端优化 */
+@media screen and (max-width: 768px) {
+    /* 顶部操作按钮组容器 */
+    .top-actions {
+        display: flex;
+        padding: 8px;
+        gap: 8px;
+        background: transparent;
+    }
+
+    /* 操作按钮组样式 */
+    .action-group {
+        display: flex;
+        gap: 6px;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        justify-content: space-between;
+        margin: 0;
+    }
+
+    /* 每个操作按钮的样式 */
+    .action-btn {
+        flex: 1;
+        height: 36px;
+        padding: 0 12px;
+        font-size: 13px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-width: 0;
+        white-space: nowrap;
+    }
+
+    /* 按钮图标样式 */
+    .action-btn .icon {
+        font-size: 15px;
+        margin: 0;
+    }
+
+    /* 按钮文字样式 */
+    .action-btn span {
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    /* 删除按钮特殊样式 */
+    .action-btn.delete {
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* 添加按钮特殊样式 */
+    .action-btn.add {
+        background: rgba(99, 102, 241, 0.1);
+    }
+
+    /* 编辑按钮特殊样式 */
+    .action-btn.edit {
+        background: rgba(139, 92, 246, 0.1);
+    }
+
+    /* 歌曲列表项 */
+    .song-list {
+        margin-top: 10px;
+    }
+
+    .song-item {
+        padding: 12px;
+        gap: 8px;
+        grid-template-columns: 1fr auto;
+    }
+
+    .song-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .song-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .song-artist {
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .song-genre {
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+    .song-note {
+        font-size: 12px;
+        color: #6b7280;
+        font-style: italic;
+    }
+
+    /* 底部操作按钮 */
+    .song-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+        border-radius: 6px;
+    }
+
+    /* 选择框 */
+    .song-select {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* 批量操作工具栏 */
+    .batch-toolbar {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .batch-toolbar button {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    /* 模态框 */
+    .modal-content {
+        width: 90%;
+        max-width: none;
+        margin: 20px auto;
+        padding: 16px;
+    }
+
+    .form-group {
+        margin-bottom: 12px;
+    }
+
+    .form-group label {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    /* 暗色模式适配 */
+    [data-theme="dark"] .song-title {
+        color: #e5e7eb;
+    }
+
+    [data-theme="dark"] .song-artist,
+    [data-theme="dark"] .song-note {
+        color: #9ca3af;
+    }
+}
+
+/* 强制按钮样式覆盖 - 最高优先级解决样式冲突 */
+button.glass-btn.primary,
+.admin-content button.glass-btn.primary,
+.song-actions button.glass-btn.primary,
+#addSongBtn,
+#saveProfileBtn {
+    background: var(--kawaii-gradient) !important;
+    background-clip: padding-box !important;
+    backdrop-filter: none !important;
+    border: 2px solid transparent !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3) !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    padding: 12px 20px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    min-height: 44px !important;
+}
+
+button.glass-btn.danger,
+.admin-content button.glass-btn.danger,
+.song-actions button.glass-btn.danger,
+#batchRemoveBtn,
+#batchDeleteBtn {
+    background: linear-gradient(45deg, var(--error-color), #ff8a80) !important;
+    background-clip: padding-box !important;
+    backdrop-filter: none !important;
+    border: 2px solid transparent !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3) !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    padding: 12px 20px !important;
+    box-sizing: border-box !important;
+    min-height: 44px !important;
+}
+
+button.glass-btn.secondary,
+.admin-content button.glass-btn.secondary,
+.song-actions button.glass-btn.secondary,
+#batchAddBtn,
+#clearSelectionBtn {
+    background: linear-gradient(45deg, var(--cute-blue), var(--cute-purple)) !important;
+    background-clip: padding-box !important;
+    backdrop-filter: none !important;
+    border: 2px solid transparent !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(167, 199, 255, 0.3) !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    padding: 12px 20px !important;
+    box-sizing: border-box !important;
+    min-height: 44px !important;
+}
+
+/* 悬停效果强制覆盖 */
+button.glass-btn.primary:hover,
+.admin-content button.glass-btn.primary:hover,
+.song-actions button.glass-btn.primary:hover,
+#addSongBtn:hover,
+#saveProfileBtn:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.5) !important;
+}
+
+button.glass-btn.danger:hover,
+.admin-content button.glass-btn.danger:hover,
+.song-actions button.glass-btn.danger:hover,
+#batchRemoveBtn:hover,
+#batchDeleteBtn:hover {
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5) !important;
+}
+
+button.glass-btn.secondary:hover,
+.admin-content button.glass-btn.secondary:hover,
+.song-actions button.glass-btn.secondary:hover,
+#batchAddBtn:hover,
+#clearSelectionBtn:hover {
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(167, 199, 255, 0.5) !important;
+}
+
+/* 确保操作按钮文字显示 */
+.action-btn {
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+.action-btn .icon {
+    flex-shrink: 0;
+    display: inline !important;
+}
+
+.action-btn span:not(.icon) {
+    display: inline !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* 操作按钮文字内容显示 */
+.action-btn::after {
+    content: none !important;
+}
+
+.action-btn {
+    justify-content: center !important;
+}
+
+.settings-card {
+    margin-top: 20px;
+    padding: 24px;
+}
+
+.settings-card h2 {
+    font-size: 20px;
+    color: #4b5563;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .settings-card h2 {
+    color: #e5e7eb;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+[data-theme="dark"] .form-group label {
+    color: #9ca3af;
+}
+
+.form-text {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+[data-theme="dark"] .form-text {
+    color: #9ca3af;
+}
+
+.command-preview {
+    background: rgba(243, 244, 246, 0.8);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 14px;
+    color: #1f2937;
+    border: 1px solid rgba(209, 213, 219, 0.3);
+}
+
+[data-theme="dark"] .command-preview {
+    background: rgba(17, 24, 39, 0.8);
+    color: #e5e7eb;
+    border-color: rgba(75, 85, 99, 0.3);
+}
+
+.save-settings-btn {
+    width: 100%;
+}
+
+.notification-container {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    position: relative;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 2px 8px var(--shadow);
+    max-width: 300px;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification .icon {
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.notification .text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notification.success {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.notification.error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.notification.warning {
+    background: rgba(234, 179, 8, 0.1);
+    border-color: rgba(234, 179, 8, 0.3);
+}
+
+.notification.info {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="dark"] .notification {
+    background: rgba(30, 41, 59, 0.95);
+}
+
+[data-theme="dark"] .notification.success {
+    background: rgba(34, 197, 94, 0.2);
+}
+[data-theme="dark"] .notification.error {
+    background: rgba(239, 68, 68, 0.2);
+}
+[data-theme="dark"] .notification.warning {
+    background: rgba(234, 179, 8, 0.2);
+}
+[data-theme="dark"] .notification.info {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+@media (max-width: 768px) {
+    .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        padding: 10px 15px;
+        font-size: 13px;
+        transform: translateY(-120%);
+    }
+    .notification.show {
+        transform: translateY(0);
+    }
+}
+
+.management-section {
+    margin-bottom: 24px;
+}
+
+.management-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.add-input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.items-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    background: var(--glass-bg);
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+}
+
+.item-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-secondary);
+    padding: 6px 10px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+    transition: all 0.2s ease;
+}
+
+.item-tag .delete-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    font-size: 16px;
+    line-height: 1;
+    opacity: 0.5;
+    transition: all 0.2s ease;
+}
+
+.item-tag:hover .delete-btn {
+    opacity: 1;
+    color: var(--error-color);
+}
+
+.stats-container .stat-item {
+    padding: 8px 0;
+}
+
+.add-input-group .glass-input {
+    flex-grow: 1;
+}
+
+.medium-modal {
+    max-width: 550px;
+    width: 90vw;
+}
+
+[data-theme="dark"] .song-cell {
+    color: var(--text-primary);
+}
+
+.song-cell.song-note,
+.song-cell.song-genre {
+    color: #333333;
+}
+
+.song-row .song-cell.song-genre {
+    text-align: left;
+}
+.song-row .song-cell.song-note {
+    padding-left: 10px;
+}
+
+/* 暗色主题下的文字颜色优化 */
+[data-theme="dark"] .song-cell {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .song-cell.song-title {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .song-cell.song-artist,
+[data-theme="dark"] .song-cell.song-note,
+[data-theme="dark"] .song-cell.song-genre {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .song-row:hover .song-cell,
+[data-theme="dark"] .song-row:hover .song-cell.song-title,
+[data-theme="dark"] .song-row:hover .song-cell.song-artist,
+[data-theme="dark"] .song-row:hover .song-cell.song-note,
+[data-theme="dark"] .song-row:hover .song-cell.song-genre {
+    color: #ffffff;
+}
+
+/* 暗色主题下的表头优化 */
+[data-theme="dark"] .songs-header .song-cell {
+    background: linear-gradient(90deg, #f472b6, #c084fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    font-size: 16px !important;
+}
+
+/* 暗色主题下的行悬停效果优化 */
+[data-theme="dark"] .song-row:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+[data-theme="dark"] .song-row:hover::before {
+    opacity: 0.95;
+}
+
+/* 暗色主题下的操作按钮优化 */
+[data-theme="dark"] .action-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .action-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+}
+
+[data-theme="dark"] .action-btn.edit {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.4);
+}
+
+[data-theme="dark"] .action-btn.delete {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+/* 暗色主题下的分隔线优化 */
+[data-theme="dark"] .song-row {
+    border-bottom-color: rgba(148, 163, 184, 0.1);
+}
+
+[data-theme="dark"] .song-row:first-child {
+    border-top-color: rgba(148, 163, 184, 0.15);
+}
+
+/* 暗色主题下的滚动条优化 */
+[data-theme="dark"] .songs-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .songs-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}

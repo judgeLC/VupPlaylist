@@ -1,0 +1,19 @@
+{
+  "settings": {
+    "commandPrefix": "/点歌",
+    "commandSuffix": "",
+    "theme": "light",
+    "autoSave": true,
+    "backupEnabled": true,
+    "maxSongsPerPage": 50,
+    "allowGuestView": true,
+    "enableSearch": true,
+    "enableFilter": true
+  },
+  "metadata": {
+    "version": "1.0",
+    "lastModified": "2025-07-04T18:46:27.213Z",
+    "description": "系统设置数据文件",
+    "createdDate": "2025-07-04T09:27:15.377Z"
+  }
+}
