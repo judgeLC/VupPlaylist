@@ -43,8 +43,8 @@ class VTuberPlaylist {
             console.log('基础数据加载完成');
 
             // 2. 等待风格管理器初始化完成
-            await window.genreManager.initialize();
-            console.log('GenreManager 初始化完成，开始渲染页面');
+            await window.simpleGenreManager.initialize();
+            console.log('SimpleGenreManager 初始化完成，开始渲染页面');
 
             // 3. 绑定事件和渲染页面
             this.bindEvents();
@@ -267,8 +267,8 @@ class VTuberPlaylist {
                         this.updateProfile();
                         break;
                     case 'genreDataUpdated':
-                        // 风格数据更新，刷新 GenreManager
-                        await window.genreManager.refresh();
+                        // 风格数据更新，刷新 SimpleGenreManager
+                        await window.simpleGenreManager.refresh();
                         this.updateGenreNavigation();
                         this.renderPlaylist(); // 重新渲染歌曲以更新风格显示
                         showGeneralNotification('风格数据已更新', 'success');
@@ -292,7 +292,7 @@ class VTuberPlaylist {
             const genreChannel = new BroadcastChannel('vup-playlist-genres');
             genreChannel.addEventListener('message', async (event) => {
                 if (event.data.type === 'genreDataUpdated') {
-                    await window.genreManager.refresh();
+                    await window.simpleGenreManager.refresh();
                     this.updateGenreNavigation();
                     this.renderPlaylist();
                     showGeneralNotification('风格数据已同步更新', 'info');
@@ -407,7 +407,7 @@ class VTuberPlaylist {
         // 每30秒检查一次风格数据是否有更新
         setInterval(async () => {
             try {
-                await window.genreManager.refresh();
+                await window.simpleGenreManager.refresh();
             } catch (error) {
                 console.log('定期风格数据检查失败:', error);
             }
@@ -428,7 +428,7 @@ class VTuberPlaylist {
             console.log('手动刷新数据...');
 
             // 刷新风格数据
-            await window.genreManager.refresh();
+            await window.simpleGenreManager.refresh();
 
             // 重新加载歌曲数据
             this.reloadData();
@@ -697,7 +697,7 @@ class VTuberPlaylist {
 
     // 获取所有风格（内置+自定义）
     getAllGenres() {
-        return window.genreManager.getAllGenres().map(g => ({
+        return window.simpleGenreManager.getAllGenres().map(g => ({
             id: g.id,
             name: g.name,
             emoji: '🎵'
@@ -819,7 +819,7 @@ class VTuberPlaylist {
 
     // 获取风格显示名称
     getGenreDisplayName(genre) {
-        return window.genreManager.getDisplayName(genre);
+        return window.simpleGenreManager.getDisplayName(genre);
     }
 
     // HTML转义

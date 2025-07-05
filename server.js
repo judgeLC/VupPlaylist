@@ -14,6 +14,7 @@ const DATA_DIR = path.join(__dirname, 'data');
 const SONGS_FILE = path.join(DATA_DIR, 'songs.json');
 const PROFILE_FILE = path.join(DATA_DIR, 'profile.json');
 const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
+const GENRES_FILE = path.join(DATA_DIR, 'genres.json');
 
 // 确保数据目录存在
 if (!fsSync.existsSync(DATA_DIR)) {
@@ -107,6 +108,36 @@ class DataManager {
             lastModified: new Date().toISOString()
         };
         return await this.writeJsonFile(PROFILE_FILE, profileData);
+    }
+
+    // 获取风格数据
+    static async getGenres() {
+        const defaultGenres = {
+            genres: [
+                { id: 'pop', name: '流行', builtIn: true, createdAt: new Date().toISOString() },
+                { id: 'rock', name: '摇滚', builtIn: true, createdAt: new Date().toISOString() },
+                { id: 'folk', name: '民谣', builtIn: true, createdAt: new Date().toISOString() },
+                { id: 'classical', name: '古典', builtIn: true, createdAt: new Date().toISOString() },
+                { id: 'electronic', name: '电子', builtIn: true, createdAt: new Date().toISOString() }
+            ],
+            metadata: {
+                version: '1.0',
+                lastModified: new Date().toISOString(),
+                description: '风格数据文件',
+                totalCount: 5
+            }
+        };
+        return await this.readJsonFile(GENRES_FILE, defaultGenres);
+    }
+
+    // 保存风格数据
+    static async saveGenres(genresData) {
+        genresData.metadata = {
+            ...genresData.metadata,
+            lastModified: new Date().toISOString(),
+            totalCount: genresData.genres.length
+        };
+        return await this.writeJsonFile(GENRES_FILE, genresData);
     }
 
     // 生成唯一ID
@@ -564,17 +595,108 @@ app.get('/api/settings', async (req, res) => {
     }
 });
 
-// 风格管理 API
+// 新的风格管理 API
 // 获取所有风格
 app.get('/api/genres', async (req, res) => {
     try {
-        const songsData = await DataManager.getSongs();
-        const customGenres = songsData.customGenres || [];
-
-        ResponseHelper.success(res, customGenres);
+        const genresData = await DataManager.getGenres();
+        ResponseHelper.success(res, genresData.genres || []);
     } catch (error) {
         console.error('获取风格数据失败:', error);
         ResponseHelper.error(res, '获取风格数据失败', 500, error);
+    }
+});
+
+// 添加新风格
+app.post('/api/genres', authenticateToken, async (req, res) => {
+    try {
+        const { name } = req.body;
+        if (!name || !name.trim()) {
+            return ResponseHelper.error(res, '风格名称不能为空', 400);
+        }
+
+        const genresData = await DataManager.getGenres();
+        const genres = genresData.genres || [];
+
+        // 检查是否已存在
+        if (genres.some(g => g.name === name.trim())) {
+            return ResponseHelper.error(res, '该风格已存在', 400);
+        }
+
+        // 添加新风格
+        const newGenre = {
+            id: 'custom_' + Date.now(),
+            name: name.trim(),
+            builtIn: false,
+            createdAt: new Date().toISOString()
+        };
+
+        genres.push(newGenre);
+
+        // 保存数据
+        const updatedData = {
+            ...genresData,
+            genres: genres,
+            metadata: {
+                ...genresData.metadata,
+                lastModified: new Date().toISOString(),
+                totalCount: genres.length
+            }
+        };
+
+        const saved = await DataManager.saveGenres(updatedData);
+        if (saved) {
+            ResponseHelper.success(res, newGenre, '风格添加成功');
+        } else {
+            ResponseHelper.error(res, '保存失败', 500);
+        }
+    } catch (error) {
+        console.error('添加风格失败:', error);
+        ResponseHelper.error(res, '添加风格失败', 500, error);
+    }
+});
+
+// 删除风格
+app.delete('/api/genres/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const genresData = await DataManager.getGenres();
+        const genres = genresData.genres || [];
+
+        const genreIndex = genres.findIndex(g => g.id === id);
+        if (genreIndex === -1) {
+            return ResponseHelper.error(res, '风格不存在', 404);
+        }
+
+        const genre = genres[genreIndex];
+        if (genre.builtIn) {
+            return ResponseHelper.error(res, '不能删除内置风格', 400);
+        }
+
+        // 删除风格
+        genres.splice(genreIndex, 1);
+
+        // 保存数据
+        const updatedData = {
+            ...genresData,
+            genres: genres,
+            metadata: {
+                ...genresData.metadata,
+                lastModified: new Date().toISOString(),
+                totalCount: genres.length
+            }
+        };
+
+        const saved = await DataManager.saveGenres(updatedData);
+        if (saved) {
+            ResponseHelper.success(res, null, '风格删除成功');
+        } else {
+            ResponseHelper.error(res, '保存失败', 500);
+        }
+    } catch (error) {
+        console.error('删除风格失败:', error);
+        ResponseHelper.error(res, '删除风格失败', 500, error);
     }
 });
 

@@ -1782,12 +1782,12 @@ class AdminManager {
     }
 
     getAllGenres() {
-        return this.getCustomGenres();
+        return window.simpleGenreManager.getAllGenres();
     }
 
     // 获取风格显示名称
     getGenreDisplayName(genreId) {
-        return window.genreManager.getDisplayName(genreId);
+        return window.simpleGenreManager.getDisplayName(genreId);
     }
 
     // 同步风格数据到服务器
@@ -1941,58 +1941,83 @@ class AdminManager {
             input.focus();
             return;
         }
-        const allGenres = this.getAllGenres();
-        if (allGenres.some(g => g.name === name)) {
-            this.showNotification('该风格已存在', 'warning');
-            input.focus();
-            return;
-        }
 
-        // 添加到 GenreManager
-        const newGenre = window.genreManager.addGenre(name);
-
-        // 同步到服务器
         try {
-            await this.syncGenresToServer();
-            console.log('风格同步到服务器成功，通知其他页面更新');
-            // 通知数据更新
-            window.genreManager.notifyDataUpdate();
-            this.notifyGenreUpdate(); // 添加这行来通知其他页面
-            this.showNotification('风格添加成功并已同步到服务器', 'success');
-        } catch (error) {
-            console.error('同步风格到服务器失败:', error);
-            this.showNotification('风格添加成功，但同步到服务器失败', 'warning');
-        }
+            // 直接使用新的API添加风格
+            const session = this.getSession();
+            if (!session || !session.token) {
+                this.showNotification('未登录，无法添加风格', 'error');
+                return;
+            }
 
-        input.value = '';
-        this.renderGenreManagement();
-        this.updateGenreSelects();
-        this.updateGenreAndRemarkSelects();
+            const response = await fetch('/api/genres', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.token}`
+                },
+                body: JSON.stringify({ name })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // 刷新本地风格管理器
+                await window.simpleGenreManager.refresh();
+
+                this.showNotification('风格添加成功', 'success');
+                input.value = '';
+                this.renderGenreManagement();
+                this.updateGenreSelects();
+                this.updateGenreAndRemarkSelects();
+
+                // 通知其他页面更新
+                this.notifyGenreUpdate();
+            } else {
+                this.showNotification(result.message || '添加风格失败', 'error');
+            }
+        } catch (error) {
+            console.error('添加风格失败:', error);
+            this.showNotification('添加风格失败: ' + error.message, 'error');
+        }
     }
 
     async deleteGenre(genreId) {
-        const success = window.genreManager.deleteGenre(genreId);
-        if (!success) {
-            this.showNotification('删除风格失败', 'error');
-            return;
-        }
-
-        // 同步到服务器
         try {
-            await this.syncGenresToServer();
-            console.log('风格删除同步到服务器成功，通知其他页面更新');
-            // 通知数据更新
-            window.genreManager.notifyDataUpdate();
-            this.notifyGenreUpdate(); // 添加这行来通知其他页面
-            this.showNotification('风格删除成功并已同步到服务器', 'success');
-        } catch (error) {
-            console.error('同步风格到服务器失败:', error);
-            this.showNotification('风格删除成功，但同步到服务器失败', 'warning');
-        }
+            // 直接使用新的API删除风格
+            const session = this.getSession();
+            if (!session || !session.token) {
+                this.showNotification('未登录，无法删除风格', 'error');
+                return;
+            }
 
-        this.renderGenreManagement();
-        this.updateGenreSelects();
-        this.updateGenreAndRemarkSelects();
+            const response = await fetch(`/api/genres/${genreId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${session.token}`
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // 刷新本地风格管理器
+                await window.simpleGenreManager.refresh();
+
+                this.showNotification('风格删除成功', 'success');
+                this.renderGenreManagement();
+                this.updateGenreSelects();
+                this.updateGenreAndRemarkSelects();
+
+                // 通知其他页面更新
+                this.notifyGenreUpdate();
+            } else {
+                this.showNotification(result.message || '删除风格失败', 'error');
+            }
+        } catch (error) {
+            console.error('删除风格失败:', error);
+            this.showNotification('删除风格失败: ' + error.message, 'error');
+        }
     }
 
     renderGenreManagement() {

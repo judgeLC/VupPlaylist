@@ -1,0 +1,22 @@
+{
+  "genres": [
+    {
+      "id": "pop",
+      "name": "流行",
+      "builtIn": true,
+      "createdAt": "2025-07-05T00:00:00.000Z"
+    },
+    {
+      "id": "custom_1751706584845",
+      "name": "古风",
+      "builtIn": false,
+      "createdAt": "2025-07-05T09:09:44.845Z"
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "lastModified": "2025-07-05T09:09:44.845Z",
+    "description": "风格数据文件",
+    "totalCount": 2
+  }
+}
