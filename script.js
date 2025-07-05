@@ -271,7 +271,7 @@ class VTuberPlaylist {
                         await window.genreManager.refresh();
                         this.updateGenreNavigation();
                         this.renderPlaylist(); // 重新渲染歌曲以更新风格显示
-                        this.showNotification('风格数据已更新', 'success');
+                        showGeneralNotification('风格数据已更新', 'success');
                         break;
                     case 'faviconUpdated':
                         if (event.data.favicon) {
@@ -295,7 +295,7 @@ class VTuberPlaylist {
                     await window.genreManager.refresh();
                     this.updateGenreNavigation();
                     this.renderPlaylist();
-                    this.showNotification('风格数据已同步更新', 'info');
+                    showGeneralNotification('风格数据已同步更新', 'info');
                 }
             });
         }
@@ -305,7 +305,7 @@ class VTuberPlaylist {
             console.log('收到风格更新事件，刷新页面显示...');
             this.updateGenreNavigation();
             this.renderPlaylist();
-            this.showNotification('风格数据已更新', 'success');
+            showGeneralNotification('风格数据已更新', 'success');
         });
 
         // 定期检查风格数据更新（作为备用机制）
@@ -437,10 +437,10 @@ class VTuberPlaylist {
             this.updateGenreNavigation();
             this.renderPlaylist();
 
-            showNotification('数据刷新成功', 'success');
+            showGeneralNotification('数据刷新成功', 'success');
         } catch (error) {
             console.error('刷新数据失败:', error);
-            showNotification('数据刷新失败', 'error');
+            showGeneralNotification('数据刷新失败', 'error');
         } finally {
             if (refreshBtn) {
                 refreshBtn.disabled = false;
