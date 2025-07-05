@@ -11,12 +11,36 @@
       "name": "古风",
       "builtIn": false,
       "createdAt": "2025-07-05T09:09:44.845Z"
+    },
+    {
+      "id": "custom_1751707035585",
+      "name": "豫剧",
+      "builtIn": false,
+      "createdAt": "2025-07-05T09:17:15.585Z"
+    },
+    {
+      "id": "custom_1751707066624",
+      "name": "京剧",
+      "builtIn": false,
+      "createdAt": "2025-07-05T09:17:46.624Z"
+    },
+    {
+      "id": "custom_1751707088538",
+      "name": "黄梅戏",
+      "builtIn": false,
+      "createdAt": "2025-07-05T09:18:08.538Z"
+    },
+    {
+      "id": "custom_1751707101080",
+      "name": "SC",
+      "builtIn": false,
+      "createdAt": "2025-07-05T09:18:21.080Z"
     }
   ],
   "metadata": {
     "version": "1.0",
-    "lastModified": "2025-07-05T09:09:44.845Z",
+    "lastModified": "2025-07-05T09:18:21.080Z",
     "description": "风格数据文件",
-    "totalCount": 2
+    "totalCount": 6
   }
 }

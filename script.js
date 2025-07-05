@@ -214,11 +214,7 @@ class VTuberPlaylist {
             liveBtn.addEventListener('click', () => this.openLiveRoom());
         }
 
-        // 绑定刷新按钮事件
-        const refreshBtn = document.getElementById('refreshBtn');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => this.refreshData());
-        }
+
 
         // 风格选择下拉框
         const genreSelect = document.getElementById('genreSelect');
@@ -414,40 +410,7 @@ class VTuberPlaylist {
         }, 30000); // 30秒
     }
 
-    /**
-     * 手动刷新数据
-     */
-    async refreshData() {
-        const refreshBtn = document.getElementById('refreshBtn');
-        if (refreshBtn) {
-            refreshBtn.disabled = true;
-            refreshBtn.innerHTML = '<span class="icon">⏳</span><span class="text">刷新中...</span>';
-        }
 
-        try {
-            console.log('手动刷新数据...');
-
-            // 刷新风格数据
-            await window.simpleGenreManager.refresh();
-
-            // 重新加载歌曲数据
-            this.reloadData();
-
-            // 更新界面
-            this.updateGenreNavigation();
-            this.renderPlaylist();
-
-            showGeneralNotification('数据刷新成功', 'success');
-        } catch (error) {
-            console.error('刷新数据失败:', error);
-            showGeneralNotification('数据刷新失败', 'error');
-        } finally {
-            if (refreshBtn) {
-                refreshBtn.disabled = false;
-                refreshBtn.innerHTML = '<span class="icon">🔄</span><span class="text">刷新</span>';
-            }
-        }
-    }
 
     // 主题切换
     async toggleTheme() {
