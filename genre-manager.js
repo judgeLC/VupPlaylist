@@ -126,7 +126,12 @@ class GenreManager {
 
         const genres = Array.from(genreMap.values());
 
-        // 异步获取真实的风格名称
+        // 立即生成友好名称，避免显示原始ID
+        genres.forEach(genre => {
+            genre.name = this.generateFriendlyName(genre.id);
+        });
+
+        // 异步获取真实的风格名称（如果API可用）
         this.fetchGenreNames(genres);
 
         return genres;
@@ -163,23 +168,18 @@ class GenreManager {
                     if (updated) {
                         // 保存到缓存
                         this.saveToCache();
-                        console.log('风格名称更新完成');
+                        console.log('风格名称从API更新完成');
 
                         // 触发页面更新
                         this.notifyUpdate();
                     }
                 }
+            } else if (response.status === 404) {
+                console.log('风格名称API不可用，使用友好名称显示');
             }
         } catch (error) {
-            console.log('获取风格名称失败，使用ID作为显示名称:', error.message);
-            // 如果API失败，至少确保风格ID可以显示
-            genres.forEach(genre => {
-                if (genre.name === genre.id) {
-                    // 尝试从ID中提取更友好的名称
-                    genre.name = this.generateFriendlyName(genre.id);
-                    this.genres.set(genre.id, genre);
-                }
-            });
+            // 静默处理API错误，不在控制台显示错误信息
+            console.log('风格名称API不可用，使用友好名称显示');
         }
     }
 
@@ -191,7 +191,11 @@ class GenreManager {
             const timestamp = genreId.replace('custom_', '');
             const date = new Date(parseInt(timestamp));
             if (!isNaN(date.getTime())) {
-                return `自定义风格_${date.getMonth() + 1}${date.getDate()}`;
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                const hour = date.getHours();
+                const minute = date.getMinutes();
+                return `自定义风格_${month}月${day}日${hour}:${minute.toString().padStart(2, '0')}`;
             }
         }
         return genreId;
