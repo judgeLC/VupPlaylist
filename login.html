@@ -221,6 +221,36 @@
             margin-top: 15px;
         }
 
+        .first-time-info {
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .first-time-info h4 {
+            margin: 0 0 10px 0;
+            color: #3498db;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .default-password-info {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .default-password-info code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
         .security-info {
             margin-top: 25px;
             padding: 15px;
@@ -281,6 +311,16 @@
             border-color: rgba(148, 163, 184, 0.2);
         }
 
+        [data-theme="dark"] .first-time-info {
+            background: rgba(52, 152, 219, 0.15);
+            border-color: rgba(52, 152, 219, 0.4);
+        }
+
+        [data-theme="dark"] .first-time-info code {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ff6b6b;
+        }
+
         [data-theme="dark"] .security-info {
             background: rgba(148, 163, 184, 0.1);
             border-color: rgba(148, 163, 184, 0.2);
@@ -333,6 +373,15 @@
                 </div>
             </form>
 
+            <!-- 首次登录提示 -->
+            <div class="first-time-info" id="firstTimeInfo" style="display: none;">
+                <h4>首次登录</h4>
+                <div class="default-password-info">
+                    <p><strong>默认密码：</strong> <code>Admin@123456</code></p>
+                    <p>首次登录后系统将要求您立即修改密码</p>
+                </div>
+            </div>
+
             <!-- 安全提示 -->
             <div class="security-info">
                 <h4>🛡️ 安全提示</h4>
@@ -358,4 +407,4 @@
 
     <script src="auth.js"></script>
 </body>
-</html> 
+</html>

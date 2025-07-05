@@ -1,13 +1,13 @@
 window.officialData = {
   "profile": {
-    "websiteTitle": "橙汁的歌单",
-    "vtuberName": "橙汁",
-    "vtuberUid": "123456789",
-    "vtuberBirthday": "7/15",
+    "websiteTitle": "",
+    "vtuberName": "",
+    "vtuberUid": "",
+    "vtuberBirthday": "",
     "liveRoomUrl": "",
-    "vtuberDesc": "专为虚拟主播开发的轻量化歌单。",
-    "avatar": "images/avatars/1751630546361.jpg",
-    "background": "images/backgrounds/1751630555108.png"
+    "vtuberDesc": "",
+    "avatar": "",
+    "background": ""
   },
   "songs": [
     {
@@ -3009,43 +3009,25 @@ window.officialData = {
       "genre": "custom_1751506243976",
       "note": "/",
       "addedDate": "2025-07-04T19:17:20.231Z"
+    },
+    {
+      "id": "e002a3ff1ee629533e68505d06779dc2",
+      "title": "????",
+      "artist": "????",
+      "genre": "??",
+      "note": "??",
+      "addedDate": "2025-07-05T10:44:31.892Z"
     }
   ],
-  "customGenres": [
-    {
-      "id": "custom_1751691275246",
-      "name": "自定义风格_7月5日12:54",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751656714021",
-      "name": "自定义风格_7月5日3:18",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506259744",
-      "name": "自定义风格_7月3日9:30",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506255759",
-      "name": "自定义风格_7月3日9:30",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506245176",
-      "name": "自定义风格_7月3日9:30",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506269360",
-      "name": "自定义风格_7月3日9:31",
-      "builtIn": false
-    },
-    {
-      "id": "custom_1751506243976",
-      "name": "自定义风格_7月3日9:30",
-      "builtIn": false
-    }
-  ]
+  "settings": {
+    "commandPrefix": "/点歌",
+    "commandSuffix": "",
+    "theme": "light",
+    "autoSave": true,
+    "backupEnabled": true,
+    "maxSongsPerPage": 50,
+    "allowGuestView": true,
+    "enableSearch": true,
+    "enableFilter": true
+  }
 };

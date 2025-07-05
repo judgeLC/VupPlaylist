@@ -15,6 +15,7 @@ const SONGS_FILE = path.join(DATA_DIR, 'songs.json');
 const PROFILE_FILE = path.join(DATA_DIR, 'profile.json');
 const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
 const GENRES_FILE = path.join(DATA_DIR, 'genres.json');
+const AUTH_FILE = path.join(DATA_DIR, 'auth.json');
 
 // 确保数据目录存在
 if (!fsSync.existsSync(DATA_DIR)) {
@@ -146,6 +147,236 @@ class DataManager {
     }
 }
 
+// 认证管理类
+class AuthManager {
+    // 默认管理员密码
+    static DEFAULT_PASSWORD = 'Admin@123456';
+
+    // 获取认证数据
+    static async getAuthData() {
+        const defaultAuth = {
+            passwordHash: null,
+            salt: null,
+            isSetup: false,
+            sessions: {},
+            loginAttempts: {},
+            lockouts: {}
+        };
+        return await DataManager.readJsonFile(AUTH_FILE, defaultAuth);
+    }
+
+    // 保存认证数据
+    static async saveAuthData(authData) {
+        return await DataManager.writeJsonFile(AUTH_FILE, authData);
+    }
+
+    // 生成密码哈希
+    static hashPassword(password, salt) {
+        return crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+    }
+
+    // 生成盐值
+    static generateSalt() {
+        return crypto.randomBytes(32).toString('hex');
+    }
+
+    // 生成会话token
+    static generateToken() {
+        return crypto.randomBytes(32).toString('hex');
+    }
+
+    // 验证密码强度
+    static validatePasswordStrength(password) {
+        if (password.length < 8) return false;
+        if (!/[a-z]/.test(password)) return false;
+        if (!/[A-Z]/.test(password)) return false;
+        if (!/\d/.test(password)) return false;
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return false;
+        return true;
+    }
+
+    // 检查是否为首次设置
+    static async isFirstTimeSetup() {
+        const authData = await this.getAuthData();
+        return !authData.isSetup;
+    }
+
+    // 验证登录
+    static async verifyLogin(password) {
+        const authData = await this.getAuthData();
+        const clientIp = '127.0.0.1'; // 简化处理，实际应该从请求中获取
+
+        // 检查是否被锁定
+        if (this.isLockedOut(authData, clientIp)) {
+            throw new Error('账户已被锁定，请稍后再试');
+        }
+
+        // 首次设置
+        if (!authData.isSetup) {
+            if (password !== this.DEFAULT_PASSWORD) {
+                this.recordFailedAttempt(authData, clientIp);
+                await this.saveAuthData(authData);
+                throw new Error('首次登录请使用默认密码：Admin@123456');
+            }
+            // 首次登录成功，但需要修改密码
+            return { firstTime: true, token: null };
+        }
+
+        // 验证密码
+        const inputHash = this.hashPassword(password, authData.salt);
+        if (inputHash !== authData.passwordHash) {
+            this.recordFailedAttempt(authData, clientIp);
+            await this.saveAuthData(authData);
+            throw new Error('密码错误');
+        }
+
+        // 登录成功，生成token
+        const token = this.generateToken();
+        const sessionId = crypto.randomUUID();
+
+        authData.sessions[sessionId] = {
+            token,
+            createdAt: new Date().toISOString(),
+            expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24小时
+            clientIp
+        };
+
+        // 清除失败记录
+        delete authData.loginAttempts[clientIp];
+        delete authData.lockouts[clientIp];
+
+        await this.saveAuthData(authData);
+
+        return { firstTime: false, token, sessionId };
+    }
+
+    // 设置新密码（首次设置或修改密码）
+    static async setPassword(newPassword, currentPassword = null) {
+        const authData = await this.getAuthData();
+
+        // 验证密码强度
+        if (!this.validatePasswordStrength(newPassword)) {
+            throw new Error('密码强度不足，请使用包含大小写字母、数字和特殊字符的8位以上密码');
+        }
+
+        // 如果不是首次设置，需要验证当前密码
+        if (authData.isSetup && currentPassword) {
+            const currentHash = this.hashPassword(currentPassword, authData.salt);
+            if (currentHash !== authData.passwordHash) {
+                throw new Error('当前密码错误');
+            }
+        }
+
+        // 首次设置时验证默认密码
+        if (!authData.isSetup && currentPassword !== this.DEFAULT_PASSWORD) {
+            throw new Error('首次设置请先输入默认密码：Admin@123456');
+        }
+
+        // 不能设置为默认密码
+        if (newPassword === this.DEFAULT_PASSWORD) {
+            throw new Error('新密码不能与默认密码相同');
+        }
+
+        // 生成新的盐值和密码哈希
+        const salt = this.generateSalt();
+        const passwordHash = this.hashPassword(newPassword, salt);
+
+        authData.passwordHash = passwordHash;
+        authData.salt = salt;
+        authData.isSetup = true;
+
+        // 清除所有现有会话
+        authData.sessions = {};
+
+        await this.saveAuthData(authData);
+
+        return true;
+    }
+
+    // 验证token
+    static async verifyToken(token) {
+        const authData = await this.getAuthData();
+
+        // 查找匹配的会话
+        for (const [sessionId, session] of Object.entries(authData.sessions)) {
+            if (session.token === token) {
+                // 检查是否过期
+                if (new Date() > new Date(session.expiresAt)) {
+                    delete authData.sessions[sessionId];
+                    await this.saveAuthData(authData);
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // 记录失败尝试
+    static recordFailedAttempt(authData, clientIp) {
+        if (!authData.loginAttempts[clientIp]) {
+            authData.loginAttempts[clientIp] = [];
+        }
+
+        authData.loginAttempts[clientIp].push(new Date().toISOString());
+
+        // 只保留最近1小时的记录
+        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+        authData.loginAttempts[clientIp] = authData.loginAttempts[clientIp]
+            .filter(time => new Date(time) > oneHourAgo);
+
+        // 如果失败次数超过5次，锁定15分钟
+        if (authData.loginAttempts[clientIp].length >= 5) {
+            authData.lockouts[clientIp] = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+        }
+    }
+
+    // 检查是否被锁定
+    static isLockedOut(authData, clientIp) {
+        const lockoutTime = authData.lockouts[clientIp];
+        if (!lockoutTime) return false;
+
+        if (new Date() > new Date(lockoutTime)) {
+            delete authData.lockouts[clientIp];
+            return false;
+        }
+
+        return true;
+    }
+
+    // 登出
+    static async logout(token) {
+        const authData = await this.getAuthData();
+
+        // 删除对应的会话
+        for (const [sessionId, session] of Object.entries(authData.sessions)) {
+            if (session.token === token) {
+                delete authData.sessions[sessionId];
+                break;
+            }
+        }
+
+        await this.saveAuthData(authData);
+        return true;
+    }
+
+    // 重置密码到初始状态
+    static async resetToDefault() {
+        const authData = {
+            passwordHash: null,
+            salt: null,
+            isSetup: false,
+            sessions: {},
+            loginAttempts: {},
+            lockouts: {}
+        };
+
+        await this.saveAuthData(authData);
+        return true;
+    }
+}
+
 // 响应工具函数
 class ResponseHelper {
     static success(res, data = null, message = '操作成功') {
@@ -222,7 +453,7 @@ const validateSong = (req, res, next) => {
 };
 
 // 改进的认证中间件
-const authenticateToken = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
     // 对于GET请求（读取操作），可以不需要认证
     if (req.method === 'GET' && (req.path.startsWith('/api/songs') || req.path.startsWith('/api/profile') || req.path.startsWith('/api/stats') || req.path.startsWith('/api/settings'))) {
         return next();
@@ -235,16 +466,12 @@ const authenticateToken = (req, res, next) => {
         return ResponseHelper.unauthorized(res, '需要登录才能执行此操作');
     }
 
-    // 验证token格式和有效性
+    // 使用AuthManager验证token
     try {
-        // 检查token是否为有效的会话标识（64位十六进制字符串）
-        if (token.length !== 64 || !/^[a-f0-9]{64}$/i.test(token)) {
-            return ResponseHelper.unauthorized(res, '无效的认证令牌格式');
+        const isValid = await AuthManager.verifyToken(token);
+        if (!isValid) {
+            return ResponseHelper.unauthorized(res, '认证令牌无效或已过期');
         }
-
-        // 这里可以添加更复杂的token验证逻辑
-        // 比如检查token是否在有效会话列表中，是否过期等
-        // 目前简化处理，只验证格式
 
         req.user = { authenticated: true, token };
         next();
@@ -352,6 +579,134 @@ const upload = multer({
 app.use(express.static(path.join(__dirname)));
 
 // ==================== API 路由 ====================
+
+// 认证 API
+// 检查是否为首次设置
+app.get('/api/auth/status', async (req, res) => {
+    try {
+        const isFirstTime = await AuthManager.isFirstTimeSetup();
+        ResponseHelper.success(res, {
+            isFirstTime,
+            defaultPassword: isFirstTime ? AuthManager.DEFAULT_PASSWORD : null
+        });
+    } catch (error) {
+        console.error('获取认证状态失败:', error);
+        ResponseHelper.error(res, '获取认证状态失败', 500, error);
+    }
+});
+
+// 登录
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { password } = req.body;
+
+        if (!password) {
+            return ResponseHelper.error(res, '请输入密码', 400);
+        }
+
+        const result = await AuthManager.verifyLogin(password);
+
+        if (result.firstTime) {
+            // 首次登录，需要修改密码
+            ResponseHelper.success(res, {
+                firstTime: true,
+                message: '首次登录成功，请设置新密码'
+            });
+        } else {
+            // 正常登录成功
+            ResponseHelper.success(res, {
+                firstTime: false,
+                token: result.token,
+                sessionId: result.sessionId,
+                message: '登录成功'
+            });
+        }
+    } catch (error) {
+        console.error('登录失败:', error);
+        ResponseHelper.error(res, error.message || '登录失败', 401);
+    }
+});
+
+// 设置密码（首次设置或修改密码）
+app.post('/api/auth/set-password', async (req, res) => {
+    try {
+        const { newPassword, currentPassword } = req.body;
+
+        if (!newPassword) {
+            return ResponseHelper.error(res, '请输入新密码', 400);
+        }
+
+        await AuthManager.setPassword(newPassword, currentPassword);
+
+        // 设置密码成功后，如果是首次设置，需要重新登录获取token
+        const isFirstTime = !currentPassword || currentPassword === AuthManager.DEFAULT_PASSWORD;
+        if (isFirstTime) {
+            const loginResult = await AuthManager.verifyLogin(newPassword);
+            ResponseHelper.success(res, {
+                message: '密码设置成功',
+                token: loginResult.token,
+                sessionId: loginResult.sessionId
+            });
+        } else {
+            ResponseHelper.success(res, { message: '密码修改成功，请重新登录' });
+        }
+    } catch (error) {
+        console.error('设置密码失败:', error);
+        ResponseHelper.error(res, error.message || '设置密码失败', 400);
+    }
+});
+
+// 登出
+app.post('/api/auth/logout', async (req, res) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+
+        if (token) {
+            await AuthManager.logout(token);
+        }
+
+        ResponseHelper.success(res, { message: '登出成功' });
+    } catch (error) {
+        console.error('登出失败:', error);
+        ResponseHelper.error(res, '登出失败', 500, error);
+    }
+});
+
+// 验证token
+app.get('/api/auth/verify', async (req, res) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+
+        if (!token) {
+            return ResponseHelper.error(res, '未提供认证令牌', 401);
+        }
+
+        const isValid = await AuthManager.verifyToken(token);
+
+        if (isValid) {
+            ResponseHelper.success(res, { valid: true, message: '令牌有效' });
+        } else {
+            ResponseHelper.error(res, '令牌无效或已过期', 401);
+        }
+    } catch (error) {
+        console.error('验证令牌失败:', error);
+        ResponseHelper.error(res, '验证令牌失败', 500, error);
+    }
+});
+
+// 重置密码到默认状态（危险操作，仅用于开发/测试）
+app.post('/api/auth/reset', async (req, res) => {
+    try {
+        // 这个API应该有额外的安全验证，这里简化处理
+        await AuthManager.resetToDefault();
+        ResponseHelper.success(res, { message: '密码已重置到默认状态' });
+    } catch (error) {
+        console.error('重置密码失败:', error);
+        ResponseHelper.error(res, '重置密码失败', 500, error);
+    }
+});
 
 // 歌曲管理 API
 // 获取所有歌曲

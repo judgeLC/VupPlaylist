@@ -143,48 +143,38 @@ class AdminManager {
     }
 
     /**
-     * 检查登录状态
+     * 检查登录状态 - 使用新的服务器端认证系统
      * @returns {boolean} 是否已登录
      */
     checkAuth() {
-        const session = this.getSession();
-        if (!session) {
+        const token = localStorage.getItem('vtuber_admin_token');
+        if (!token) {
             this.redirectToLogin();
             return false;
         }
 
-        const now = Date.now();
-        
-        // 检查会话是否过期
-        if (now >= session.expiresAt) {
-            this.logout('会话已过期，请重新登录');
-            return false;
-        }
-
-        // 检查是否超时
-        const sessionTimeout = 2 * 60 * 60 * 1000; // 2小时
-        if (now - session.lastActivity >= sessionTimeout) {
-            this.logout('长时间无操作，已自动登出');
-            return false;
-        }
-
-        this.updateSessionActivity();
+        // 简化检查，实际验证由服务器端处理
         return true;
     }
 
-    // 获取会话信息
+    // 获取会话信息 - 兼容新的认证系统
     getSession() {
-        const stored = localStorage.getItem('vtuber_admin_session');
-        return stored ? JSON.parse(stored) : null;
+        const token = localStorage.getItem('vtuber_admin_token');
+        const sessionId = localStorage.getItem('vtuber_admin_session_id');
+
+        if (token) {
+            return {
+                token: token,
+                sessionId: sessionId
+            };
+        }
+        return null;
     }
 
-    // 更新会话活动时间
+    // 更新会话活动时间 - 新认证系统中不需要客户端管理
     updateSessionActivity() {
-        const session = this.getSession();
-        if (session) {
-            session.lastActivity = Date.now();
-            localStorage.setItem('vtuber_admin_session', JSON.stringify(session));
-        }
+        // 服务器端认证系统自动管理会话活动
+        console.log('会话活动已更新');
     }
 
     // 开始定期检查登录状态
@@ -218,16 +208,33 @@ class AdminManager {
         });
     }
 
-    // 登出
-    logout(message = '已安全登出') {
-        // 清除会话
-        localStorage.removeItem('vtuber_admin_session');
-        
+    // 登出 - 使用新的服务器端认证系统
+    async logout(message = '已安全登出') {
+        try {
+            // 调用服务器端登出API
+            const token = localStorage.getItem('vtuber_admin_token');
+            if (token) {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('服务器端登出失败:', error);
+        }
+
+        // 清除本地存储的认证信息
+        localStorage.removeItem('vtuber_admin_token');
+        localStorage.removeItem('vtuber_admin_session_id');
+        localStorage.removeItem('auth_token'); // 清除API客户端令牌
+
         // 清除检查定时器
         if (this.authCheckInterval) {
             clearInterval(this.authCheckInterval);
         }
-        
+
         // 显示消息并跳转
         this.showNotification(message, 'info');
         setTimeout(() => {

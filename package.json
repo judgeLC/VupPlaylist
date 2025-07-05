@@ -5,11 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
-    "migrate": "node migrate-data.js",
-    "test-api": "node test-api.js",
-    "backup": "node scripts/backup.js",
-    "restore": "node scripts/restore.js"
+    "dev": "node server.js"
   },
   "keywords": [
     "vtuber",
@@ -22,12 +18,10 @@
   "author": "VTuber Playlist Team",
   "license": "MIT",
   "dependencies": {
-    "@react-spring/web": "^10.0.1",
     "body-parser": "^1.20.2",
     "express": "^4.19.2",
     "multer": "^2.0.1"
   },
-  "devDependencies": {},
   "engines": {
     "node": ">=14.0.0"
   },

@@ -1,17 +1,17 @@
 /**
- * 虚拟主播歌单系统 - 安全认证模块
- * 
+ * 虚拟主播歌单系统 - 服务器端认证模块
+ *
  * 主要功能：
- * - 密码验证和管理
+ * - 服务器端密码验证
+ * - JWT Token 管理
  * - 会话管理
- * - 防爆破保护
- * - 安全日志记录
- * 
+ * - 首次设置流程
+ *
  * 安全特性：
- * - SHA-256 密码哈希
- * - 随机盐值
- * - 恒定时间比较
- * - 会话超时控制
+ * - 服务器端密码存储
+ * - Token 过期验证
+ * - 防爆破保护
+ * - 统一认证管理
  */
 
 class AuthManager {
@@ -20,35 +20,74 @@ class AuthManager {
      * @constructor
      */
     constructor() {
-        // 安全配置参数
-        this.maxAttempts = 5;                    // 最大尝试次数
-        this.lockoutDuration = 15 * 60 * 1000;   // 锁定时间：15分钟
-        this.sessionDuration = 24 * 60 * 60 * 1000; // 会话持续时间：24小时
-        this.sessionTimeout = 2 * 60 * 60 * 1000;   // 无操作超时：2小时
-        
+        this.apiBase = window.location.origin;
+        this.token = localStorage.getItem('vtuber_admin_token');
+        this.sessionId = localStorage.getItem('vtuber_admin_session_id');
+        this.isSettingPassword = false; // 防止密码设置过程中的页面跳转
+        this.isCheckingAuth = false; // 防止重复认证检查导致循环
+
         this.init();
     }
 
     /**
      * 系统初始化
-     * 加载主题、绑定事件、检查锁定状态
      */
-    init() {
+    async init() {
         this.loadTheme();
         this.bindEvents();
-        this.checkLockoutStatus();
-        this.initPasswordStrengthCheck();
 
-        // 只在登录页面检查登录状态并跳转
-        if (window.location.pathname.includes('login.html') && this.isLoggedIn()) {
-            window.location.href = 'admin.html';
+        // 只在登录页面进行认证检查
+        if (window.location.pathname.includes('login.html')) {
+            console.log('在登录页面，开始认证检查');
+            await this.checkAuthStatus();
+        } else {
+            console.log('不在登录页面，跳过认证检查');
+        }
+    }
+
+    /**
+     * 检查认证状态和页面跳转 - 仅在登录页面使用
+     */
+    async checkAuthStatus() {
+        // 如果正在设置密码，跳过状态检查
+        if (this.isSettingPassword) {
+            console.log('正在设置密码，跳过状态检查');
             return;
         }
 
-        // 在管理页面检查是否需要登录
-        if (window.location.pathname.includes('admin.html') && !this.isLoggedIn()) {
-            window.location.href = 'login.html';
+        // 防止重复检查导致的循环
+        if (this.isCheckingAuth) {
+            console.log('正在检查认证状态，跳过重复检查');
             return;
+        }
+
+        // 只在登录页面执行认证检查
+        if (!window.location.pathname.includes('login.html')) {
+            console.log('不在登录页面，跳过认证检查');
+            return;
+        }
+
+        this.isCheckingAuth = true;
+
+        try {
+            console.log('检查认证状态...');
+            const isLoggedIn = await this.isLoggedIn();
+            console.log('登录状态:', isLoggedIn);
+
+            // 在登录页面且已登录，跳转到管理页面
+            if (isLoggedIn) {
+                console.log('已登录，跳转到管理页面');
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            // 在登录页面且未登录，检查是否为首次设置
+            console.log('未登录，检查首次设置状态');
+            await this.checkFirstTimeSetup();
+        } catch (error) {
+            console.error('检查认证状态时出错:', error);
+        } finally {
+            this.isCheckingAuth = false;
         }
     }
 
@@ -108,7 +147,51 @@ class AuthManager {
         });
     }
 
-    // 处理登录
+    /**
+     * 检查是否为首次设置
+     */
+    async checkFirstTimeSetup() {
+        try {
+            const response = await fetch(`${this.apiBase}/api/auth/status`);
+            const data = await response.json();
+
+            if (data.success && data.data.isFirstTime) {
+                this.showFirstTimeInfo(data.data.defaultPassword);
+            } else {
+                this.hideFirstTimeInfo();
+            }
+        } catch (error) {
+            console.error('检查首次设置状态失败:', error);
+        }
+    }
+
+    /**
+     * 显示首次登录信息
+     */
+    showFirstTimeInfo(defaultPassword) {
+        const firstTimeInfo = document.getElementById('firstTimeInfo');
+        if (firstTimeInfo) {
+            firstTimeInfo.style.display = 'block';
+            const codeElement = firstTimeInfo.querySelector('code');
+            if (codeElement) {
+                codeElement.textContent = defaultPassword;
+            }
+        }
+    }
+
+    /**
+     * 隐藏首次登录信息
+     */
+    hideFirstTimeInfo() {
+        const firstTimeInfo = document.getElementById('firstTimeInfo');
+        if (firstTimeInfo) {
+            firstTimeInfo.style.display = 'none';
+        }
+    }
+
+    /**
+     * 处理登录
+     */
     async handleLogin() {
         const passwordInput = document.getElementById('password');
         if (!passwordInput) return;
@@ -120,135 +203,398 @@ class AuthManager {
             return;
         }
 
-        // 检查是否被锁定
-        if (this.isLockedOut()) {
-            this.showLockoutMessage();
-            return;
-        }
-
         // 显示加载状态
         this.setLoading(true);
 
         try {
-            // 模拟网络延迟（防止时序攻击）
-            await this.delay(300 + Math.random() * 200);
+            const response = await fetch(`${this.apiBase}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password })
+            });
 
-            if (await this.verifyPassword(password)) {
-                // 登录成功
-                this.onLoginSuccess();
+            const data = await response.json();
+
+            if (data.success) {
+                if (data.data.firstTime) {
+                    // 首次登录，需要设置新密码
+                    this.showPasswordChangeDialog();
+                } else {
+                    // 正常登录成功
+                    this.token = data.data.token;
+                    this.sessionId = data.data.sessionId;
+                    localStorage.setItem('vtuber_admin_token', this.token);
+                    localStorage.setItem('vtuber_admin_session_id', this.sessionId);
+
+                    this.onLoginSuccess();
+                }
             } else {
-                // 登录失败
-                this.onLoginFailure();
+                this.showError(data.message || '登录失败');
             }
         } catch (error) {
-            console.error('Login error:', error);
-            this.showError('登录过程中发生错误，请重试');
+            console.error('登录请求失败:', error);
+            this.showError('网络连接失败，请检查服务器状态');
         } finally {
             this.setLoading(false);
-            passwordInput.value = '';
+        }
+    }
+    /**
+     * 显示密码修改对话框
+     */
+    showPasswordChangeDialog() {
+        const dialog = document.createElement('div');
+        dialog.className = 'password-change-dialog';
+        dialog.innerHTML = `
+            <div class="dialog-overlay">
+                <div class="dialog-content">
+                    <h3>首次登录 - 修改默认密码</h3>
+                    <p>为了安全，请立即修改默认密码</p>
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label>新密码</label>
+                            <input type="password" id="newPassword" class="glass-input" placeholder="请输入新密码" required>
+                        </div>
+                        <div class="form-group">
+                            <label>确认新密码</label>
+                            <input type="password" id="confirmPassword" class="glass-input" placeholder="请再次输入新密码" required>
+                        </div>
+                        <div class="password-requirements">
+                            <small>密码要求：至少8位，包含大小写字母、数字和特殊字符</small>
+                        </div>
+                        <div class="dialog-actions">
+                            <button type="submit" class="glass-btn primary">设置新密码</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+
+        // 添加样式
+        const style = document.createElement('style');
+        style.textContent = `
+            .password-change-dialog {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10000;
+            }
+            .dialog-overlay {
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            .dialog-content {
+                background: white;
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 400px;
+                width: 100%;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            }
+            .dialog-content h3 {
+                margin-bottom: 10px;
+                color: #333;
+                text-align: center;
+            }
+            .dialog-content p {
+                margin-bottom: 20px;
+                color: #666;
+                text-align: center;
+            }
+            .password-requirements {
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+            .password-requirements small {
+                color: #666;
+                line-height: 1.4;
+            }
+            .dialog-actions {
+                text-align: center;
+            }
+        `;
+        document.head.appendChild(style);
+        document.body.appendChild(dialog);
+
+        // 绑定表单提交事件
+        const form = dialog.querySelector('#changePasswordForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await this.handlePasswordChange(dialog);
+        });
+    }
+
+    /**
+     * 处理密码修改
+     */
+    async handlePasswordChange(dialog) {
+        const newPassword = dialog.querySelector('#newPassword').value;
+        const confirmPassword = dialog.querySelector('#confirmPassword').value;
+
+        if (!newPassword || !confirmPassword) {
+            this.showError('请填写所有字段');
+            return;
+        }
+
+        // 设置标志，防止页面跳转冲突
+        this.isSettingPassword = true;
+
+        if (newPassword !== confirmPassword) {
+            this.showError('两次输入的密码不一致');
+            return;
+        }
+
+        if (!this.validatePasswordStrength(newPassword)) {
+            this.showError('密码强度不足，请使用包含大小写字母、数字和特殊字符的8位以上密码');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${this.apiBase}/api/auth/set-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    newPassword,
+                    currentPassword: 'Admin@123456' // 首次设置时使用默认密码
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // 设置成功，保存token
+                if (data.data.token) {
+                    this.token = data.data.token;
+                    this.sessionId = data.data.sessionId;
+                    localStorage.setItem('vtuber_admin_token', this.token);
+                    localStorage.setItem('vtuber_admin_session_id', this.sessionId);
+                }
+
+                // 移除对话框
+                document.body.removeChild(dialog);
+
+                this.showNotification('密码设置成功！正在跳转...', 'success');
+
+                // 清除设置密码标志
+                this.isSettingPassword = false;
+
+                // 跳转到管理页面
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 1500);
+
+            } else {
+                this.showError(data.message || '设置密码失败');
+                this.isSettingPassword = false; // 清除标志
+            }
+        } catch (error) {
+            console.error('设置密码失败:', error);
+            this.showError('网络连接失败，请重试');
+            this.isSettingPassword = false; // 清除标志
         }
     }
 
     /**
-     * 密码验证
-     * @param {string} password - 待验证的密码
-     * @returns {Promise<boolean>} 验证结果
+     * 检查是否已登录
      */
-    async verifyPassword(password) {
-        const storedHash = this.getStoredPasswordHash();
-        
-        if (!storedHash) {
-            // 首次设置密码
-            if (await this.isFirstTimeSetup()) {
-                return await this.setupInitialPassword(password);
-            }
+    async isLoggedIn() {
+        if (!this.token) {
             return false;
         }
 
-        // 验证密码
-        const inputHash = await this.hashPassword(password);
-        return this.compareHashes(storedHash, inputHash);
-    }
+        try {
+            const response = await fetch(`${this.apiBase}/api/auth/verify`, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`
+                }
+            });
 
-    // 检查是否是首次设置
-    async isFirstTimeSetup() {
-        return !localStorage.getItem('vtuber_admin_setup');
-    }
-
-    // 设置初始密码
-    async setupInitialPassword(password) {
-        if (!this.validatePasswordStrength(password)) {
-            this.showError('密码强度不足，请使用包含大小写字母、数字和特殊字符的8位以上密码');
+            const data = await response.json();
+            return data.success && data.data.valid;
+        } catch (error) {
+            console.error('验证登录状态失败:', error);
             return false;
         }
+    }
 
-        const passwordHash = await this.hashPassword(password);
-        localStorage.setItem('vtuber_admin_password', passwordHash);
-        localStorage.setItem('vtuber_admin_setup', 'completed');
-        
-        this.showNotification('初始密码设置成功！正在跳转...', 'success');
+    /**
+     * 验证密码强度
+     */
+    validatePasswordStrength(password) {
+        if (password.length < 8) return false;
+        if (!/[a-z]/.test(password)) return false;
+        if (!/[A-Z]/.test(password)) return false;
+        if (!/\d/.test(password)) return false;
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return false;
         return true;
     }
 
     /**
-     * 密码哈希处理
-     * @param {string} password - 原始密码
-     * @returns {Promise<string>} 哈希后的密码
+     * 登录成功处理
      */
-    async hashPassword(password) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password + this.getSalt());
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    onLoginSuccess() {
+        this.showNotification('登录成功！正在跳转...', 'success');
+        setTimeout(() => {
+            window.location.href = 'admin.html';
+        }, 1500);
     }
 
-    // 获取盐值（用于增强安全性）
-    getSalt() {
-        let salt = localStorage.getItem('vtuber_admin_salt');
-        if (!salt) {
-            salt = this.generateSalt();
-            localStorage.setItem('vtuber_admin_salt', salt);
+    /**
+     * 登出
+     */
+    async logout() {
+        try {
+            if (this.token) {
+                await fetch(`${this.apiBase}/api/auth/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('登出请求失败:', error);
+        } finally {
+            // 清除本地存储
+            localStorage.removeItem('vtuber_admin_token');
+            localStorage.removeItem('vtuber_admin_session_id');
+            this.token = null;
+            this.sessionId = null;
+
+            // 跳转到登录页面
+            window.location.href = 'login.html';
         }
-        return salt;
     }
 
-    // 生成随机盐值
-    generateSalt() {
-        const array = new Uint8Array(32);
-        crypto.getRandomValues(array);
-        return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    /**
+     * UI 工具方法
+     */
+
+    // 显示错误消息
+    showError(message) {
+        this.showNotification(message, 'error');
     }
 
-    // 获取存储的密码哈希
-    getStoredPasswordHash() {
-        return localStorage.getItem('vtuber_admin_password');
+    // 显示警告消息
+    showWarning(message) {
+        this.showNotification(message, 'warning');
     }
 
-    // 比较哈希值
-    compareHashes(hash1, hash2) {
-        if (hash1.length !== hash2.length) {
-            return false;
+    // 显示通知消息
+    showNotification(message, type = 'info') {
+        // 移除现有通知
+        const existingNotification = document.querySelector('.auth-notification');
+        if (existingNotification) {
+            existingNotification.remove();
         }
-        
-        // 使用恒定时间比较防止时序攻击
-        let result = 0;
-        for (let i = 0; i < hash1.length; i++) {
-            result |= hash1.charCodeAt(i) ^ hash2.charCodeAt(i);
+
+        // 创建新通知
+        const notification = document.createElement('div');
+        notification.className = `auth-notification ${type}`;
+        notification.textContent = message;
+
+        // 添加样式
+        const style = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 10001;
+            max-width: 300px;
+            word-wrap: break-word;
+            animation: slideInRight 0.3s ease-out;
+        `;
+
+        const colors = {
+            success: 'background: #28a745; border-left: 4px solid #1e7e34;',
+            error: 'background: #dc3545; border-left: 4px solid #c82333;',
+            warning: 'background: #ffc107; color: #212529; border-left: 4px solid #e0a800;',
+            info: 'background: #17a2b8; border-left: 4px solid #138496;'
+        };
+
+        notification.style.cssText = style + (colors[type] || colors.info);
+
+        // 添加动画样式
+        if (!document.querySelector('#auth-notification-styles')) {
+            const styleSheet = document.createElement('style');
+            styleSheet.id = 'auth-notification-styles';
+            styleSheet.textContent = `
+                @keyframes slideInRight {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutRight {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(styleSheet);
         }
-        return result === 0;
+
+        document.body.appendChild(notification);
+
+        // 自动移除
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }
+        }, 4000);
     }
 
-    // 验证密码强度
-    validatePasswordStrength(password) {
-        if (password.length < 8) return false;
-        
-        const hasUpper = /[A-Z]/.test(password);
-        const hasLower = /[a-z]/.test(password);
-        const hasNumber = /\d/.test(password);
-        const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\?]/.test(password);
-        
-        return hasUpper && hasLower && hasNumber && hasSpecial;
+    // 设置加载状态
+    setLoading(loading) {
+        const loginBtn = document.querySelector('.glass-btn');
+        const passwordInput = document.getElementById('password');
+
+        if (loginBtn) {
+            if (loading) {
+                loginBtn.disabled = true;
+                loginBtn.textContent = '登录中...';
+                loginBtn.style.opacity = '0.7';
+            } else {
+                loginBtn.disabled = false;
+                loginBtn.textContent = '登录';
+                loginBtn.style.opacity = '1';
+            }
+        }
+
+        if (passwordInput) {
+            passwordInput.disabled = loading;
+        }
+    }
+
+    // 切换密码可见性
+    togglePasswordVisibility() {
+        const passwordInput = document.getElementById('password');
+        const toggleBtn = document.getElementById('passwordToggle');
+
+        if (passwordInput && toggleBtn) {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '隐藏';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '显示';
+            }
+        }
     }
 
     // 检查密码强度（实时）
@@ -260,425 +606,6 @@ class AuthManager {
     initPasswordStrengthCheck() {
         // 可以添加密码强度指示器UI
     }
-
-    // 登录成功处理
-    onLoginSuccess() {
-        // 清除失败记录
-        this.clearFailedAttempts();
-        
-        // 创建会话
-        this.createSession();
-        
-        // 记录登录日志
-        this.logLoginAttempt(true);
-        
-        // 显示成功消息并跳转
-        this.showNotification('登录成功！正在跳转到管理界面...', 'success');
-        
-        setTimeout(() => {
-            window.location.href = 'admin.html';
-        }, 1500);
-    }
-
-    // 登录失败处理
-    onLoginFailure() {
-        // 记录失败尝试
-        this.recordFailedAttempt();
-        
-        // 记录登录日志
-        this.logLoginAttempt(false);
-        
-        const attempts = this.getFailedAttempts();
-        const remaining = this.maxAttempts - attempts.count;
-
-        if (remaining <= 0) {
-            // 触发锁定
-            this.lockAccount();
-            this.showLockoutMessage();
-        } else {
-            // 显示剩余尝试次数
-            this.showError(`密码错误，还有 ${remaining} 次尝试机会`);
-            
-            if (remaining <= 2) {
-                this.showWarning(`注意：连续失败将锁定账户 ${this.lockoutDuration / 60000} 分钟`);
-            }
-        }
-    }
-
-    // 记录失败尝试
-    recordFailedAttempt() {
-        const attempts = this.getFailedAttempts();
-        attempts.count++;
-        attempts.lastAttempt = Date.now();
-        localStorage.setItem('vtuber_admin_attempts', JSON.stringify(attempts));
-    }
-
-    // 获取失败尝试记录
-    getFailedAttempts() {
-        const stored = localStorage.getItem('vtuber_admin_attempts');
-        if (stored) {
-            return JSON.parse(stored);
-        }
-        return { count: 0, lastAttempt: 0 };
-    }
-
-    // 清除失败记录
-    clearFailedAttempts() {
-        localStorage.removeItem('vtuber_admin_attempts');
-        localStorage.removeItem('vtuber_admin_lockout');
-    }
-
-    // 锁定账户
-    lockAccount() {
-        const lockout = {
-            lockedAt: Date.now(),
-            unlockAt: Date.now() + this.lockoutDuration
-        };
-        localStorage.setItem('vtuber_admin_lockout', JSON.stringify(lockout));
-    }
-
-    // 检查是否被锁定
-    isLockedOut() {
-        const lockout = this.getLockoutInfo();
-        if (!lockout) return false;
-        
-        if (Date.now() >= lockout.unlockAt) {
-            // 锁定期已过，清除锁定
-            this.clearLockout();
-            return false;
-        }
-        
-        return true;
-    }
-
-    // 获取锁定信息
-    getLockoutInfo() {
-        const stored = localStorage.getItem('vtuber_admin_lockout');
-        return stored ? JSON.parse(stored) : null;
-    }
-
-    // 清除锁定
-    clearLockout() {
-        localStorage.removeItem('vtuber_admin_lockout');
-        this.clearFailedAttempts();
-    }
-
-    // 检查锁定状态
-    checkLockoutStatus() {
-        if (this.isLockedOut()) {
-            this.showLockoutMessage();
-            this.startLockoutTimer();
-        }
-    }
-
-    // 显示锁定消息
-    showLockoutMessage() {
-        const lockout = this.getLockoutInfo();
-        if (!lockout) return;
-
-        const remaining = Math.ceil((lockout.unlockAt - Date.now()) / 1000);
-        this.showWarning(`账户已锁定，剩余时间：${this.formatTime(remaining)}`);
-        
-        // 禁用登录按钮
-        const loginBtn = document.getElementById('loginBtn');
-        if (loginBtn) {
-            loginBtn.disabled = true;
-        }
-        
-        this.startLockoutTimer();
-    }
-
-    // 开始锁定倒计时
-    startLockoutTimer() {
-        const timerElement = document.getElementById('lockoutTimer');
-        const timerValue = document.getElementById('timerValue');
-
-        if (!timerElement || !timerValue) return;
-
-        timerElement.style.display = 'block';
-
-        const updateTimer = () => {
-            const lockout = this.getLockoutInfo();
-            if (!lockout) {
-                timerElement.style.display = 'none';
-                const loginBtn = document.getElementById('loginBtn');
-                if (loginBtn) {
-                    loginBtn.disabled = false;
-                }
-                return;
-            }
-
-            const remaining = Math.ceil((lockout.unlockAt - Date.now()) / 1000);
-            
-            if (remaining <= 0) {
-                this.clearLockout();
-                timerElement.style.display = 'none';
-                const loginBtn = document.getElementById('loginBtn');
-                if (loginBtn) {
-                    loginBtn.disabled = false;
-                }
-                this.hideMessages();
-                return;
-            }
-
-            timerValue.textContent = remaining;
-            setTimeout(updateTimer, 1000);
-        };
-
-        updateTimer();
-    }
-
-    // 格式化时间
-    formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${minutes}分${secs}秒`;
-    }
-
-    // 创建会话
-    createSession() {
-        const session = {
-            token: this.generateSessionToken(),
-            createdAt: Date.now(),
-            expiresAt: Date.now() + this.sessionDuration,
-            lastActivity: Date.now()
-        };
-        
-        localStorage.setItem('vtuber_admin_session', JSON.stringify(session));
-        
-        // 定期更新活动时间
-        setInterval(() => {
-            this.updateSessionActivity();
-        }, 60000); // 每分钟更新一次
-    }
-
-    // 生成会话令牌
-    generateSessionToken() {
-        const array = new Uint8Array(32);
-        crypto.getRandomValues(array);
-        return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-    }
-
-    // 更新会话活动时间
-    updateSessionActivity() {
-        const session = this.getSession();
-        if (session) {
-            session.lastActivity = Date.now();
-            localStorage.setItem('vtuber_admin_session', JSON.stringify(session));
-        }
-    }
-
-    // 获取会话信息
-    getSession() {
-        const stored = localStorage.getItem('vtuber_admin_session');
-        return stored ? JSON.parse(stored) : null;
-    }
-
-    // 检查是否已登录
-    isLoggedIn() {
-        const session = this.getSession();
-        if (!session) return false;
-
-        const now = Date.now();
-        
-        // 检查会话是否过期
-        if (now >= session.expiresAt) {
-            this.logout();
-            return false;
-        }
-
-        // 检查是否超时（无操作）
-        if (now - session.lastActivity >= this.sessionTimeout) {
-            this.logout();
-            return false;
-        }
-
-        return true;
-    }
-
-    // 登出
-    logout() {
-        localStorage.removeItem('vtuber_admin_session');
-        window.location.href = 'login.html';
-    }
-
-    // 记录登录日志
-    logLoginAttempt(success) {
-        const logs = this.getLoginLogs();
-        const logEntry = {
-            timestamp: Date.now(),
-            success: success,
-            ip: 'unknown', // 前端无法获取真实IP
-            userAgent: navigator.userAgent
-        };
-        
-        logs.push(logEntry);
-        
-        // 只保留最近50条记录
-        if (logs.length > 50) {
-            logs.splice(0, logs.length - 50);
-        }
-        
-        localStorage.setItem('vtuber_admin_logs', JSON.stringify(logs));
-    }
-
-    // 获取登录日志
-    getLoginLogs() {
-        const stored = localStorage.getItem('vtuber_admin_logs');
-        return stored ? JSON.parse(stored) : [];
-    }
-
-    // 切换密码显示/隐藏
-    togglePasswordVisibility() {
-        const passwordInput = document.getElementById('password');
-        const passwordToggle = document.getElementById('passwordToggle');
-
-        if (!passwordInput || !passwordToggle) return;
-
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            passwordToggle.textContent = '隐藏';
-        } else {
-            passwordInput.type = 'password';
-            passwordToggle.textContent = '显示';
-        }
-    }
-
-    // 设置加载状态
-    setLoading(loading) {
-        const loginBtn = document.getElementById('loginBtn');
-        if (!loginBtn) return;
-
-        const btnText = loginBtn.querySelector('span');
-        if (!btnText) return;
-
-        if (loading) {
-            loginBtn.disabled = true;
-            btnText.textContent = '验证中...';
-        } else {
-            loginBtn.disabled = false;
-            btnText.textContent = '登录管理后台';
-        }
-    }
-
-    // 显示错误消息
-    showError(message) {
-        const errorElement = document.getElementById('errorMessage');
-        if (!errorElement) return;
-
-        errorElement.textContent = message;
-        errorElement.classList.add('show');
-
-        setTimeout(() => {
-            errorElement.classList.remove('show');
-        }, 5000);
-    }
-
-    // 显示警告消息
-    showWarning(message) {
-        const warningElement = document.getElementById('warningMessage');
-        if (!warningElement) return;
-
-        warningElement.textContent = message;
-        warningElement.classList.add('show');
-
-        setTimeout(() => {
-            warningElement.classList.remove('show');
-        }, 8000);
-    }
-
-    // 隐藏所有消息
-    hideMessages() {
-        const errorElement = document.getElementById('errorMessage');
-        const warningElement = document.getElementById('warningMessage');
-
-        if (errorElement) {
-            errorElement.classList.remove('show');
-        }
-        if (warningElement) {
-            warningElement.classList.remove('show');
-        }
-    }
-
-    // 显示通知
-    showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 16px 20px;
-            color: var(--text-primary);
-            z-index: 10000;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            max-width: 300px;
-        `;
-        
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
-        
-        setTimeout(() => {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 300);
-        }, 3000);
-    }
-
-    // 延迟函数
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    // 安全检查（基础）
-    performSecurityCheck() {
-        // 检查是否在iframe中运行
-        if (window.self !== window.top) {
-            this.showWarning('检测到异常运行环境');
-            return false;
-        }
-
-        // 检查本地存储是否可用
-        try {
-            localStorage.setItem('test', 'test');
-            localStorage.removeItem('test');
-        } catch (e) {
-            this.showError('本地存储不可用，请检查浏览器设置');
-            return false;
-        }
-
-        return true;
-    }
-
-    // 清空所有登录相关的数据
-    clearLoginData() {
-        localStorage.removeItem('vtuber_admin_password');
-        localStorage.removeItem('vtuber_admin_salt');
-        localStorage.removeItem('vtuber_admin_setup');
-        localStorage.removeItem('vtuber_admin_lockout');
-        localStorage.removeItem('vtuber_admin_session');
-        localStorage.removeItem('vtuber_admin_attempts');
-        localStorage.removeItem('vtuber_admin_logs');
-    }
-
-    // 重置密码到初始状态
-    resetPassword() {
-        this.clearLoginData();
-        this.showNotification('密码已重置到初始状态，请刷新页面重新设置密码', 'success');
-        setTimeout(() => {
-            window.location.reload();
-        }, 2000);
-    }
 }
 
 // 页面加载完成后初始化
@@ -687,4 +614,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 导出到全局作用域
-window.AuthManager = AuthManager; 
+window.AuthManager = AuthManager;
