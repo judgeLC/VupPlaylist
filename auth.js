@@ -537,10 +537,10 @@ class AuthManager {
 
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
-            passwordToggle.textContent = '🙈';
+            passwordToggle.textContent = '隐藏';
         } else {
             passwordInput.type = 'password';
-            passwordToggle.textContent = '👁️';
+            passwordToggle.textContent = '显示';
         }
     }
 
@@ -554,10 +554,10 @@ class AuthManager {
 
         if (loading) {
             loginBtn.disabled = true;
-            btnText.textContent = '🔄 验证中...';
+            btnText.textContent = '验证中...';
         } else {
             loginBtn.disabled = false;
-            btnText.textContent = '🚀 登录管理后台';
+            btnText.textContent = '登录管理后台';
         }
     }
 
