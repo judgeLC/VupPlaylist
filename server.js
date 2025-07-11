@@ -63,9 +63,20 @@ class DataManager {
                 return defaultData;
             }
             const data = await fs.readFile(filePath, 'utf8');
+
+            // 安全的JSON解析
+            if (!data || data.trim().length === 0) {
+                return defaultData;
+            }
+
+            // 检查JSON大小限制（防止DoS攻击）
+            if (data.length > 10 * 1024 * 1024) { // 10MB限制
+                throw new Error('JSON文件过大');
+            }
+
             return JSON.parse(data);
         } catch (error) {
-            console.error(`读取文件失败 ${filePath}:`, error);
+            SecurityUtils.secureError(`读取文件失败 ${filePath}:`, error.message);
             return defaultData;
         }
     }
@@ -222,6 +233,68 @@ class AuthManager {
         return crypto.randomBytes(32).toString('hex');
     }
 
+    // 生成加密密钥（基于服务器启动时间和随机数）
+    static getEncryptionKey() {
+        if (!this._encryptionKey) {
+            const serverStartTime = process.hrtime.bigint().toString();
+            const randomData = crypto.randomBytes(16).toString('hex');
+            this._encryptionKey = crypto.createHash('sha256')
+                .update(serverStartTime + randomData + 'vupplaylist_secret')
+                .digest();
+        }
+        return this._encryptionKey;
+    }
+
+    // 加密敏感数据
+    static encryptSensitiveData(data) {
+        try {
+            const key = this.getEncryptionKey();
+            const iv = crypto.randomBytes(16);
+            const cipher = crypto.createCipher('aes-256-cbc', key);
+
+            let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
+            encrypted += cipher.final('hex');
+
+            return {
+                encrypted: encrypted,
+                iv: iv.toString('hex')
+            };
+        } catch (error) {
+            SecurityUtils.secureError('加密数据失败:', error.message);
+            return data; // 加密失败时返回原数据
+        }
+    }
+
+    // 解密敏感数据
+    static decryptSensitiveData(encryptedData) {
+        try {
+            if (!encryptedData.encrypted || !encryptedData.iv) {
+                return encryptedData; // 不是加密数据，直接返回
+            }
+
+            const key = this.getEncryptionKey();
+            const decipher = crypto.createDecipher('aes-256-cbc', key);
+
+            let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
+            decrypted += decipher.final('utf8');
+
+            // 安全的JSON解析
+            if (!decrypted || decrypted.trim().length === 0) {
+                return encryptedData;
+            }
+
+            // 检查解密后数据大小
+            if (decrypted.length > 1024 * 1024) { // 1MB限制
+                throw new Error('解密后数据过大');
+            }
+
+            return JSON.parse(decrypted);
+        } catch (error) {
+            SecurityUtils.secureError('解密数据失败:', error.message);
+            return encryptedData; // 解密失败时返回原数据
+        }
+    }
+
     // 验证密码强度
     static validatePasswordStrength(password) {
         if (password.length < 8) return false;
@@ -238,10 +311,20 @@ class AuthManager {
         return !authData.isSetup;
     }
 
+    // 获取客户端真实IP地址
+    static getClientIp(req) {
+        return req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+               req.headers['x-real-ip'] ||
+               req.connection?.remoteAddress ||
+               req.socket?.remoteAddress ||
+               req.ip ||
+               '127.0.0.1';
+    }
+
     // 验证登录
-    static async verifyLogin(password) {
+    static async verifyLogin(password, req) {
         const authData = await this.getAuthData();
-        const clientIp = '127.0.0.1'; // 简化处理，实际应该从请求中获取
+        const clientIp = this.getClientIp(req);
 
         // 检查是否被锁定
         if (this.isLockedOut(authData, clientIp)) {
@@ -253,7 +336,7 @@ class AuthManager {
             if (password !== this.DEFAULT_PASSWORD) {
                 this.recordFailedAttempt(authData, clientIp);
                 await this.saveAuthData(authData);
-                throw new Error('首次登录请使用默认密码：Admin@123456');
+                throw new Error('首次登录失败，请查看FIRST_LOGIN.md文档获取初始密码');
             }
             // 首次登录成功，但需要修改密码
             return { firstTime: true, token: null };
@@ -271,12 +354,25 @@ class AuthManager {
         const token = this.generateToken();
         const sessionId = crypto.randomUUID();
 
-        authData.sessions[sessionId] = {
+        // 限制并发会话
+        await this.limitConcurrentSessions(clientIp);
+
+        // 创建会话数据（敏感信息将被加密）
+        const sessionData = {
             token,
             createdAt: new Date().toISOString(),
             expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24小时
+            lastActivity: new Date().toISOString(),
             clientIp
         };
+
+        // 加密敏感的token信息
+        const encryptedSession = {
+            ...sessionData,
+            token: this.encryptSensitiveData({ token }).encrypted || token
+        };
+
+        authData.sessions[sessionId] = encryptedSession;
 
         // 清除失败记录
         delete authData.loginAttempts[clientIp];
@@ -306,7 +402,7 @@ class AuthManager {
 
         // 首次设置时验证默认密码
         if (!authData.isSetup && currentPassword !== this.DEFAULT_PASSWORD) {
-            throw new Error('首次设置请先输入默认密码：Admin@123456');
+            throw new Error('首次设置失败，请查看FIRST_LOGIN.md文档获取初始密码');
         }
 
         // 不能设置为默认密码
@@ -330,19 +426,72 @@ class AuthManager {
         return true;
     }
 
+    // 清理过期会话
+    static async cleanupExpiredSessions() {
+        const authData = await this.getAuthData();
+        const now = new Date();
+        let hasChanges = false;
+
+        for (const [sessionId, session] of Object.entries(authData.sessions)) {
+            if (now > new Date(session.expiresAt)) {
+                delete authData.sessions[sessionId];
+                hasChanges = true;
+            }
+        }
+
+        if (hasChanges) {
+            await this.saveAuthData(authData);
+            SecurityUtils.secureLog(`清理了过期会话，当前活跃会话数: ${Object.keys(authData.sessions).length}`);
+        }
+    }
+
+    // 限制并发会话数量
+    static async limitConcurrentSessions(clientIp, maxSessions = 3) {
+        const authData = await this.getAuthData();
+        const userSessions = Object.entries(authData.sessions)
+            .filter(([_, session]) => session.clientIp === clientIp)
+            .sort(([_, a], [__, b]) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        if (userSessions.length >= maxSessions) {
+            // 删除最旧的会话
+            const sessionsToRemove = userSessions.slice(maxSessions - 1);
+            for (const [sessionId] of sessionsToRemove) {
+                delete authData.sessions[sessionId];
+            }
+            await this.saveAuthData(authData);
+        }
+    }
+
     // 验证token
     static async verifyToken(token) {
         const authData = await this.getAuthData();
 
         // 查找匹配的会话
         for (const [sessionId, session] of Object.entries(authData.sessions)) {
-            if (session.token === token) {
+            let sessionToken = session.token;
+
+            // 如果token是加密的，尝试解密
+            if (typeof sessionToken === 'string' && sessionToken.length > 64) {
+                try {
+                    const decryptedData = this.decryptSensitiveData({ encrypted: sessionToken });
+                    sessionToken = decryptedData.token || sessionToken;
+                } catch (error) {
+                    // 解密失败，使用原始token
+                    SecurityUtils.secureError('Token解密失败:', error.message);
+                }
+            }
+
+            if (sessionToken === token) {
                 // 检查是否过期
                 if (new Date() > new Date(session.expiresAt)) {
                     delete authData.sessions[sessionId];
                     await this.saveAuthData(authData);
                     return false;
                 }
+
+                // 更新最后活动时间
+                session.lastActivity = new Date().toISOString();
+                await this.saveAuthData(authData);
                 return true;
             }
         }
@@ -388,7 +537,19 @@ class AuthManager {
 
         // 删除对应的会话
         for (const [sessionId, session] of Object.entries(authData.sessions)) {
-            if (session.token === token) {
+            let sessionToken = session.token;
+
+            // 如果token是加密的，尝试解密
+            if (typeof sessionToken === 'string' && sessionToken.length > 64) {
+                try {
+                    const decryptedData = this.decryptSensitiveData({ encrypted: sessionToken });
+                    sessionToken = decryptedData.token || sessionToken;
+                } catch (error) {
+                    SecurityUtils.secureError('登出时Token解密失败:', error.message);
+                }
+            }
+
+            if (sessionToken === token) {
                 delete authData.sessions[sessionId];
                 break;
             }
@@ -396,6 +557,33 @@ class AuthManager {
 
         await this.saveAuthData(authData);
         return true;
+    }
+
+    // 强制登出所有会话（密码修改时使用）
+    static async logoutAllSessions() {
+        const authData = await this.getAuthData();
+        authData.sessions = {};
+        await this.saveAuthData(authData);
+        return true;
+    }
+
+    // 检查会话是否来自可疑IP
+    static async checkSuspiciousActivity(clientIp) {
+        const authData = await this.getAuthData();
+        const now = Date.now();
+        const oneHour = 60 * 60 * 1000;
+
+        // 检查同一IP的会话数量
+        const ipSessions = Object.values(authData.sessions).filter(session =>
+            session.clientIp === clientIp
+        );
+
+        if (ipSessions.length > 5) {
+            SecurityUtils.secureWarn(`可疑活动：IP ${clientIp} 有 ${ipSessions.length} 个活跃会话`);
+            return true;
+        }
+
+        return false;
     }
 
     // 重置密码到初始状态
@@ -468,34 +656,73 @@ async function updateDataJsFile() {
     }
 }
 
-// 数据验证中间件
+// 增强的数据验证中间件
 const validateSong = (req, res, next) => {
-    const { title, artist } = req.body;
+    const { title, artist, genre, note } = req.body;
 
-    if (!title || !title.trim()) {
-        return ResponseHelper.error(res, '歌曲标题不能为空');
+    // 验证必填字段
+    if (!title || typeof title !== 'string' || !title.trim()) {
+        return ResponseHelper.error(res, '歌曲标题不能为空', 400);
     }
 
-    if (!artist || !artist.trim()) {
-        return ResponseHelper.error(res, '艺术家不能为空');
+    if (!artist || typeof artist !== 'string' || !artist.trim()) {
+        return ResponseHelper.error(res, '艺术家不能为空', 400);
     }
 
-    // 清理数据
+    // 验证字段长度
+    if (title.trim().length > 200) {
+        return ResponseHelper.error(res, '歌曲标题过长（最多200字符）', 400);
+    }
+
+    if (artist.trim().length > 100) {
+        return ResponseHelper.error(res, '艺术家名称过长（最多100字符）', 400);
+    }
+
+    if (genre && typeof genre === 'string' && genre.length > 50) {
+        return ResponseHelper.error(res, '风格名称过长（最多50字符）', 400);
+    }
+
+    if (note && typeof note === 'string' && note.length > 500) {
+        return ResponseHelper.error(res, '备注过长（最多500字符）', 400);
+    }
+
+    // 验证特殊字符
+    const dangerousChars = /<script|javascript:|vbscript:|onload=|onerror=/i;
+    if (dangerousChars.test(title) || dangerousChars.test(artist) ||
+        (genre && dangerousChars.test(genre)) || (note && dangerousChars.test(note))) {
+        return ResponseHelper.error(res, '输入包含不安全字符', 400);
+    }
+
+    // 清理和标准化数据
     req.body.title = title.trim();
     req.body.artist = artist.trim();
-    req.body.genre = req.body.genre?.trim() || '';
-    req.body.note = req.body.note?.trim() || '';
+    req.body.genre = (genre && typeof genre === 'string') ? genre.trim() : '';
+    req.body.note = (note && typeof note === 'string') ? note.trim() : '';
+
+    next();
+};
+
+// CSRF保护中间件
+const csrfProtection = (req, res, next) => {
+    // 只对状态改变的请求进行CSRF保护
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+        const csrfToken = req.headers['x-csrf-token'] || req.body._csrf;
+        const sessionId = req.headers['x-session-id'];
+
+        if (!sessionId || !csrfToken) {
+            return ResponseHelper.error(res, 'CSRF保护：缺少必要的安全令牌', 403);
+        }
+
+        if (!SecurityUtils.verifyCSRFToken(sessionId, csrfToken)) {
+            return ResponseHelper.error(res, 'CSRF保护：安全令牌无效或已过期', 403);
+        }
+    }
 
     next();
 };
 
 // 改进的认证中间件
 const authenticateToken = async (req, res, next) => {
-    // 对于GET请求（读取操作），可以不需要认证
-    if (req.method === 'GET' && (req.path.startsWith('/api/songs') || req.path.startsWith('/api/profile') || req.path.startsWith('/api/stats') || req.path.startsWith('/api/settings'))) {
-        return next();
-    }
-
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -510,7 +737,11 @@ const authenticateToken = async (req, res, next) => {
             return ResponseHelper.unauthorized(res, '认证令牌无效或已过期');
         }
 
-        req.user = { authenticated: true, token };
+        // 不在req.user中存储完整token，只存储验证状态
+        req.user = {
+            authenticated: true,
+            tokenHash: crypto.createHash('sha256').update(token).digest('hex').substring(0, 8) // 只存储token的前8位哈希用于日志
+        };
         next();
     } catch (error) {
         console.error('认证令牌验证失败:', error);
@@ -518,25 +749,142 @@ const authenticateToken = async (req, res, next) => {
     }
 };
 
-// 中间件配置
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(bodyParser.urlencoded({ extended: true }));
+// 公开访问中间件（仅用于真正的公开API）
+const allowPublicAccess = (req, res, next) => {
+    next();
+};
 
-// CORS支持 - 更安全的配置
+// 安全中间件配置
+// 移除X-Powered-By头部
+app.disable('x-powered-by');
+
+// 安全HTTP头部
 app.use((req, res, next) => {
-    // 在生产环境中应该设置具体的域名
+    // 防止点击劫持
+    res.setHeader('X-Frame-Options', 'DENY');
+
+    // 防止MIME类型嗅探
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+
+    // XSS保护
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+
+    // 内容安全策略
+    res.setHeader('Content-Security-Policy',
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline'; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "img-src 'self' data: https:; " +
+        "connect-src 'self'; " +
+        "frame-ancestors 'none';"
+    );
+
+    // 如果是HTTPS，添加HSTS头部
+    if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    }
+
+    // 推荐安全头部
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+
+    next();
+});
+
+// 速率限制中间件
+const rateLimitMap = new Map();
+
+const rateLimit = (maxRequests = 100, windowMs = 15 * 60 * 1000) => {
+    return (req, res, next) => {
+        const clientIp = AuthManager.getClientIp(req);
+        const now = Date.now();
+        const windowStart = now - windowMs;
+
+        // 清理过期记录
+        if (rateLimitMap.has(clientIp)) {
+            const requests = rateLimitMap.get(clientIp).filter(time => time > windowStart);
+            rateLimitMap.set(clientIp, requests);
+        }
+
+        // 检查请求频率
+        const requests = rateLimitMap.get(clientIp) || [];
+        if (requests.length >= maxRequests) {
+            SecurityUtils.secureWarn(`速率限制触发: ${clientIp} - ${requests.length} 请求在 ${windowMs/1000} 秒内`);
+            return res.status(429).json({
+                success: false,
+                message: '请求过于频繁，请稍后再试',
+                retryAfter: Math.ceil(windowMs / 1000),
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        // 记录请求
+        requests.push(now);
+        rateLimitMap.set(clientIp, requests);
+        next();
+    };
+};
+
+// 应用速率限制
+app.use(rateLimit(200, 15 * 60 * 1000)); // 15分钟内最多200个请求
+
+// 清理速率限制的辅助函数（开发用）
+const clearRateLimit = (ip) => {
+    if (rateLimitMap.has(ip)) {
+        rateLimitMap.delete(ip);
+        console.log(`已清理IP ${ip} 的速率限制记录`);
+    }
+};
+
+// 中间件配置
+app.use(bodyParser.json({
+    limit: '1mb',  // 降低到1MB
+    verify: (req, res, buf) => {
+        // 验证JSON格式
+        try {
+            if (buf.length > 0) {
+                JSON.parse(buf);
+            }
+        } catch (error) {
+            throw new Error('无效的JSON格式');
+        }
+    }
+}));
+app.use(bodyParser.urlencoded({
+    extended: true,
+    limit: '1mb',
+    parameterLimit: 100  // 限制参数数量
+}));
+
+// CORS支持 - 严格的安全配置
+app.use((req, res, next) => {
+    // 严格的CORS配置
     const allowedOrigins = process.env.ALLOWED_ORIGINS ?
-        process.env.ALLOWED_ORIGINS.split(',') :
-        ['http://localhost:8000', 'http://127.0.0.1:8000'];
+        process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()) :
+        ['http://localhost:8000', 'http://127.0.0.1:8000', 'https://localhost:8000', 'https://127.0.0.1:8000'];
 
     const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin) || !origin) {
-        res.header('Access-Control-Allow-Origin', origin || '*');
+
+    // 只允许明确列出的来源
+    if (origin && allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+        res.header('Access-Control-Allow-Credentials', 'true');
+    } else if (!origin) {
+        // 同源请求（没有Origin头）
+        res.header('Access-Control-Allow-Origin', 'null');
+    } else {
+        // 拒绝未授权的跨域请求
+        return res.status(403).json({
+            success: false,
+            message: '跨域请求被拒绝',
+            timestamp: new Date().toISOString()
+        });
     }
 
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Session-ID, X-CSRF-Token');
+    res.header('Access-Control-Max-Age', '86400'); // 预检请求缓存24小时
 
     if (req.method === 'OPTIONS') {
         res.sendStatus(200);
@@ -545,35 +893,270 @@ app.use((req, res, next) => {
     }
 });
 
-// 请求日志中间件
+// 安全工具类
+class SecurityUtils {
+    // CSRF Token管理
+    static csrfTokens = new Map();
+
+    // 输入验证函数
+    static validateInput(input, options = {}) {
+        const {
+            maxLength = 1000,
+            minLength = 0,
+            allowEmpty = true,
+            type = 'string',
+            pattern = null
+        } = options;
+
+        // 类型检查
+        if (type === 'string' && typeof input !== 'string') {
+            return { valid: false, error: '输入类型错误' };
+        }
+
+        if (type === 'number' && typeof input !== 'number') {
+            return { valid: false, error: '输入必须是数字' };
+        }
+
+        if (type === 'array' && !Array.isArray(input)) {
+            return { valid: false, error: '输入必须是数组' };
+        }
+
+        // 空值检查
+        if (!allowEmpty && (!input || (typeof input === 'string' && !input.trim()))) {
+            return { valid: false, error: '输入不能为空' };
+        }
+
+        // 长度检查
+        if (typeof input === 'string') {
+            if (input.length < minLength) {
+                return { valid: false, error: `输入长度不能少于${minLength}字符` };
+            }
+            if (input.length > maxLength) {
+                return { valid: false, error: `输入长度不能超过${maxLength}字符` };
+            }
+
+            // 危险字符检查
+            const dangerousPatterns = [
+                /<script/i, /javascript:/i, /vbscript:/i, /onload=/i, /onerror=/i,
+                /onclick=/i, /onmouseover=/i, /onfocus=/i, /onblur=/i,
+                /<iframe/i, /<object/i, /<embed/i, /<link/i, /<meta/i
+            ];
+
+            if (dangerousPatterns.some(pattern => pattern.test(input))) {
+                return { valid: false, error: '输入包含不安全字符' };
+            }
+        }
+
+        // 自定义模式检查
+        if (pattern && typeof input === 'string' && !pattern.test(input)) {
+            return { valid: false, error: '输入格式不正确' };
+        }
+
+        return { valid: true };
+    }
+
+    // 生成CSRF Token
+    static generateCSRFToken(sessionId) {
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiresAt = Date.now() + (60 * 60 * 1000); // 1小时过期
+
+        this.csrfTokens.set(sessionId, {
+            token,
+            expiresAt
+        });
+
+        // 清理过期token
+        this.cleanupExpiredCSRFTokens();
+
+        return token;
+    }
+
+    // 验证CSRF Token
+    static verifyCSRFToken(sessionId, token) {
+        const csrfData = this.csrfTokens.get(sessionId);
+        if (!csrfData) return false;
+
+        if (Date.now() > csrfData.expiresAt) {
+            this.csrfTokens.delete(sessionId);
+            return false;
+        }
+
+        return csrfData.token === token;
+    }
+
+    // 清理过期CSRF Token
+    static cleanupExpiredCSRFTokens() {
+        const now = Date.now();
+        for (const [sessionId, data] of this.csrfTokens.entries()) {
+            if (now > data.expiresAt) {
+                this.csrfTokens.delete(sessionId);
+            }
+        }
+    }
+
+    // 清理敏感信息的日志函数
+    static sanitizeForLog(data) {
+        if (typeof data === 'string') {
+            // 隐藏token（64位十六进制）
+            data = data.replace(/\b[a-f0-9]{64}\b/gi, '[TOKEN_HIDDEN]');
+            // 隐藏UUID格式的sessionId
+            data = data.replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, '[SESSION_ID_HIDDEN]');
+            // 隐藏可能的密码
+            data = data.replace(/(password|pwd|pass)[\s]*[:=][\s]*[^\s,}]+/gi, '$1: [PASSWORD_HIDDEN]');
+        }
+        return data;
+    }
+
+    // 安全的console.log
+    static secureLog(...args) {
+        const sanitizedArgs = args.map(arg =>
+            typeof arg === 'string' ? this.sanitizeForLog(arg) : arg
+        );
+        console.log(...sanitizedArgs);
+    }
+
+    // 安全的console.error
+    static secureError(...args) {
+        const sanitizedArgs = args.map(arg =>
+            typeof arg === 'string' ? this.sanitizeForLog(arg) : arg
+        );
+        console.error(...sanitizedArgs);
+    }
+
+    // 安全的console.warn
+    static secureWarn(...args) {
+        const sanitizedArgs = args.map(arg =>
+            typeof arg === 'string' ? this.sanitizeForLog(arg) : arg
+        );
+        console.warn(...sanitizedArgs);
+    }
+}
+
+// 增强的安全请求日志中间件
 app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+    const clientIp = AuthManager.getClientIp(req);
+    const userAgent = req.headers['user-agent'] || 'Unknown';
+    const timestamp = new Date().toISOString();
+    const contentLength = req.headers['content-length'] || 0;
+
+    // 安全记录基本请求信息（自动过滤敏感数据）
+    SecurityUtils.secureLog(`${timestamp} - ${clientIp} - ${req.method} ${req.path} - ${userAgent.substring(0, 100)} - ${contentLength}B`);
+
+    // 检测可疑活动
+    const suspiciousPatterns = [
+        // 路径遍历
+        /\.\./,
+        // 系统文件访问
+        /\/etc\/|\/proc\/|\/sys\/|\/dev\/|\/var\/|\/tmp\//,
+        // SQL注入尝试
+        /union.*select|select.*from|insert.*into|delete.*from|drop.*table/i,
+        // 脚本注入
+        /<script|javascript:|vbscript:|onload=|onerror=/i,
+        // 命令注入
+        /;.*ls|;.*cat|;.*wget|;.*curl|\|.*nc|\|.*bash/i
+    ];
+
+    if (suspiciousPatterns.some(pattern => pattern.test(req.path + req.url))) {
+        SecurityUtils.secureWarn(`🚨 可疑请求模式: ${clientIp} - ${req.method} ${req.path}`);
+    }
+
+    // 检测异常大的请求
+    if (contentLength > 10 * 1024 * 1024) { // 10MB
+        SecurityUtils.secureWarn(`🚨 异常大请求: ${clientIp} - ${contentLength} bytes`);
+    }
+
+    // 检测异常User-Agent
+    const suspiciousUA = [
+        /sqlmap|nikto|nmap|masscan|zap|burp|metasploit/i,
+        /bot|crawler|spider|scraper/i
+    ];
+
+    if (suspiciousUA.some(pattern => pattern.test(userAgent))) {
+        SecurityUtils.secureWarn(`🚨 可疑User-Agent: ${clientIp} - ${userAgent.substring(0, 100)}`);
+    }
+
+    // 检测缺少必要头部的请求
+    if (req.method === 'POST' && !req.headers['content-type']) {
+        SecurityUtils.secureWarn(`🚨 POST请求缺少Content-Type: ${clientIp} - ${req.path}`);
+    }
+
     next();
 });
+
+// 安全的路径验证函数
+function validateUploadType(type) {
+    const allowedTypes = ['avatars', 'backgrounds', 'covers'];
+    if (!type || typeof type !== 'string') {
+        return 'avatars';
+    }
+
+    // 防止路径遍历攻击
+    const sanitizedType = type.replace(/[^a-zA-Z0-9_-]/g, '');
+
+    if (allowedTypes.includes(sanitizedType)) {
+        return sanitizedType;
+    }
+
+    return 'avatars'; // 默认类型
+}
 
 // 配置文件上传
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        // 根据上传类型选择目录
-        const type = req.query.type || 'avatars';  // 默认为头像
+        // 安全验证上传类型
+        const type = validateUploadType(req.query.type);
         const dir = path.join(__dirname, 'images', type);
-        
+
         // 确保目录存在
         if (!fsSync.existsSync(dir)) {
             fsSync.mkdirSync(dir, { recursive: true });
         }
-        
+
         cb(null, dir);
     },
     filename: function (req, file, cb) {
-        // 生成文件名：时间戳 + 原始扩展名
+        // 安全生成文件名：时间戳 + 随机数 + 验证过的扩展名
         const timestamp = Date.now();
-        const ext = path.extname(file.originalname);
-        cb(null, `${timestamp}${ext}`);
+        const randomSuffix = crypto.randomBytes(8).toString('hex');
+        const ext = path.extname(file.originalname).toLowerCase();
+
+        // 验证扩展名安全性
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.ico'];
+        const safeExt = allowedExtensions.includes(ext) ? ext : '.jpg';
+
+        const filename = `${timestamp}_${randomSuffix}${safeExt}`;
+        cb(null, filename);
     }
 });
 
-// 改进的文件过滤器
+// 文件魔数验证
+const validateFileSignature = (buffer, mimetype) => {
+    const signatures = {
+        'image/jpeg': [
+            [0xFF, 0xD8, 0xFF],
+        ],
+        'image/png': [
+            [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
+        ],
+        'image/gif': [
+            [0x47, 0x49, 0x46, 0x38, 0x37, 0x61], // GIF87a
+            [0x47, 0x49, 0x46, 0x38, 0x39, 0x61]  // GIF89a
+        ],
+        'image/webp': [
+            [0x52, 0x49, 0x46, 0x46] // RIFF
+        ]
+    };
+
+    const fileSignatures = signatures[mimetype];
+    if (!fileSignatures) return false;
+
+    return fileSignatures.some(signature => {
+        if (buffer.length < signature.length) return false;
+        return signature.every((byte, index) => buffer[index] === byte);
+    });
+};
+
+// 增强的文件过滤器
 const fileFilter = (req, file, cb) => {
     // 允许的图片类型
     const allowedMimeTypes = [
@@ -590,30 +1173,120 @@ const fileFilter = (req, file, cb) => {
     const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.ico'];
     const fileExtension = path.extname(file.originalname).toLowerCase();
 
-    // 检查MIME类型和文件扩展名
-    if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(fileExtension)) {
-        // 检查文件名安全性
-        const filename = file.originalname;
-        if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
-            cb(new Error('文件名包含非法字符！'), false);
-            return;
-        }
-        cb(null, true);
-    } else {
-        cb(new Error('只允许上传图片文件（jpg, png, gif, webp, ico）！'), false);
+    // 检查文件名安全性
+    const filename = file.originalname;
+    if (filename.includes('..') || filename.includes('/') || filename.includes('\\') ||
+        filename.includes('<') || filename.includes('>') || filename.includes('|') ||
+        filename.includes('&') || filename.includes(';') || filename.includes('`') ||
+        filename.includes('$') || filename.includes('*') || filename.includes('?')) {
+        cb(new Error('文件名包含非法字符'), false);
+        return;
     }
+
+    // 检查文件名长度
+    if (filename.length > 100) {
+        cb(new Error('文件名过长'), false);
+        return;
+    }
+
+    // 检查是否为隐藏文件
+    if (filename.startsWith('.')) {
+        cb(new Error('不允许上传隐藏文件'), false);
+        return;
+    }
+
+    // 检查MIME类型和文件扩展名匹配
+    if (!allowedMimeTypes.includes(file.mimetype) || !allowedExtensions.includes(fileExtension)) {
+        cb(new Error('只允许上传图片文件（jpg, png, gif, webp, ico）'), false);
+        return;
+    }
+
+    // 额外的MIME类型验证
+    const mimeExtensionMap = {
+        'image/jpeg': ['.jpg', '.jpeg'],
+        'image/png': ['.png'],
+        'image/gif': ['.gif'],
+        'image/webp': ['.webp'],
+        'image/x-icon': ['.ico'],
+        'image/vnd.microsoft.icon': ['.ico']
+    };
+
+    if (!mimeExtensionMap[file.mimetype]?.includes(fileExtension)) {
+        cb(new Error('文件类型与扩展名不匹配'), false);
+        return;
+    }
+
+    cb(null, true);
 };
 
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024  // 限制5MB
+        fileSize: 5 * 1024 * 1024,  // 限制5MB
+        files: 1,                   // 一次只能上传一个文件
+        fields: 10,                 // 限制表单字段数量
+        fieldNameSize: 100,         // 限制字段名长度
+        fieldSize: 1024             // 限制字段值大小
     }
 });
 
-// 提供静态文件服务（HTML, CSS, JS等）
-app.use(express.static(path.join(__dirname)));
+// 安全的静态文件服务配置
+// 阻止访问敏感文件和目录
+app.use((req, res, next) => {
+    const blockedPaths = [
+        '/data/',
+        '/node_modules/',
+        '/.git/',
+        '/package.json',
+        '/package-lock.json',
+        '/server.js',
+        '/FIRST_LOGIN.md',
+        '/.env',
+        '/auth.json'
+    ];
+
+    const blockedExtensions = ['.json', '.md', '.js'];
+    const requestPath = req.path.toLowerCase();
+
+    // 检查是否访问被阻止的路径
+    if (blockedPaths.some(blocked => requestPath.startsWith(blocked))) {
+        return res.status(404).json({
+            success: false,
+            message: '文件未找到',
+            timestamp: new Date().toISOString()
+        });
+    }
+
+    // 检查是否访问被阻止的文件扩展名（除了允许的JS文件）
+    const allowedJsFiles = ['/script.js', '/admin.js', '/auth.js', '/api-client.js', '/simple-genre-manager.js', '/data.js'];
+    if (blockedExtensions.some(ext => requestPath.endsWith(ext)) &&
+        !allowedJsFiles.includes(requestPath)) {
+        return res.status(404).json({
+            success: false,
+            message: '文件未找到',
+            timestamp: new Date().toISOString()
+        });
+    }
+
+    next();
+});
+
+// 提供静态文件服务（仅限安全的文件）
+app.use(express.static(path.join(__dirname), {
+    dotfiles: 'deny', // 拒绝访问点文件
+    index: ['index.html'], // 默认首页
+    setHeaders: (res, path) => {
+        // 为静态文件设置缓存头
+        if (path.endsWith('.html')) {
+            res.setHeader('Cache-Control', 'no-cache');
+        } else if (path.endsWith('.css') || path.endsWith('.js')) {
+            res.setHeader('Cache-Control', 'public, max-age=3600');
+        } else if (path.match(/\.(jpg|jpeg|png|gif|ico|webp)$/)) {
+            res.setHeader('Cache-Control', 'public, max-age=86400');
+        }
+    }
+}));
 
 // ==================== API 路由 ====================
 
@@ -624,16 +1297,17 @@ app.get('/api/auth/status', async (req, res) => {
         const isFirstTime = await AuthManager.isFirstTimeSetup();
         ResponseHelper.success(res, {
             isFirstTime,
-            defaultPassword: isFirstTime ? AuthManager.DEFAULT_PASSWORD : null
+            // 安全考虑：不再暴露默认密码，请查看FIRST_LOGIN.md文档
+            message: isFirstTime ? '首次设置，请查看FIRST_LOGIN.md文档获取初始密码' : '系统已初始化'
         });
     } catch (error) {
         console.error('获取认证状态失败:', error);
-        ResponseHelper.error(res, '获取认证状态失败', 500, error);
+        ResponseHelper.error(res, '获取认证状态失败', 500);
     }
 });
 
-// 登录
-app.post('/api/auth/login', async (req, res) => {
+// 登录 - 适度的速率限制（开发友好）
+app.post('/api/auth/login', rateLimit(30, 5 * 60 * 1000), async (req, res) => {
     try {
         const { password } = req.body;
 
@@ -641,7 +1315,7 @@ app.post('/api/auth/login', async (req, res) => {
             return ResponseHelper.error(res, '请输入密码', 400);
         }
 
-        const result = await AuthManager.verifyLogin(password);
+        const result = await AuthManager.verifyLogin(password, req);
 
         if (result.firstTime) {
             // 首次登录，需要修改密码
@@ -659,7 +1333,7 @@ app.post('/api/auth/login', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('登录失败:', error);
+        SecurityUtils.secureError('登录失败:', error.message);
         ResponseHelper.error(res, error.message || '登录失败', 401);
     }
 });
@@ -678,14 +1352,16 @@ app.post('/api/auth/set-password', async (req, res) => {
         // 设置密码成功后，如果是首次设置，需要重新登录获取token
         const isFirstTime = !currentPassword || currentPassword === AuthManager.DEFAULT_PASSWORD;
         if (isFirstTime) {
-            const loginResult = await AuthManager.verifyLogin(newPassword);
+            const loginResult = await AuthManager.verifyLogin(newPassword, req);
             ResponseHelper.success(res, {
                 message: '密码设置成功',
                 token: loginResult.token,
                 sessionId: loginResult.sessionId
             });
         } else {
-            ResponseHelper.success(res, { message: '密码修改成功，请重新登录' });
+            // 密码修改成功，强制登出所有会话
+            await AuthManager.logoutAllSessions();
+            ResponseHelper.success(res, { message: '密码修改成功，所有会话已失效，请重新登录' });
         }
     } catch (error) {
         console.error('设置密码失败:', error);
@@ -706,7 +1382,7 @@ app.post('/api/auth/logout', async (req, res) => {
         ResponseHelper.success(res, { message: '登出成功' });
     } catch (error) {
         console.error('登出失败:', error);
-        ResponseHelper.error(res, '登出失败', 500, error);
+        ResponseHelper.error(res, '登出失败', 500);
     }
 });
 
@@ -733,21 +1409,28 @@ app.get('/api/auth/verify', async (req, res) => {
     }
 });
 
-// 重置密码到默认状态（危险操作，仅用于开发/测试）
-app.post('/api/auth/reset', async (req, res) => {
+// 获取CSRF Token
+app.get('/api/auth/csrf-token', authenticateToken, async (req, res) => {
     try {
-        // 这个API应该有额外的安全验证，这里简化处理
-        await AuthManager.resetToDefault();
-        ResponseHelper.success(res, { message: '密码已重置到默认状态' });
+        const sessionId = req.headers['x-session-id'];
+        if (!sessionId) {
+            return ResponseHelper.error(res, '缺少会话ID', 400);
+        }
+
+        const csrfToken = SecurityUtils.generateCSRFToken(sessionId);
+        ResponseHelper.success(res, { csrfToken });
     } catch (error) {
-        console.error('重置密码失败:', error);
-        ResponseHelper.error(res, '重置密码失败', 500, error);
+        SecurityUtils.secureError('生成CSRF Token失败:', error);
+        ResponseHelper.error(res, '生成CSRF Token失败', 500);
     }
 });
 
+// 密码重置API已移除 - 安全考虑
+// 如需重置密码，请手动删除 data/auth.json 文件并重启服务器
+
 // 歌曲管理 API
-// 获取所有歌曲
-app.get('/api/songs', async (req, res) => {
+// 获取所有歌曲 - 公开访问（观众查看歌单）
+app.get('/api/songs', allowPublicAccess, async (req, res) => {
     try {
         const { page = 1, limit = 50, genre, search } = req.query;
         const songsData = await DataManager.getSongs();
@@ -788,8 +1471,8 @@ app.get('/api/songs', async (req, res) => {
     }
 });
 
-// 获取单个歌曲
-app.get('/api/songs/:id', async (req, res) => {
+// 获取单个歌曲 - 公开访问
+app.get('/api/songs/:id', allowPublicAccess, async (req, res) => {
     try {
         const { id } = req.params;
         const songsData = await DataManager.getSongs();
@@ -807,7 +1490,7 @@ app.get('/api/songs/:id', async (req, res) => {
 });
 
 // 添加歌曲
-app.post('/api/songs', authenticateToken, validateSong, async (req, res) => {
+app.post('/api/songs', authenticateToken, csrfProtection, validateSong, async (req, res) => {
     try {
         const songsData = await DataManager.getSongs();
         const newSong = {
@@ -928,8 +1611,8 @@ app.delete('/api/songs', authenticateToken, async (req, res) => {
 });
 
 // 个人资料管理 API
-// 获取个人资料
-app.get('/api/profile', async (req, res) => {
+// 获取个人资料 - 公开访问（显示主播信息）
+app.get('/api/profile', allowPublicAccess, async (req, res) => {
     try {
         const profileData = await DataManager.getProfile();
         ResponseHelper.success(res, profileData);
@@ -963,8 +1646,8 @@ app.put('/api/profile', authenticateToken, async (req, res) => {
     }
 });
 
-// 获取设置信息
-app.get('/api/settings', async (req, res) => {
+// 获取设置信息 - 公开访问（前端需要点歌指令格式）
+app.get('/api/settings', allowPublicAccess, async (req, res) => {
     try {
         const settings = await DataManager.readJsonFile(SETTINGS_FILE, {
             settings: {
@@ -988,8 +1671,8 @@ app.get('/api/settings', async (req, res) => {
 });
 
 // 新的风格管理 API
-// 获取所有风格
-app.get('/api/genres', async (req, res) => {
+// 获取所有风格 - 公开访问（前端筛选需要）
+app.get('/api/genres', allowPublicAccess, async (req, res) => {
     try {
         const genresData = await DataManager.getGenres();
         ResponseHelper.success(res, genresData.genres || []);
@@ -1092,8 +1775,8 @@ app.delete('/api/genres/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// 获取风格名称映射
-app.post('/api/genre-names', async (req, res) => {
+// 获取风格名称映射 - 需要认证
+app.post('/api/genre-names', authenticateToken, async (req, res) => {
     try {
         const { genreIds } = req.body;
         if (!Array.isArray(genreIds)) {
@@ -1118,8 +1801,8 @@ app.post('/api/genre-names', async (req, res) => {
     }
 });
 
-// 调试API：获取风格映射信息
-app.get('/api/debug/genres', async (req, res) => {
+// 调试API：获取风格映射信息 - 需要认证
+app.get('/api/debug/genres', authenticateToken, async (req, res) => {
     try {
         const songsData = await DataManager.getSongs();
         const songs = songsData.songs || [];
@@ -1196,8 +1879,8 @@ app.put('/api/settings', authenticateToken, async (req, res) => {
     }
 });
 
-// 数据统计 API
-app.get('/api/stats', async (req, res) => {
+// 数据统计 API - 需要认证
+app.get('/api/stats', authenticateToken, async (req, res) => {
     try {
         const songsData = await DataManager.getSongs();
         const songs = songsData.songs;
@@ -1284,14 +1967,46 @@ app.post('/api/update-data', authenticateToken, async (req, res) => {
 });
 
 // 文件上传接口
-app.post('/api/upload', authenticateToken, upload.single('file'), (req, res) => {
+app.post('/api/upload', authenticateToken, csrfProtection, upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
             return ResponseHelper.error(res, '没有收到文件');
         }
 
-        // 返回文件的相对路径
-        const relativePath = path.join('images', req.query.type || 'avatars', req.file.filename)
+        // 验证文件内容（魔数检查）
+        const fileBuffer = await fs.readFile(req.file.path);
+        const isValidImage = validateFileSignature(fileBuffer, req.file.mimetype);
+
+        if (!isValidImage && !req.file.mimetype.includes('icon')) {
+            // 删除无效文件
+            try {
+                await fs.unlink(req.file.path);
+            } catch (unlinkError) {
+                SecurityUtils.secureError('删除无效文件失败:', unlinkError.message);
+            }
+            return ResponseHelper.error(res, '文件内容验证失败，不是有效的图片文件', 400);
+        }
+
+        // 检查文件是否包含可执行代码
+        const fileContent = fileBuffer.toString('utf8', 0, Math.min(1024, fileBuffer.length));
+        const suspiciousPatterns = [
+            /<script/i, /javascript:/i, /vbscript:/i, /onload=/i, /onerror=/i,
+            /<?php/i, /<%/i, /#!/i, /eval\(/i, /exec\(/i
+        ];
+
+        if (suspiciousPatterns.some(pattern => pattern.test(fileContent))) {
+            // 删除可疑文件
+            try {
+                await fs.unlink(req.file.path);
+            } catch (unlinkError) {
+                SecurityUtils.secureError('删除可疑文件失败:', unlinkError.message);
+            }
+            return ResponseHelper.error(res, '文件包含可疑内容，上传被拒绝', 400);
+        }
+
+        // 安全返回文件的相对路径
+        const safeType = validateUploadType(req.query.type);
+        const relativePath = path.join('images', safeType, req.file.filename)
             .replace(/\\/g, '/');  // 转换为正斜杠，确保在Windows上也能正常工作
 
         const fileInfo = {
@@ -1305,15 +2020,15 @@ app.post('/api/upload', authenticateToken, upload.single('file'), (req, res) => 
 
         ResponseHelper.success(res, fileInfo, '文件上传成功');
     } catch (error) {
-        console.error('文件上传失败:', error);
-        ResponseHelper.error(res, '文件上传失败', 500, error);
+        SecurityUtils.secureError('文件上传失败:', error.message);
+        ResponseHelper.error(res, '文件上传失败', 500);
     }
 });
 
-// 获取图片列表接口
-app.get('/api/images', async (req, res) => {
+// 获取图片列表接口 - 需要认证
+app.get('/api/images', authenticateToken, async (req, res) => {
     try {
-        const type = req.query.type || 'avatars';  // 默认为头像
+        const type = validateUploadType(req.query.type);  // 安全验证类型
         const imagesDir = path.join(__dirname, 'images', type);
 
         // 检查目录是否存在
@@ -1373,28 +2088,52 @@ app.get('/api/images', async (req, res) => {
     }
 });
 
-// 404 处理
+// 404 处理 - 统一错误响应，避免信息泄露
 app.use((req, res, next) => {
+    const clientIp = AuthManager.getClientIp(req);
+
     if (req.path.startsWith('/api/')) {
-        ResponseHelper.notFound(res, 'API接口');
+        // 记录API 404请求用于安全分析
+        SecurityUtils.secureWarn(`API 404请求: ${clientIp} - ${req.method} ${req.path}`);
+
+        // 统一的API 404响应
+        res.status(404).json({
+            success: false,
+            message: '请求的API接口不存在',
+            timestamp: new Date().toISOString()
+        });
     } else {
+        // 记录静态文件404请求
+        SecurityUtils.secureLog(`静态文件404: ${clientIp} - ${req.path}`);
         next();
     }
 });
 
-// 错误处理中间件
+// 安全的错误处理中间件
 app.use((err, req, res, next) => {
+    const clientIp = AuthManager.getClientIp(req);
+    const timestamp = new Date().toISOString();
+
+    // 记录详细错误信息到服务器日志
+    console.error(`${timestamp} - 错误 - ${clientIp} - ${req.method} ${req.path}:`, err.message);
+
     if (err instanceof multer.MulterError) {
         // Multer错误处理
         if (err.code === 'LIMIT_FILE_SIZE') {
-            return ResponseHelper.error(res, '文件大小不能超过5MB');
+            return ResponseHelper.error(res, '文件大小不能超过5MB', 400);
         }
-        return ResponseHelper.error(res, '文件上传错误: ' + err.message);
+        if (err.code === 'LIMIT_FILE_COUNT') {
+            return ResponseHelper.error(res, '文件数量超出限制', 400);
+        }
+        return ResponseHelper.error(res, '文件上传错误', 400);
     }
 
-    // 其他错误
-    console.error('服务器错误:', err);
-    ResponseHelper.error(res, '服务器内部错误', 500, err);
+    // 其他错误 - 不暴露详细错误信息给客户端
+    if (process.env.NODE_ENV === 'development') {
+        ResponseHelper.error(res, `开发模式错误: ${err.message}`, 500);
+    } else {
+        ResponseHelper.error(res, '服务器内部错误', 500);
+    }
 });
 
 // 初始化数据文件
@@ -1418,25 +2157,47 @@ async function startServer() {
         // 启动时更新data.js文件
         await updateDataJsFile();
 
+        // 启动时清理过期会话
+        await AuthManager.cleanupExpiredSessions();
+
+        // 设置定期清理任务（每小时执行一次）
+        setInterval(async () => {
+            try {
+                await AuthManager.cleanupExpiredSessions();
+            } catch (error) {
+                console.error('定期清理会话失败:', error);
+            }
+        }, 60 * 60 * 1000); // 1小时
+
+        // 启动HTTP服务器
         app.listen(PORT, () => {
             console.log(`
     ================================================
-    🚀 虚拟主播歌单系统 - API服务器已启动！
+    虚拟主播歌单系统 - API服务器已启动！
 
-    📍 服务器地址: http://localhost:${PORT}
+    服务器地址: http://localhost:${PORT}
 
-    🎵 前端页面:
+    前端页面:
     - 主页 (观众访问): http://localhost:${PORT}
     - 后台 (主播管理): http://localhost:${PORT}/admin.html
     - 登录页面: http://localhost:${PORT}/login.html
 
-    🔌 API接口:
+    API接口:
     - 歌曲管理: http://localhost:${PORT}/api/songs
     - 个人资料: http://localhost:${PORT}/api/profile
     - 数据统计: http://localhost:${PORT}/api/stats
     - 文件上传: http://localhost:${PORT}/api/upload
 
-    📁 数据存储: ./data/ 目录
+    数据存储: ./data/ 目录
+
+    安全特性已启用:
+    - 强密码策略
+    - 防爆破攻击保护
+    - 会话管理和清理
+    - 安全HTTP头部
+    - 严格CORS策略
+
+    注意: 部署到公网时请启用HTTPS
 
     ================================================
             `);

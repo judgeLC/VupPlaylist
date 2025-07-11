@@ -116,7 +116,15 @@
         </footer>
     </div>
 
-    <script src="data.js?v=1.1"></script>
+    <script>
+        // 动态加载data.js，添加时间戳防止缓存
+        const dataScript = document.createElement('script');
+        dataScript.src = `data.js?v=${Date.now()}`;
+        dataScript.onload = function() {
+            console.log('data.js 加载完成，时间戳:', Date.now());
+        };
+        document.head.appendChild(dataScript);
+    </script>
     <script src="simple-genre-manager.js?v=1.0"></script>
     <script src="api-client.js"></script>
     <script src="script.js?v=1.1"></script>

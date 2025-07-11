@@ -163,6 +163,46 @@ class VTuberPlaylist {
     }
 
     /**
+     * 强制重新加载data.js文件
+     */
+    async forceReloadDataJs() {
+        try {
+            console.log('强制重新加载 data.js...');
+
+            // 移除旧的data.js脚本
+            const oldScript = document.querySelector('script[src*="data.js"]');
+            if (oldScript) {
+                oldScript.remove();
+            }
+
+            // 创建新的script标签，添加时间戳防止缓存
+            const newScript = document.createElement('script');
+            newScript.src = `data.js?v=${Date.now()}`;
+
+            // 等待脚本加载完成
+            await new Promise((resolve, reject) => {
+                newScript.onload = () => {
+                    console.log('data.js 重新加载完成');
+                    resolve();
+                };
+                newScript.onerror = () => {
+                    console.error('data.js 重新加载失败');
+                    reject(new Error('Failed to reload data.js'));
+                };
+                document.head.appendChild(newScript);
+            });
+
+            // 重新加载数据
+            this.reloadData();
+            this.renderPlaylist();
+            this.updateProfile();
+
+        } catch (error) {
+            console.error('强制重新加载data.js失败:', error);
+        }
+    }
+
+    /**
      * 按首字母排序歌曲
      * 支持中文、英文、数字的首字母排序，中文使用拼音首字母
      * @param {Array} songs - 歌曲数组
@@ -292,6 +332,11 @@ class VTuberPlaylist {
                         this.renderPlaylist();
                         this.updateProfile();
                         break;
+                    case 'forceDataReload':
+                        // 强制重新加载data.js文件
+                        console.log('收到强制数据重载消息');
+                        await this.forceReloadDataJs();
+                        break;
                     case 'genreDataUpdated':
                         // 风格数据更新，刷新 SimpleGenreManager
                         await window.simpleGenreManager.refresh();
@@ -418,8 +463,34 @@ class VTuberPlaylist {
                 }
             }
 
-            // 这里可以添加其他数据的同步逻辑
-            // 比如歌曲数据、个人资料等
+            // 检查歌曲数据更新
+            const songsResponse = await fetch('/api/songs');
+            if (songsResponse.ok) {
+                const songsResult = await songsResponse.json();
+                const serverSongs = songsResult.data.songs || [];
+
+                // 比较服务器数据和当前数据
+                if (JSON.stringify(serverSongs) !== JSON.stringify(this.songs)) {
+                    console.log(`检测到歌曲数据更新: ${this.songs.length} -> ${serverSongs.length} 首歌曲`);
+                    this.songs = this.sortSongsByFirstLetter(serverSongs);
+                    this.renderPlaylist();
+                    this.updateFilterOptions();
+                }
+            }
+
+            // 检查个人资料更新
+            const profileResponse = await fetch('/api/profile');
+            if (profileResponse.ok) {
+                const profileResult = await profileResponse.json();
+                const serverProfile = profileResult.data.profile || {};
+
+                // 比较服务器数据和当前数据
+                if (JSON.stringify(serverProfile) !== JSON.stringify(this.profile)) {
+                    console.log('检测到个人资料更新');
+                    this.profile = serverProfile;
+                    this.updateProfile();
+                }
+            }
 
         } catch (error) {
             console.error('数据同步失败:', error);
@@ -621,7 +692,9 @@ class VTuberPlaylist {
             const genres = new Set(this.songs.map(song => song.genre));
             const genreOptions = ['<option value="all">全部</option>'];
             genres.forEach(genre => {
-                genreOptions.push(`<option value="${genre}">${this.getGenreDisplayName(genre)}</option>`);
+                const escapedGenre = this.escapeHtml(genre);
+                const escapedDisplayName = this.escapeHtml(this.getGenreDisplayName(genre));
+                genreOptions.push(`<option value="${escapedGenre}">${escapedDisplayName}</option>`);
             });
             genreSelect.innerHTML = genreOptions.join('');
         }
@@ -633,7 +706,8 @@ class VTuberPlaylist {
             const noteOptions = ['<option value="all">全部</option>'];
             notes.forEach(note => {
                 if (note && note.trim()) {
-                    noteOptions.push(`<option value="${note}">${note}</option>`);
+                    const escapedNote = this.escapeHtml(note);
+                    noteOptions.push(`<option value="${escapedNote}">${escapedNote}</option>`);
                 }
             });
             noteSelect.innerHTML = noteOptions.join('');
@@ -664,10 +738,10 @@ class VTuberPlaylist {
             const artist = this.escapeHtml(song.artist);
             
             songItem.innerHTML = `
-                <div class="song-title" data-song-id="${song.id}">${title}</div>
+                <div class="song-title" data-song-id="${this.escapeHtml(song.id)}">${title}</div>
                 <div class="song-artist">${artist}</div>
                 <div class="song-genre-cell">
-                    <div class="song-genre">${this.getGenreDisplayName(song.genre)}</div>
+                    <div class="song-genre">${this.escapeHtml(this.getGenreDisplayName(song.genre))}</div>
                 </div>
                 <div class="song-note">${this.escapeHtml(song.note)}</div>
                 <div class="song-command">
@@ -755,7 +829,8 @@ class VTuberPlaylist {
         Object.keys(genreCount).forEach(genreId => {
             if (!allGenres.find(g => g.id === genreId) && genreId !== 'unknown') {
                 const count = genreCount[genreId];
-                optionsHTML += `<option value="${genreId}">🎵 ${genreId} (${count})</option>`;
+                const escapedGenreId = this.escapeHtml(genreId);
+                optionsHTML += `<option value="${escapedGenreId}">🎵 ${escapedGenreId} (${count})</option>`;
             }
         });
 

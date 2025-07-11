@@ -1,6 +1,6 @@
-# 🎵 虚拟主播歌单系统 - API 文档
+# 虚拟主播歌单系统 - API 文档
 
-## 📋 概述
+## 概述
 
 本文档描述了虚拟主播歌单系统的RESTful API接口。所有API响应都遵循统一的格式。
 
@@ -26,7 +26,7 @@
 }
 ```
 
-## 🎵 歌曲管理 API
+## 歌曲管理 API
 
 ### 获取歌曲列表
 ```
@@ -104,7 +104,7 @@ DELETE /api/songs
 }
 ```
 
-## 👤 个人资料 API
+## 个人资料 API
 
 ### 获取个人资料
 ```
@@ -130,7 +130,7 @@ PUT /api/profile
 }
 ```
 
-## 📊 数据统计 API
+## 数据统计 API
 
 ### 获取统计信息
 ```
@@ -159,7 +159,7 @@ GET /api/stats
 }
 ```
 
-## 📁 文件管理 API
+## 文件管理 API
 
 ### 上传文件
 ```
@@ -175,7 +175,7 @@ POST /api/upload?type=avatars
 GET /api/images?type=avatars
 ```
 
-## 🔄 数据同步 API
+## 数据同步 API
 
 ### 同步数据到官网
 ```
@@ -190,7 +190,7 @@ POST /api/update-data
 }
 ```
 
-## 🔧 使用示例
+## 使用示例
 
 ### JavaScript Fetch API
 
@@ -249,7 +249,7 @@ const songs = await api.get('/songs');
 const newSong = await api.post('/songs', songData);
 ```
 
-## 🚨 错误代码
+## 错误代码
 
 - `400` - 请求参数错误
 - `401` - 未授权访问
@@ -257,7 +257,7 @@ const newSong = await api.post('/songs', songData);
 - `404` - 资源不存在
 - `500` - 服务器内部错误
 
-## 📝 注意事项
+## 注意事项
 
 1. 所有API都支持CORS跨域访问
 2. 文件上传限制为5MB

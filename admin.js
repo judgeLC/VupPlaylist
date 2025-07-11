@@ -1370,11 +1370,32 @@ class AdminManager {
                         const formData = new FormData();
                         formData.append('file', new File([blob], filename, { type: 'image/jpeg' }));
 
-                        // 上传文件（需要认证）
+                        // 上传文件（需要认证和CSRF保护）
                         const session = this.getSession();
                         const headers = {};
                         if (session && session.token) {
                             headers['Authorization'] = `Bearer ${session.token}`;
+                        }
+
+                        // 获取CSRF Token
+                        let csrfToken = null;
+                        if (session && session.sessionId) {
+                            try {
+                                const csrfResponse = await fetch('/api/auth/csrf-token', {
+                                    headers: {
+                                        'Authorization': `Bearer ${session.token}`,
+                                        'X-Session-ID': session.sessionId
+                                    }
+                                });
+                                const csrfResult = await csrfResponse.json();
+                                if (csrfResult.success) {
+                                    csrfToken = csrfResult.data.csrfToken;
+                                    headers['X-Session-ID'] = session.sessionId;
+                                    headers['X-CSRF-Token'] = csrfToken;
+                                }
+                            } catch (csrfError) {
+                                console.warn('获取CSRF Token失败:', csrfError);
+                            }
                         }
 
                         const response = await fetch(`/api/upload?type=${type}s`, {
@@ -2590,6 +2611,9 @@ class AdminManager {
 
             if (result.success) {
                 this.showNotification('官网数据已同步！', 'success');
+
+                // 通知所有打开的前端页面强制刷新数据
+                this.notifyFrontendDataUpdate();
             } else {
                 throw new Error(result.message || '未知错误');
             }
@@ -2603,6 +2627,28 @@ class AdminManager {
                     this.logout('认证失败，请重新登录');
                 }, 2000);
             }
+        }
+    }
+
+    /**
+     * 通知前端页面数据已更新
+     */
+    notifyFrontendDataUpdate() {
+        try {
+            // 通知所有打开的前端窗口
+            if (window.opener && !window.opener.closed) {
+                window.opener.postMessage({
+                    type: 'forceDataReload',
+                    timestamp: Date.now()
+                }, '*');
+                console.log('已通知前端页面强制刷新数据');
+            }
+
+            // 如果有其他窗口引用，也可以通知它们
+            // 这里可以扩展支持多窗口通知
+
+        } catch (error) {
+            console.error('通知前端页面失败:', error);
         }
     }
 

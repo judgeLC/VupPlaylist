@@ -5,12 +5,54 @@
       "name": "流行",
       "builtIn": true,
       "createdAt": "2025-07-05T00:00:00.000Z"
+    },
+    {
+      "id": "custom_1752212722246",
+      "name": "古风",
+      "builtIn": false,
+      "createdAt": "2025-07-11T05:45:22.246Z"
+    },
+    {
+      "id": "custom_1752212727964",
+      "name": "儿歌",
+      "builtIn": false,
+      "createdAt": "2025-07-11T05:45:27.964Z"
+    },
+    {
+      "id": "custom_1752212732564",
+      "name": "豫剧",
+      "builtIn": false,
+      "createdAt": "2025-07-11T05:45:32.564Z"
+    },
+    {
+      "id": "custom_1752212738812",
+      "name": "京剧",
+      "builtIn": false,
+      "createdAt": "2025-07-11T05:45:38.812Z"
+    },
+    {
+      "id": "custom_1752212743396",
+      "name": "黄梅戏",
+      "builtIn": false,
+      "createdAt": "2025-07-11T05:45:43.396Z"
+    },
+    {
+      "id": "custom_1752212748084",
+      "name": "SC",
+      "builtIn": false,
+      "createdAt": "2025-07-11T05:45:48.084Z"
+    },
+    {
+      "id": "custom_1752212753981",
+      "name": "/",
+      "builtIn": false,
+      "createdAt": "2025-07-11T05:45:53.981Z"
     }
   ],
   "metadata": {
     "version": "1.0",
-    "lastModified": "2025-07-05T09:08:19.820Z",
+    "lastModified": "2025-07-11T05:45:53.981Z",
     "description": "风格数据文件",
-    "totalCount": 1
+    "totalCount": 8
   }
 }

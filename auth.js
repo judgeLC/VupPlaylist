@@ -29,8 +29,8 @@ class AuthManager {
      */
     constructor() {
         this.apiBase = window.location.origin;                                    // API基础URL
-        this.token = localStorage.getItem('vtuber_admin_token');                  // 用户认证令牌
-        this.sessionId = localStorage.getItem('vtuber_admin_session_id');         // 会话ID
+        this.token = this.getSecureToken();                                       // 安全获取认证令牌
+        this.sessionId = this.getSecureSessionId();                               // 安全获取会话ID
         this.isSettingPassword = false;                                           // 密码设置状态标志
         this.isCheckingAuth = false;                                              // 认证检查状态标志
 
@@ -100,6 +100,90 @@ class AuthManager {
         }
     }
 
+    // 安全Token存储方法
+    getSecureToken() {
+        try {
+            const token = localStorage.getItem('vtuber_admin_token');
+            if (token) {
+                // 验证token格式（应该是64字符的十六进制字符串）
+                if (!/^[a-f0-9]{64}$/i.test(token)) {
+                    console.warn('检测到无效的token格式，已清除');
+                    this.clearSecureStorage();
+                    return null;
+                }
+                return token;
+            }
+            return null;
+        } catch (error) {
+            console.error('获取token失败:', error);
+            return null;
+        }
+    }
+
+    getSecureSessionId() {
+        try {
+            const sessionId = localStorage.getItem('vtuber_admin_session_id');
+            if (sessionId) {
+                // 验证sessionId格式（应该是UUID格式）
+                if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+                    console.warn('检测到无效的sessionId格式，已清除');
+                    this.clearSecureStorage();
+                    return null;
+                }
+                return sessionId;
+            }
+            return null;
+        } catch (error) {
+            console.error('获取sessionId失败:', error);
+            return null;
+        }
+    }
+
+    // 安全存储Token
+    setSecureToken(token, sessionId) {
+        try {
+            if (token && sessionId) {
+                localStorage.setItem('vtuber_admin_token', token);
+                localStorage.setItem('vtuber_admin_session_id', sessionId);
+
+                // 设置过期时间检查
+                const expiryTime = Date.now() + (24 * 60 * 60 * 1000); // 24小时
+                localStorage.setItem('vtuber_admin_token_expiry', expiryTime.toString());
+
+                this.token = token;
+                this.sessionId = sessionId;
+            }
+        } catch (error) {
+            console.error('存储token失败:', error);
+        }
+    }
+
+    // 清除安全存储
+    clearSecureStorage() {
+        try {
+            localStorage.removeItem('vtuber_admin_token');
+            localStorage.removeItem('vtuber_admin_session_id');
+            localStorage.removeItem('vtuber_admin_token_expiry');
+            this.token = null;
+            this.sessionId = null;
+        } catch (error) {
+            console.error('清除存储失败:', error);
+        }
+    }
+
+    // 检查Token是否过期
+    isTokenExpired() {
+        try {
+            const expiryTime = localStorage.getItem('vtuber_admin_token_expiry');
+            if (!expiryTime) return true;
+
+            return Date.now() > parseInt(expiryTime);
+        } catch (error) {
+            console.error('检查token过期时间失败:', error);
+            return true;
+        }
+    }
+
     // 加载主题
     loadTheme() {
         const savedTheme = localStorage.getItem('vtuber_theme') || 'light';
@@ -157,44 +241,16 @@ class AuthManager {
     }
 
     /**
-     * 检查是否为首次设置
+     * 检查是否为首次设置 - 移除敏感信息显示
      */
     async checkFirstTimeSetup() {
+        // 移除敏感信息显示逻辑，保持页面简洁安全
         try {
             const response = await fetch(`${this.apiBase}/api/auth/status`);
             const data = await response.json();
-
-            if (data.success && data.data.isFirstTime) {
-                this.showFirstTimeInfo(data.data.defaultPassword);
-            } else {
-                this.hideFirstTimeInfo();
-            }
+            // 不再显示首次登录提示和默认密码
         } catch (error) {
-            console.error('检查首次设置状态失败:', error);
-        }
-    }
-
-    /**
-     * 显示首次登录信息
-     */
-    showFirstTimeInfo(defaultPassword) {
-        const firstTimeInfo = document.getElementById('firstTimeInfo');
-        if (firstTimeInfo) {
-            firstTimeInfo.style.display = 'block';
-            const codeElement = firstTimeInfo.querySelector('code');
-            if (codeElement) {
-                codeElement.textContent = defaultPassword;
-            }
-        }
-    }
-
-    /**
-     * 隐藏首次登录信息
-     */
-    hideFirstTimeInfo() {
-        const firstTimeInfo = document.getElementById('firstTimeInfo');
-        if (firstTimeInfo) {
-            firstTimeInfo.style.display = 'none';
+            console.error('检查设置状态失败:', error);
         }
     }
 
@@ -228,15 +284,11 @@ class AuthManager {
 
             if (data.success) {
                 if (data.data.firstTime) {
-                    // 首次登录，需要设置新密码
+                    // 需要设置新密码
                     this.showPasswordChangeDialog();
                 } else {
-                    // 正常登录成功
-                    this.token = data.data.token;
-                    this.sessionId = data.data.sessionId;
-                    localStorage.setItem('vtuber_admin_token', this.token);
-                    localStorage.setItem('vtuber_admin_session_id', this.sessionId);
-
+                    // 登录成功
+                    this.setSecureToken(data.data.token, data.data.sessionId);
                     this.onLoginSuccess();
                 }
             } else {
@@ -258,8 +310,8 @@ class AuthManager {
         dialog.innerHTML = `
             <div class="dialog-overlay">
                 <div class="dialog-content">
-                    <h3>首次登录 - 修改默认密码</h3>
-                    <p>为了安全，请立即修改默认密码</p>
+                    <h3>设置新密码</h3>
+                    <p>为了安全，请设置一个强密码</p>
                     <form id="changePasswordForm">
                         <div class="form-group">
                             <label>新密码</label>
@@ -374,7 +426,7 @@ class AuthManager {
                 },
                 body: JSON.stringify({
                     newPassword,
-                    currentPassword: 'Admin@123456' // 首次设置时使用默认密码
+                    currentPassword: 'Admin@123456' // 内部使用
                 })
             });
 
@@ -383,10 +435,7 @@ class AuthManager {
             if (data.success) {
                 // 设置成功，保存token
                 if (data.data.token) {
-                    this.token = data.data.token;
-                    this.sessionId = data.data.sessionId;
-                    localStorage.setItem('vtuber_admin_token', this.token);
-                    localStorage.setItem('vtuber_admin_session_id', this.sessionId);
+                    this.setSecureToken(data.data.token, data.data.sessionId);
                 }
 
                 // 移除对话框
@@ -421,6 +470,13 @@ class AuthManager {
             return false;
         }
 
+        // 检查本地token是否过期
+        if (this.isTokenExpired()) {
+            console.warn('Token已过期，清除本地存储');
+            this.clearSecureStorage();
+            return false;
+        }
+
         try {
             const response = await fetch(`${this.apiBase}/api/auth/verify`, {
                 headers: {
@@ -429,9 +485,17 @@ class AuthManager {
             });
 
             const data = await response.json();
-            return data.success && data.data.valid;
+
+            if (!data.success || !data.data.valid) {
+                // 服务器端token无效，清除本地存储
+                this.clearSecureStorage();
+                return false;
+            }
+
+            return true;
         } catch (error) {
             console.error('验证登录状态失败:', error);
+            // 网络错误时不清除token，可能是临时问题
             return false;
         }
     }
@@ -474,11 +538,8 @@ class AuthManager {
         } catch (error) {
             console.error('登出请求失败:', error);
         } finally {
-            // 清除本地存储
-            localStorage.removeItem('vtuber_admin_token');
-            localStorage.removeItem('vtuber_admin_session_id');
-            this.token = null;
-            this.sessionId = null;
+            // 清除安全存储
+            this.clearSecureStorage();
 
             // 跳转到登录页面
             window.location.href = 'login.html';
