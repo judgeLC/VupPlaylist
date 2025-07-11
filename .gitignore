@@ -1,0 +1,78 @@
+# 敏感配置文件
+.env
+.env.local
+.env.production
+.env.development
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+
+# 认证和数据文件
+data/auth.json
+data/sessions.json
+auth.json
+sessions.json
+
+# 敏感文档（包含密码、配置信息）
+FIRST_LOGIN.md
+URGENT_SECURITY_NOTICE.md
+DEPLOYMENT_SECURITY.md
+SECURITY_UPDATE_README.md
+security-check.js
+quick-fix.js
+
+# 日志文件
+*.log
+logs/
+debug.log
+error.log
+access.log
+
+# 依赖
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 临时文件
+.tmp/
+temp/
+*.tmp
+*.temp
+
+# 备份文件
+*.backup
+backup-*
+*.bak
+data-backup-*
+
+# 证书文件
+certs/
+ssl/
+*.csr
+*.der
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 运行时文件
+*.pid
+*.seed
+*.pid.lock
+
+# 上传文件（可能包含敏感内容）
+uploads/
+images/avatars/
+images/backgrounds/
+images/covers/

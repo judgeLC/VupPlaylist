@@ -67,10 +67,98 @@ class AdminManager {
     safeSetContent(id, content) {
         const element = this.safeGetElement(id);
         if (element) {
-            element.textContent = content;
+            // 防止XSS攻击，只设置文本内容
+            element.textContent = this.sanitizeInput(content);
             return true;
         }
         return false;
+    }
+
+    /**
+     * 输入内容清理
+     * 清理用户输入，防止XSS攻击
+     * @param {string} input - 输入内容
+     * @returns {string} 清理后的内容
+     */
+    sanitizeInput(input) {
+        if (typeof input !== 'string') {
+            return String(input);
+        }
+
+        // 移除潜在的危险字符
+        return input
+            .replace(/[<>]/g, '') // 移除尖括号
+            .replace(/javascript:/gi, '') // 移除javascript协议
+            .replace(/on\w+=/gi, '') // 移除事件处理器
+            .trim();
+    }
+
+    /**
+     * 验证输入内容
+     * @param {string} input - 输入内容
+     * @param {Object} options - 验证选项
+     * @returns {Object} 验证结果
+     */
+    validateInput(input, options = {}) {
+        const {
+            maxLength = 500,
+            minLength = 0,
+            required = false,
+            pattern = null,
+            type = 'text'
+        } = options;
+
+        const result = {
+            valid: true,
+            errors: []
+        };
+
+        // 必填检查
+        if (required && (!input || input.trim().length === 0)) {
+            result.valid = false;
+            result.errors.push('此字段为必填项');
+            return result;
+        }
+
+        // 如果不是必填且为空，则跳过其他验证
+        if (!required && (!input || input.trim().length === 0)) {
+            return result;
+        }
+
+        // 长度检查
+        if (input.length < minLength) {
+            result.valid = false;
+            result.errors.push(`长度不能少于${minLength}个字符`);
+        }
+
+        if (input.length > maxLength) {
+            result.valid = false;
+            result.errors.push(`长度不能超过${maxLength}个字符`);
+        }
+
+        // 危险内容检查
+        const dangerousPatterns = [
+            /<script/i,
+            /javascript:/i,
+            /vbscript:/i,
+            /on\w+=/i,
+            /<iframe/i,
+            /<object/i,
+            /<embed/i
+        ];
+
+        if (dangerousPatterns.some(pattern => pattern.test(input))) {
+            result.valid = false;
+            result.errors.push('输入包含不安全的内容');
+        }
+
+        // 自定义模式检查
+        if (pattern && !pattern.test(input)) {
+            result.valid = false;
+            result.errors.push('输入格式不正确');
+        }
+
+        return result;
     }
 
     /**
@@ -180,13 +268,43 @@ class AdminManager {
      */
     checkAuth() {
         const token = localStorage.getItem('vtuber_admin_token');
-        if (!token) {
+        const sessionId = localStorage.getItem('vtuber_admin_session_id');
+        const tokenExpiry = localStorage.getItem('vtuber_admin_token_expiry');
+
+        // 检查token是否存在
+        if (!token || !sessionId) {
+            console.warn('未找到认证令牌，跳转到登录页面');
+            this.clearAuthData();
             this.redirectToLogin();
             return false;
         }
 
-        // 简化检查，实际验证由服务器端处理
+        // 检查token是否过期
+        if (tokenExpiry && Date.now() > parseInt(tokenExpiry)) {
+            console.warn('认证令牌已过期，跳转到登录页面');
+            this.clearAuthData();
+            this.redirectToLogin();
+            return false;
+        }
+
+        // 验证token格式
+        if (!/^[a-f0-9]{64}$/i.test(token)) {
+            console.warn('认证令牌格式无效，跳转到登录页面');
+            this.clearAuthData();
+            this.redirectToLogin();
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * 清除认证数据
+     */
+    clearAuthData() {
+        localStorage.removeItem('vtuber_admin_token');
+        localStorage.removeItem('vtuber_admin_session_id');
+        localStorage.removeItem('vtuber_admin_token_expiry');
     }
 
     /**

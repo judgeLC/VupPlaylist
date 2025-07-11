@@ -1,0 +1,15 @@
+{
+  "settings": {
+    "theme": "auto",
+    "itemsPerPage": 20,
+    "enableSearch": true,
+    "enableGenreFilter": true,
+    "showSongCount": true,
+    "defaultSortBy": "addedDate",
+    "defaultSortOrder": "desc"
+  },
+  "metadata": {
+    "version": "1.0",
+    "lastModified": "2025-01-01T00:00:00.000Z"
+  }
+}

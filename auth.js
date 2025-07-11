@@ -241,17 +241,87 @@ class AuthManager {
     }
 
     /**
-     * 检查是否为首次设置 - 移除敏感信息显示
+     * 检查是否为首次设置 - 显示安全提示
      */
     async checkFirstTimeSetup() {
-        // 移除敏感信息显示逻辑，保持页面简洁安全
         try {
             const response = await fetch(`${this.apiBase}/api/auth/status`);
             const data = await response.json();
-            // 不再显示首次登录提示和默认密码
+
+            if (data.success && data.data.isFirstTime) {
+                // 显示首次设置提示
+                this.showSecurityNotice(
+                    '🔒 安全提示',
+                    data.data.message + '\n\n' + (data.data.securityNotice || ''),
+                    'warning'
+                );
+            }
         } catch (error) {
             console.error('检查设置状态失败:', error);
+            this.showError('无法连接到服务器，请检查网络连接');
         }
+    }
+
+    /**
+     * 显示安全通知对话框
+     */
+    showSecurityNotice(title, message, type = 'info') {
+        const dialog = document.createElement('div');
+        dialog.className = 'security-notice-dialog';
+        dialog.innerHTML = `
+            <div class="dialog-overlay">
+                <div class="dialog-content ${type}">
+                    <h3>${title}</h3>
+                    <p style="white-space: pre-line;">${message}</p>
+                    <div class="dialog-actions">
+                        <button class="glass-btn primary" onclick="this.closest('.security-notice-dialog').remove()">
+                            我知道了
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // 添加样式
+        const style = document.createElement('style');
+        style.textContent = `
+            .security-notice-dialog {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10000;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            .security-notice-dialog .dialog-content {
+                background: white;
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 500px;
+                width: 100%;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                text-align: center;
+            }
+            .security-notice-dialog .dialog-content.warning {
+                border-left: 5px solid #ffc107;
+            }
+            .security-notice-dialog h3 {
+                margin-bottom: 15px;
+                color: #333;
+            }
+            .security-notice-dialog p {
+                margin-bottom: 20px;
+                color: #666;
+                line-height: 1.5;
+            }
+        `;
+        document.head.appendChild(style);
+        document.body.appendChild(dialog);
     }
 
     /**
@@ -426,7 +496,7 @@ class AuthManager {
                 },
                 body: JSON.stringify({
                     newPassword,
-                    currentPassword: 'Admin@123456' // 内部使用
+                    currentPassword: 'DEFAULT_PASSWORD' // 内部使用
                 })
             });
 

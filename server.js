@@ -198,7 +198,7 @@ class DataManager {
 // 认证管理类
 class AuthManager {
     // 默认管理员密码
-    static DEFAULT_PASSWORD = 'Admin@123456';
+    static DEFAULT_PASSWORD = 'DEFAULT_ADMIN_PASSWORD';
 
     // 获取认证数据
     static async getAuthData() {
@@ -309,6 +309,26 @@ class AuthManager {
     static async isFirstTimeSetup() {
         const authData = await this.getAuthData();
         return !authData.isSetup;
+    }
+
+    // 强制首次设置检查 - 如果检测到默认配置则强制重置
+    static async forceFirstTimeSetupIfNeeded() {
+        const authData = await this.getAuthData();
+
+        // 检测是否使用了不安全的默认配置
+        const isUnsafeDefault = (
+            !authData.isSetup ||
+            authData.salt === 'password' ||
+            authData.passwordHash === '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
+        );
+
+        if (isUnsafeDefault) {
+            SecurityUtils.secureWarn('🚨 检测到不安全的默认配置，强制重置认证系统');
+            await this.resetToDefault();
+            return true;
+        }
+
+        return false;
     }
 
     // 获取客户端真实IP地址
@@ -614,10 +634,14 @@ class ResponseHelper {
     }
 
     static error(res, message = '操作失败', statusCode = 400, error = null) {
+        // 在生产环境中不暴露详细错误信息
+        const isProduction = process.env.NODE_ENV === 'production';
+        const errorMessage = isProduction ? message : (error?.message || message);
+
         res.status(statusCode).json({
             success: false,
-            message,
-            error: error?.message || null,
+            message: errorMessage,
+            error: isProduction ? null : (error?.message || null),
             timestamp: new Date().toISOString()
         });
     }
@@ -758,7 +782,7 @@ const allowPublicAccess = (req, res, next) => {
 // 移除X-Powered-By头部
 app.disable('x-powered-by');
 
-// 安全HTTP头部
+// 增强的安全HTTP头部
 app.use((req, res, next) => {
     // 防止点击劫持
     res.setHeader('X-Frame-Options', 'DENY');
@@ -769,7 +793,7 @@ app.use((req, res, next) => {
     // XSS保护
     res.setHeader('X-XSS-Protection', '1; mode=block');
 
-    // 内容安全策略
+    // 增强的内容安全策略
     res.setHeader('Content-Security-Policy',
         "default-src 'self'; " +
         "script-src 'self' 'unsafe-inline'; " +
@@ -777,17 +801,32 @@ app.use((req, res, next) => {
         "font-src 'self' https://fonts.gstatic.com; " +
         "img-src 'self' data: https:; " +
         "connect-src 'self'; " +
-        "frame-ancestors 'none';"
+        "frame-ancestors 'none'; " +
+        "base-uri 'self'; " +
+        "form-action 'self'; " +
+        "upgrade-insecure-requests;"
     );
 
-    // 如果是HTTPS，添加HSTS头部
+    // 强制HTTPS（如果在HTTPS环境下）
     if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
         res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
     }
 
-    // 推荐安全头部
+    // 增强的安全头部
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+
+    // 防止缓存敏感页面
+    if (req.path.includes('/admin') || req.path.includes('/login')) {
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        res.setHeader('Surrogate-Control', 'no-store');
+    }
+
+    // 隐藏服务器信息
+    res.removeHeader('Server');
+    res.removeHeader('X-Powered-By');
 
     next();
 });
@@ -1231,7 +1270,7 @@ const upload = multer({
     }
 });
 
-// 安全的静态文件服务配置
+// 增强的静态文件服务配置
 // 阻止访问敏感文件和目录
 app.use((req, res, next) => {
     const blockedPaths = [
@@ -1242,18 +1281,26 @@ app.use((req, res, next) => {
         '/package-lock.json',
         '/server.js',
         '/FIRST_LOGIN.md',
+        '/SECURITY.md',
+        '/DEPLOYMENT_GUIDE.md',
+        '/API.md',
+        '/README.md',
         '/.env',
-        '/auth.json'
+        '/auth.json',
+        '/.gitignore',
+        '/yarn.lock',
+        '/pnpm-lock.yaml'
     ];
 
-    const blockedExtensions = ['.json', '.md', '.js'];
+    const blockedExtensions = ['.json', '.md', '.js', '.log', '.env', '.config'];
     const requestPath = req.path.toLowerCase();
 
-    // 检查是否访问被阻止的路径
+    // 记录可疑的文件访问尝试
     if (blockedPaths.some(blocked => requestPath.startsWith(blocked))) {
+        SecurityUtils.secureWarn(`🚨 尝试访问敏感路径: ${AuthManager.getClientIp(req)} - ${req.path}`);
         return res.status(404).json({
             success: false,
-            message: '文件未找到',
+            message: '页面未找到',
             timestamp: new Date().toISOString()
         });
     }
@@ -1262,9 +1309,22 @@ app.use((req, res, next) => {
     const allowedJsFiles = ['/script.js', '/admin.js', '/auth.js', '/api-client.js', '/simple-genre-manager.js', '/data.js'];
     if (blockedExtensions.some(ext => requestPath.endsWith(ext)) &&
         !allowedJsFiles.includes(requestPath)) {
+        SecurityUtils.secureWarn(`🚨 尝试访问敏感文件: ${AuthManager.getClientIp(req)} - ${req.path}`);
         return res.status(404).json({
             success: false,
-            message: '文件未找到',
+            message: '页面未找到',
+            timestamp: new Date().toISOString()
+        });
+    }
+
+    // 防止路径遍历攻击
+    if (requestPath.includes('../') || requestPath.includes('..\\') ||
+        requestPath.includes('%2e%2e') || requestPath.includes('%2f') ||
+        requestPath.includes('%5c')) {
+        SecurityUtils.secureWarn(`🚨 路径遍历攻击尝试: ${AuthManager.getClientIp(req)} - ${req.path}`);
+        return res.status(403).json({
+            success: false,
+            message: '禁止访问',
             timestamp: new Date().toISOString()
         });
     }
@@ -1294,11 +1354,21 @@ app.use(express.static(path.join(__dirname), {
 // 检查是否为首次设置
 app.get('/api/auth/status', async (req, res) => {
     try {
+        // 强制检查并重置不安全的默认配置
+        const wasReset = await AuthManager.forceFirstTimeSetupIfNeeded();
         const isFirstTime = await AuthManager.isFirstTimeSetup();
+
+        let message = '系统已初始化';
+        if (isFirstTime) {
+            message = '系统需要初始化，请使用默认密码登录并立即修改密码';
+        } else if (wasReset) {
+            message = '检测到不安全配置已重置，请使用默认密码重新设置';
+        }
+
         ResponseHelper.success(res, {
-            isFirstTime,
-            // 安全考虑：不再暴露默认密码，请查看FIRST_LOGIN.md文档
-            message: isFirstTime ? '首次设置，请查看FIRST_LOGIN.md文档获取初始密码' : '系统已初始化'
+            isFirstTime: isFirstTime || wasReset,
+            message,
+            securityNotice: '为了安全，请立即修改默认密码'
         });
     } catch (error) {
         console.error('获取认证状态失败:', error);
@@ -2136,6 +2206,16 @@ app.use((err, req, res, next) => {
     }
 });
 
+// 404处理中间件
+app.use((req, res) => {
+    SecurityUtils.secureWarn(`404 请求: ${AuthManager.getClientIp(req)} - ${req.method} ${req.path}`);
+    res.status(404).json({
+        success: false,
+        message: '页面未找到',
+        timestamp: new Date().toISOString()
+    });
+});
+
 // 初始化数据文件
 async function initializeData() {
     try {
@@ -2143,9 +2223,9 @@ async function initializeData() {
         await DataManager.getSongs();
         await DataManager.getProfile();
 
-        console.log('✅ 数据文件初始化完成');
+        console.log('[完成] 数据文件初始化完成');
     } catch (error) {
-        console.error('❌ 数据文件初始化失败:', error);
+        console.error('[错误] 数据文件初始化失败:', error);
     }
 }
 
@@ -2157,6 +2237,9 @@ async function startServer() {
         // 启动时更新data.js文件
         await updateDataJsFile();
 
+        // 启动时安全检查
+        await AuthManager.forceFirstTimeSetupIfNeeded();
+
         // 启动时清理过期会话
         await AuthManager.cleanupExpiredSessions();
 
@@ -2164,8 +2247,9 @@ async function startServer() {
         setInterval(async () => {
             try {
                 await AuthManager.cleanupExpiredSessions();
+                SecurityUtils.cleanupExpiredCSRFTokens();
             } catch (error) {
-                console.error('定期清理会话失败:', error);
+                SecurityUtils.secureError('定期清理任务失败:', error.message);
             }
         }, 60 * 60 * 1000); // 1小时
 
@@ -2203,7 +2287,7 @@ async function startServer() {
             `);
         });
     } catch (error) {
-        console.error('❌ 服务器启动失败:', error);
+        console.error('[错误] 服务器启动失败:', error);
         process.exit(1);
     }
 }

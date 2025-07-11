@@ -1,0 +1,16 @@
+{
+  "profile": {
+    "websiteTitle": "虚拟主播歌单",
+    "vtuberName": "示例主播",
+    "vtuberUid": "VT-001",
+    "vtuberBirthday": "01/01",
+    "liveRoomUrl": "",
+    "vtuberDesc": "欢迎来到我的歌单空间！",
+    "avatar": "",
+    "background": ""
+  },
+  "metadata": {
+    "version": "1.0",
+    "lastModified": "2025-01-01T00:00:00.000Z"
+  }
+}
